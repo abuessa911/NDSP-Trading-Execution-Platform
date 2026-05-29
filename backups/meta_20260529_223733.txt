@@ -1,0 +1,7 @@
+NDSP Trading Bot Backup
+Created At: 20260529_223733
+Project: /home/nawaf511/ndsp-binance-bot
+Files:
+- db_20260529_223733.sql
+- env_20260529_223733.backup
+- docker-compose_20260529_223733.yml

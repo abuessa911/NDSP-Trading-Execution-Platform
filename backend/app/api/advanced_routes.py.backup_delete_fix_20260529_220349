@@ -1,0 +1,211 @@
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from sqlalchemy import text
+from pydantic import BaseModel, Field
+
+from app.db.session import get_db
+from app.models.models import User, TradeLog
+from app.api.routes import get_current_user
+from app.schemas.schemas import ChangePasswordRequest, NdspSignalRequest, LiveSafetyConfirmRequest
+from app.services.execution import execute_signal
+from app.services.risk_service import calculate_daily_pnl, pre_trade_risk_check
+
+try:
+    from app.auth.security import verify_password, hash_password as get_password_hash
+except Exception:
+    from passlib.context import CryptContext
+    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+    def verify_password(plain_password: str, hashed_password: str) -> bool:
+        return pwd_context.verify(plain_password, hashed_password)
+
+    def get_password_hash(password: str) -> str:
+        return pwd_context.hash(password)
+
+
+router = APIRouter()
+
+
+def require_admin(user: User):
+    if not getattr(user, "is_admin", False):
+        raise HTTPException(status_code=403, detail="Admin only")
+
+
+class AdminUserUpdate(BaseModel):
+    is_active: bool | None = None
+    is_admin: bool | None = None
+
+
+@router.post("/me/change-password")
+def change_password(
+    payload: ChangePasswordRequest,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    if not verify_password(payload.old_password, user.password_hash):
+        raise HTTPException(status_code=400, detail="Old password is incorrect")
+
+    user.password_hash = get_password_hash(payload.new_password)
+    db.commit()
+
+    return {"status": "changed"}
+
+
+@router.get("/admin/users")
+def admin_users(
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    require_admin(user)
+
+    rows = db.query(User).order_by(User.id.desc()).all()
+
+    return [
+        {
+            "id": x.id,
+            "email": x.email,
+            "is_active": x.is_active,
+            "is_admin": getattr(x, "is_admin", False),
+            "created_at": x.created_at,
+            "binance_key_configured": bool(x.api_key),
+            "settings_configured": bool(x.settings),
+        }
+        for x in rows
+    ]
+
+
+@router.patch("/admin/users/{target_user_id}")
+def admin_update_user(
+    target_user_id: int,
+    payload: AdminUserUpdate,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    require_admin(user)
+
+    target = db.query(User).filter(User.id == target_user_id).first()
+    if not target:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if payload.is_active is not None:
+        target.is_active = payload.is_active
+
+    if payload.is_admin is not None:
+        target.is_admin = payload.is_admin
+
+    db.commit()
+
+    return {"status": "updated"}
+
+
+@router.get("/risk/daily-pnl")
+def daily_pnl(
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    pnl = calculate_daily_pnl(db, user)
+
+    return {
+        "daily_pnl_usdt": pnl,
+        "source": "bot_trade_logs",
+        "note": "PnL is calculated from bot trade logs. Exchange-level PnL integration can be added next."
+    }
+
+
+@router.post("/live-safety/confirm")
+def confirm_live_safety(
+    payload: LiveSafetyConfirmRequest,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    if payload.confirm_text.strip() != "I UNDERSTAND LIVE RISK":
+        raise HTTPException(
+            status_code=400,
+            detail='Type exactly: I UNDERSTAND LIVE RISK'
+        )
+
+    if not user.settings:
+        raise HTTPException(status_code=404, detail="Settings not found")
+
+    user.settings.live_safety_confirmed = True
+    db.commit()
+
+    return {"status": "confirmed"}
+
+
+@router.get("/live-safety/status")
+def live_safety_status(user: User = Depends(get_current_user)):
+    return {
+        "confirmed": bool(user.settings and user.settings.live_safety_confirmed),
+        "required_text": "I UNDERSTAND LIVE RISK"
+    }
+
+
+@router.post("/ndsp/signal")
+async def ndsp_signal(
+    payload: NdspSignalRequest,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    pre_trade_risk_check(db, user, payload.symbol, payload.side)
+
+    reason = payload.reason
+    if payload.ndsp_layer:
+        reason = f"{reason} | NDSP Layer: {payload.ndsp_layer}"
+
+    trade = await execute_signal(
+        db=db,
+        user=user,
+        symbol=payload.symbol,
+        side=payload.side,
+        notional_usdt=payload.notional_usdt,
+        reason=reason,
+    )
+
+    return {
+        "id": trade.id,
+        "symbol": trade.symbol,
+        "side": trade.side,
+        "status": trade.status,
+        "mode": trade.mode,
+        "reason": trade.reason,
+    }
+
+
+@router.get("/risk/summary")
+def risk_summary(
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    settings = user.settings
+
+    return {
+        "bot_enabled": bool(settings and settings.enabled),
+        "daily_pnl_usdt": calculate_daily_pnl(db, user),
+        "max_daily_loss_usdt": settings.max_daily_loss_usdt if settings else None,
+        "stop_loss_pct": settings.stop_loss_pct if settings else None,
+        "take_profit_pct": settings.take_profit_pct if settings else None,
+        "prevent_duplicate_positions": settings.prevent_duplicate_positions if settings else None,
+        "live_safety_confirmed": bool(settings and settings.live_safety_confirmed),
+    }
+
+
+@router.delete("/admin/users/{target_user_id}")
+def admin_delete_user(
+    target_user_id: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    require_admin(user)
+
+    if target_user_id == user.id:
+        raise HTTPException(status_code=400, detail="You cannot delete your own account")
+
+    target = db.query(User).filter(User.id == target_user_id).first()
+    if not target:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    db.delete(target)
+    db.commit()
+
+    return {"status": "deleted"}

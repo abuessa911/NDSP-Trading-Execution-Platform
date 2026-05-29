@@ -1,0 +1,876 @@
+===== PROJECT TREE =====
+backend/app/api/__pycache__/routes.cpython-311.pyc
+backend/app/api/routes.py
+backend/app/auth/__pycache__/security.cpython-311.pyc
+backend/app/auth/security.py
+backend/app/core/config.py
+backend/app/core/__pycache__/config.cpython-311.pyc
+backend/app/db/__pycache__/session.cpython-311.pyc
+backend/app/db/session.py
+backend/app/exchange/binance_client.py
+backend/app/exchange/__pycache__/binance_client.cpython-311.pyc
+backend/app/main.py
+backend/app/models/models.py
+backend/app/models/__pycache__/models.cpython-311.pyc
+backend/app/__pycache__/main.cpython-311.pyc
+backend/app/schemas/__pycache__/schemas.cpython-311.pyc
+backend/app/schemas/schemas.py
+backend/app/services/crypto_service.py
+backend/app/services/execution.py
+backend/app/services/notifications.py
+backend/app/services/__pycache__/crypto_service.cpython-311.pyc
+backend/app/services/__pycache__/execution.cpython-311.pyc
+backend/app/services/__pycache__/notifications.cpython-311.pyc
+backend/app/services/__pycache__/risk.cpython-311.pyc
+backend/app/services/risk.py
+backend/app/strategy/ndsp_adapter.py
+
+===== ROUTES =====
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.orm import Session
+from app.db.session import get_db
+from app.models.models import User, BinanceApiKey, BotSettings, TradeLog
+from app.schemas.schemas import (
+    RegisterRequest,
+    LoginRequest,
+    TokenResponse,
+    BinanceKeyRequest,
+    BotSettingsRequest,
+    TestSignalRequest,
+)
+from app.auth.security import hash_password, verify_password, create_access_token, get_current_user
+from app.services.crypto_service import encrypt_text
+from app.services.execution import execute_signal
+from app.services.notifications import send_telegram, send_email
+from app.core.config import settings
+
+
+router = APIRouter()
+
+
+@router.post("/auth/register", response_model=TokenResponse)
+def register(payload: RegisterRequest, db: Session = Depends(get_db)):
+    if settings.INVITE_CODE and payload.invite_code != settings.INVITE_CODE:
+        raise HTTPException(status_code=403, detail="Invalid invite code")
+
+    existing = db.query(User).filter(User.email == payload.email).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Email already registered")
+
+    user = User(
+        email=payload.email,
+        password_hash=hash_password(payload.password),
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+
+    bot_settings = BotSettings(user_id=user.id, enabled=False)
+    db.add(bot_settings)
+    db.commit()
+
+    token = create_access_token(user.id)
+    return TokenResponse(access_token=token)
+
+
+@router.post("/auth/login", response_model=TokenResponse)
+def login(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db),
+):
+    user = db.query(User).filter(User.email == form_data.username).first()
+
+    if not user or not verify_password(form_data.password, user.password_hash):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    return TokenResponse(access_token=create_access_token(user.id))
+
+
+@router.get("/me")
+def me(user: User = Depends(get_current_user)):
+    return {
+        "id": user.id,
+        "email": user.email,
+        "is_active": user.is_active,
+        "binance_key_configured": bool(user.api_key),
+        "settings_configured": bool(user.settings),
+    }
+
+
+@router.post("/me/binance-key")
+def save_binance_key(
+    payload: BinanceKeyRequest,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    encrypted_key = encrypt_text(payload.api_key)
+    encrypted_secret = encrypt_text(payload.api_secret)
+
+    existing = db.query(BinanceApiKey).filter(BinanceApiKey.user_id == user.id).first()
+
+    if existing:
+        existing.api_key_encrypted = encrypted_key
+        existing.api_secret_encrypted = encrypted_secret
+    else:
+        existing = BinanceApiKey(
+            user_id=user.id,
+            api_key_encrypted=encrypted_key,
+            api_secret_encrypted=encrypted_secret,
+        )
+        db.add(existing)
+
+    db.commit()
+    return {"status": "saved", "message": "Binance API key encrypted and stored"}
+
+
+@router.post("/me/settings")
+def update_settings(
+    payload: BotSettingsRequest,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    existing = db.query(BotSettings).filter(BotSettings.user_id == user.id).first()
+
+    if not existing:
+        existing = BotSettings(user_id=user.id)
+        db.add(existing)
+
+    existing.enabled = payload.enabled
+    existing.allowed_symbols = payload.allowed_symbols
+    existing.max_order_usdt = payload.max_order_usdt
+    existing.max_daily_loss_usdt = payload.max_daily_loss_usdt
+    existing.max_trades_per_day = payload.max_trades_per_day
+    existing.telegram_enabled = payload.telegram_enabled
+    existing.email_enabled = payload.email_enabled
+
+    db.commit()
+
+    return {"status": "saved", "settings": payload.model_dump()}
+
+
+@router.get("/me/settings")
+def get_settings(
+    user: User = Depends(get_current_user),
+):
+    if not user.settings:
+        return None
+
+    return {
+        "enabled": user.settings.enabled,
+        "allowed_symbols": user.settings.allowed_symbols,
+        "max_order_usdt": user.settings.max_order_usdt,
+        "max_daily_loss_usdt": user.settings.max_daily_loss_usdt,
+        "max_trades_per_day": user.settings.max_trades_per_day,
+        "telegram_enabled": user.settings.telegram_enabled,
+        "email_enabled": user.settings.email_enabled,
+    }
+
+
+@router.post("/bot/test-signal")
+async def test_signal(
+    payload: TestSignalRequest,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    """
+    ÙŠÙ†ÙØ° Ø¥Ø´Ø§Ø±Ø© ÙŠØ¯ÙˆÙŠØ©.
+    ÙÙŠ ÙˆØ¶Ø¹ dryrun Ù„Ø§ ÙŠØªÙ… ØªÙ†ÙÙŠØ° ØµÙÙ‚Ø© Ø­Ù‚ÙŠÙ‚ÙŠØ©.
+    """
+    trade = await execute_signal(
+        db=db,
+        user=user,
+        symbol=payload.symbol,
+        side=payload.side,
+        notional_usdt=payload.notional_usdt,
+        reason=payload.reason,
+    )
+
+    return {
+        "id": trade.id,
+        "symbol": trade.symbol,
+        "side": trade.side,
+        "status": trade.status,
+        "mode": trade.mode,
+        "reason": trade.reason,
+    }
+
+
+@router.post("/bot/test-alert")
+async def test_alert(user: User = Depends(get_current_user)):
+    message = f"âœ… NDSP Trading Bot test alert for {user.email}"
+
+    telegram_ok = False
+    email_ok = False
+
+    if user.settings and user.settings.telegram_enabled:
+        telegram_ok = await send_telegram(message)
+
+    if user.settings and user.settings.email_enabled:
+        try:
+            email_ok = send_email(user.email, "NDSP Test Alert", message)
+        except Exception:
+            email_ok = False
+
+    return {
+        "telegram_sent": telegram_ok,
+        "email_sent": email_ok,
+    }
+
+
+@router.get("/trades")
+def trades(
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    rows = (
+        db.query(TradeLog)
+        .filter(TradeLog.user_id == user.id)
+        .order_by(TradeLog.id.desc())
+        .limit(100)
+        .all()
+    )
+
+    return [
+        {
+            "id": x.id,
+            "symbol": x.symbol,
+            "side": x.side,
+            "amount": x.amount,
+            "price": x.price,
+            "notional_usdt": x.notional_usdt,
+            "status": x.status,
+            "mode": x.mode,
+            "reason": x.reason,
+            "created_at": x.created_at,
+        }
+        for x in rows
+    ]
+
+
+@router.post("/emergency-stop")
+def emergency_stop(
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    if not user.settings:
+        raise HTTPException(status_code=404, detail="Settings not found")
+
+    user.settings.enabled = False
+    db.commit()
+
+    return {"status": "stopped", "message": "Bot disabled for current user"}
+
+===== MODELS FILES =====
+backend/app/models/models.py
+from sqlalchemy import String, Integer, Float, Boolean, DateTime, ForeignKey, Text
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from datetime import datetime
+from app.db.session import Base
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
+    password_hash: Mapped[str] = mapped_column(String(255))
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    api_key = relationship("BinanceApiKey", back_populates="user", uselist=False)
+    settings = relationship("BotSettings", back_populates="user", uselist=False)
+    trades = relationship("TradeLog", back_populates="user")
+
+
+class BinanceApiKey(Base):
+    __tablename__ = "binance_api_keys"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), unique=True)
+    api_key_encrypted: Mapped[str] = mapped_column(Text)
+    api_secret_encrypted: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User", back_populates="api_key")
+
+
+class BotSettings(Base):
+    __tablename__ = "bot_settings"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), unique=True)
+
+    enabled: Mapped[bool] = mapped_column(Boolean, default=False)
+    allowed_symbols: Mapped[str] = mapped_column(String(500), default="BTC/USDT,ETH/USDT")
+    max_order_usdt: Mapped[float] = mapped_column(Float, default=25.0)
+    max_daily_loss_usdt: Mapped[float] = mapped_column(Float, default=20.0)
+    max_trades_per_day: Mapped[int] = mapped_column(Integer, default=3)
+
+    telegram_enabled: Mapped[bool] = mapped_column(Boolean, default=True)
+    email_enabled: Mapped[bool] = mapped_column(Boolean, default=True)
+
+    user = relationship("User", back_populates="settings")
+
+
+class TradeLog(Base):
+    __tablename__ = "trade_logs"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+
+    symbol: Mapped[str] = mapped_column(String(50))
+    side: Mapped[str] = mapped_column(String(10))
+    amount: Mapped[float] = mapped_column(Float)
+    price: Mapped[float] = mapped_column(Float, default=0)
+    notional_usdt: Mapped[float] = mapped_column(Float, default=0)
+
+    status: Mapped[str] = mapped_column(String(50))
+    mode: Mapped[str] = mapped_column(String(20))
+    reason: Mapped[str] = mapped_column(Text, default="")
+    exchange_response: Mapped[str] = mapped_column(Text, default="")
+
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User", back_populates="trades")
+backend/app/models/__pycache__/models.cpython-311.pyc
+§
+    „j{  ã                   óÆ   — d dl mZmZmZmZmZmZmZ d dlm	Z	m
+Z
+mZ d dlmZ d dlmZ  G d„ de¦  «        Z G d„ de¦  «        Z G d	„ d
+e¦  «        Z G d„ de¦  «        ZdS )é    )ÚStringÚIntegerÚFloatÚBooleanÚDateTimeÚ
+ForeignKeyÚText)ÚMappedÚmapped_columnÚrelationship)Údatetime)ÚBasec                   ó„  — e Zd ZU dZ eedd¬¦  «        Zee         e	d<    e e
+d¦  «        dd¬¦  «        Zee         e	d<    e e
+d¦  «        ¦  «        Zee         e	d<    eed¬	¦  «        Zee         e	d
+<    eeej        ¬	¦  «        Zee         e	d<    eddd¬¦  «        Z eddd¬¦  «        Z edd¬¦  «        ZdS )ÚUserÚusersT)Úprimary_keyÚindexÚidéÿ   )Úuniquer   ÚemailÚpassword_hash©ÚdefaultÚ	is_activeÚ
+created_atÚBinanceApiKeyÚuserF)Úback_populatesÚuselistÚBotSettingsÚTradeLog©r   N)Ú__name__Ú
+__module__Ú__qualname__Ú__tablename__r   r   r   r
+   ÚintÚ__annotations__r   r   Ústrr   r   r   Úboolr   r   Úutcnowr   r   Úapi_keyÚsettingsÚtrades© ó    ú/app/app/models/models.pyr   r      s  € € € € € € Ø€Mà#m G¸ÀTĞJÑJÔJ€BˆˆsŒĞJĞJÑJØ&˜ v v¨c¡{¤{¸4ÀtĞLÑLÔL€Eˆ6#Œ;ĞLĞLÑLØ!. ¨v¨v°c©{¬{Ñ!;Ô!;€M6˜#”;Ğ;Ğ;Ñ;Ø+˜m¨G¸TĞBÑBÔB€IˆvdŒ|ĞBĞBÑBØ#0 =°À8Ä?Ğ#SÑ#SÔ#S€JxÔ ĞSĞSÑSàˆl˜?¸6È5ĞQÑQÔQ€GØˆ|˜M¸&È%ĞPÑPÔP€HØˆ\˜*°VĞ<Ñ<Ô<€F€F€Fr1   r   c                   ó2  — e Zd ZU dZ eed¬¦  «        Zee         e	d<    e e
+d¦  «        d¬¦  «        Zee         e	d<    ee¦  «        Zee         e	d<    ee¦  «        Zee         e	d	<    eeej        ¬
+¦  «        Zee         e	d<    edd¬¦  «        ZdS )r   Úbinance_api_keysT©r   r   úusers.id©r   Úuser_idÚapi_key_encryptedÚapi_secret_encryptedr   r   r   r-   r#   N)r$   r%   r&   r'   r   r   r   r
+   r(   r)   r   r8   r	   r9   r*   r:   r   r   r,   r   r   r   r0   r1   r2   r   r      sİ   € € € € € € Ø&€Mà#m G¸Ğ>Ñ>Ô>€BˆˆsŒĞ>Ğ>Ñ>Ø(˜=¨¨°JÑ)?Ô)?ÈĞMÑMÔM€GˆVCŒ[ĞMĞMÑMØ%2 ]°4Ñ%8Ô%8Ğv˜c”{Ğ8Ğ8Ñ8Ø(5¨°dÑ(;Ô(;Ğ˜& œ+Ğ;Ğ;Ñ;Ø#0 =°À8Ä?Ğ#SÑ#SÔ#S€JxÔ ĞSĞSÑSàˆ<˜¨yĞ9Ñ9Ô9€D€D€Dr1   r   c                   ó  — e Zd ZU dZ eed¬¦  «        Zee         e	d<    e e
+d¦  «        d¬¦  «        Zee         e	d<    eed¬	¦  «        Zee         e	d
+<    e ed¦  «        d¬	¦  «        Zee         e	d<    eed¬	¦  «        Zee         e	d<    eed¬	¦  «        Zee         e	d<    eed¬	¦  «        Zee         e	d<    eed¬	¦  «        Zee         e	d<    eed¬	¦  «        Zee         e	d<    edd¬¦  «        ZdS )r!   Úbot_settingsTr5   r   r6   r7   r8   Fr   Úenablediô  zBTC/USDT,ETH/USDTÚallowed_symbolsg      9@Úmax_order_usdtg      4@Úmax_daily_loss_usdté   Úmax_trades_per_dayÚtelegram_enabledÚemail_enabledr   r.   r#   N)r$   r%   r&   r'   r   r   r   r
+   r(   r)   r   r8   r   r=   r+   r   r>   r*   r   r?   Úfloatr@   rB   rC   rD   r   r   r0   r1   r2   r!   r!   !   sz  € € € € € € Ø"€Mà#m G¸Ğ>Ñ>Ô>€BˆˆsŒĞ>Ğ>Ñ>Ø(˜=¨¨°JÑ)?Ô)?ÈĞMÑMÔM€GˆVCŒ[ĞMĞMÑMà)˜M¨'¸5ĞAÑAÔA€GˆVDŒ\ĞAĞAÑAØ#0 =°°¸±´ĞFYĞ#ZÑ#ZÔ#Z€OV˜C”[ĞZĞZÑZØ$1 M°%ÀĞ$FÑ$FÔ$F€NF˜5”MĞFĞFÑFØ)6¨°uÀdĞ)KÑ)KÔ)KĞ˜ œĞKĞKÑKØ&3 m°GÀQĞ&GÑ&GÔ&GĞ˜˜sœĞGĞGÑGà%2 ]°7ÀDĞ%IÑ%IÔ%IĞf˜T”lĞIĞIÑIØ"/ -°ÀĞ"FÑ"FÔ"F€M6˜$”<ĞFĞFÑFàˆ<˜¨zĞ:Ñ:Ô:€D€D€Dr1   r!   c                   óº  — e Zd ZU dZ eed¬¦  «        Zee         e	d<    e e
+d¦  «        ¦  «        Zee         e	d<    e ed¦  «        ¦  «        Zee         e	d<    e ed	¦  «        ¦  «        Zee         e	d
+<    ee¦  «        Zee         e	d<    eed¬¦  «        Zee         e	d<    eed¬¦  «        Zee         e	d<    e ed¦  «        ¦  «        Zee         e	d<    e ed¦  «        ¦  «        Zee         e	d<    eed¬¦  «        Zee         e	d<    eed¬¦  «        Zee         e	d<    eeej        ¬¦  «        Zee         e	d<    edd¬¦  «        ZdS )r"   Ú
+trade_logsTr5   r   r6   r8   é2   Úsymbolé
+   ÚsideÚamountr   r   ÚpriceÚnotional_usdtÚstatusé   ÚmodeÚ ÚreasonÚexchange_responser   r   r/   r#   N) r$   r%   r&   r'   r   r   r   r
+   r(   r)   r   r8   r   rI   r*   rK   r   rL   rE   rM   rN   rO   rQ   r	   rS   rT   r   r   r,   r   r   r   r0   r1   r2   r"   r"   3   sİ  € € € € € € Ø €Mà#m G¸Ğ>Ñ>Ô>€BˆˆsŒĞ>Ğ>Ñ>Ø(˜=¨¨°JÑ)?Ô)?Ñ@Ô@€GˆVCŒ[Ğ@Ğ@Ñ@à'˜-¨¨¨r©
+¬
+Ñ3Ô3€FˆF3ŒKĞ3Ğ3Ñ3Ø%˜ f f¨R¡j¤jÑ1Ô1€Dˆ&Œ+Ğ1Ğ1Ñ1Ø)˜M¨%Ñ0Ô0€FˆF5ŒMĞ0Ğ0Ñ0Ø(˜=¨¸Ğ:Ñ:Ô:€Eˆ6%Œ=Ğ:Ğ:Ñ:Ø#0 =°ÀĞ#BÑ#BÔ#B€M6˜%”=ĞBĞBÑBà'˜-¨¨¨r©
+¬
+Ñ3Ô3€FˆF3ŒKĞ3Ğ3Ñ3Ø%˜ f f¨R¡j¤jÑ1Ô1€Dˆ&Œ+Ğ1Ğ1Ñ1Ø'˜-¨°bĞ9Ñ9Ô9€FˆF3ŒKĞ9Ğ9Ñ9Ø%2 ]°4ÀĞ%DÑ%DÔ%DĞv˜c”{ĞDĞDÑDà#0 =°À8Ä?Ğ#SÑ#SÔ#S€JxÔ ĞSĞSÑSàˆ<˜¨xĞ8Ñ8Ô8€D€D€Dr1   r"   N)Ú
+sqlalchemyr   r   r   r   r   r   r	   Úsqlalchemy.ormr
+   r   r   r   Úapp.db.sessionr   r   r   r!   r"   r0   r1   r2   ú<module>rX      s/  ğØ RĞ RĞ RĞ RĞ RĞ RĞ RĞ RĞ RĞ RĞ RĞ RĞ RĞ RĞ RĞ RĞ RĞ RØ >Ğ >Ğ >Ğ >Ğ >Ğ >Ğ >Ğ >Ğ >Ğ >Ø Ğ Ğ Ğ Ğ Ğ Ø Ğ Ğ Ğ Ğ Ğ ğ=ğ =ğ =ğ =ğ =ˆ4ñ =ô =ğ =ğ	:ğ 	:ğ 	:ğ 	:ğ 	:Dñ 	:ô 	:ğ 	:ğ;ğ ;ğ ;ğ ;ğ ;$ñ ;ô ;ğ ;ğ$9ğ 9ğ 9ğ 9ğ 9ˆtñ 9ô 9ğ 9ğ 9ğ 9r1   
+===== SCHEMAS FILES =====
+backend/app/schemas/schemas.py
+from pydantic import BaseModel, EmailStr, Field
+
+
+class RegisterRequest(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=8)
+    invite_code: str | None = None
+
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+
+class BinanceKeyRequest(BaseModel):
+    api_key: str
+    api_secret: str
+
+
+class BotSettingsRequest(BaseModel):
+    enabled: bool = False
+    allowed_symbols: str = "BTC/USDT,ETH/USDT"
+    max_order_usdt: float = 25.0
+    max_daily_loss_usdt: float = 20.0
+    max_trades_per_day: int = 3
+    telegram_enabled: bool = True
+    email_enabled: bool = True
+
+
+class TestSignalRequest(BaseModel):
+    symbol: str = "BTC/USDT"
+    side: str = "BUY"
+    notional_usdt: float = 10.0
+    reason: str = "manual test signal"
+backend/app/schemas/__pycache__/schemas.cpython-311.pyc
+§
+    „jT  ã                   óÂ   — d dl mZmZmZ  G d„ de¦  «        Z G d„ de¦  «        Z G d„ de¦  «        Z G d„ d	e¦  «        Z G d
+„ de¦  «        Z G d„ de¦  «        Z	dS )é    )Ú	BaseModelÚEmailStrÚFieldc                   óP   — e Zd ZU eed<    ed¬¦  «        Zeed<   dZedz  ed<   dS )ÚRegisterRequestÚemailé   )Ú
+min_lengthÚpasswordNÚinvite_code)	Ú__name__Ú
+__module__Ú__qualname__r   Ú__annotations__r   r   Ústrr   © ó    ú/app/app/schemas/schemas.pyr   r      sL   € € € € € € Ø€O€OOØE QĞ'Ñ'Ô'€HˆcĞ'Ğ'Ñ'Ø"€Kt‘Ğ"Ğ"Ñ"Ğ"Ğ"r   r   c                   ó$   — e Zd ZU eed<   eed<   dS )ÚLoginRequestr   r   N)r   r   r   r   r   r   r   r   r   r   r   
+   s"   € € € € € € Ø€O€OOØ€M€MM€M€Mr   r   c                   ó(   — e Zd ZU eed<   dZeed<   dS )ÚTokenResponseÚaccess_tokenÚbearerÚ
+token_typeN)r   r   r   r   r   r   r   r   r   r   r      s.   € € € € € € ØĞĞÑØ€JĞĞÑĞĞr   r   c                   ó$   — e Zd ZU eed<   eed<   dS )ÚBinanceKeyRequestÚapi_keyÚ
+api_secretN)r   r   r   r   r   r   r   r   r   r      s"   € € € € € € Ø€L€LLØ€O€OO€O€Or   r   c                   ór   — e Zd ZU dZeed<   dZeed<   dZe	ed<   dZ
+e	ed<   d	Zeed
+<   dZeed<   dZeed<   dS )ÚBotSettingsRequestFÚenabledzBTC/USDT,ETH/USDTÚallowed_symbolsg      9@Úmax_order_usdtg      4@Úmax_daily_loss_usdté   Úmax_trades_per_dayTÚtelegram_enabledÚemail_enabledN)r   r   r   r"   Úboolr   r#   r   r$   Úfloatr%   r'   Úintr(   r)   r   r   r   r!   r!      s…   € € € € € € Ø€GˆTĞĞÑØ.€OSĞ.Ğ.Ñ.Ø €NEĞ Ğ Ñ Ø!%Ğ˜Ğ%Ğ%Ñ%ØĞ˜ĞĞÑØ!ĞdĞ!Ğ!Ñ!Ø€M4ĞĞÑĞĞr   r!   c                   óH   — e Zd ZU dZeed<   dZeed<   dZeed<   dZ	eed<   d	S )
+ÚTestSignalRequestzBTC/USDTÚsymbolÚBUYÚsideg      $@Únotional_usdtzmanual test signalÚreasonN)
+r   r   r   r/   r   r   r1   r2   r+   r3   r   r   r   r.   r.   #   sR   € € € € € € Ø€FˆCĞĞÑØ€Dˆ#ĞĞÑØ€M5ĞĞÑØ&€FˆCĞ&Ğ&Ñ&Ğ&Ğ&r   r.   N)
+Úpydanticr   r   r   r   r   r   r   r!   r.   r   r   r   ú<module>r5      s)  ğØ /Ğ /Ğ /Ğ /Ğ /Ğ /Ğ /Ğ /Ğ /Ğ /ğ#ğ #ğ #ğ #ğ #iñ #ô #ğ #ğğ ğ ğ ğ 9ñ ô ğ ğ
+ğ ğ ğ ğ Iñ ô ğ ğ
+ğ ğ ğ ğ ˜	ñ ô ğ ğ
+ğ ğ ğ ğ ˜ñ ô ğ ğ'ğ 'ğ 'ğ 'ğ '˜	ñ 'ô 'ğ 'ğ 'ğ 'r   
+===== DB SESSION =====
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, DeclarativeBase
+from app.core.config import settings
+
+
+engine = create_engine(settings.DATABASE_URL, pool_pre_ping=True)
+SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
+
+
+class Base(DeclarativeBase):
+    pass
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+===== CONFIG =====
+from pydantic_settings import BaseSettings
+
+
+class Settings(BaseSettings):
+    APP_NAME: str = "NDSP Binance Trading Bot"
+    ENV: str = "dev"
+
+    DATABASE_URL: str
+
+    SECRET_KEY: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
+    FERNET_KEY: str
+
+    INVITE_CODE: str | None = None
+
+    BINANCE_MODE: str = "dryrun"
+
+    TELEGRAM_BOT_TOKEN: str | None = None
+    TELEGRAM_CHAT_ID: str | None = None
+
+    SMTP_HOST: str | None = None
+    SMTP_PORT: int = 587
+    SMTP_USER: str | None = None
+    SMTP_PASSWORD: str | None = None
+    EMAIL_FROM: str | None = None
+
+    class Config:
+        env_file = ".env"
+
+
+settings = Settings()
+
+===== FRONTEND PAGE =====
+"use client";
+
+import { useEffect, useState } from "react";
+import { api, setToken, clearToken, getToken } from "../lib/api";
+
+type User = {
+  id: number;
+  email: string;
+  is_active: boolean;
+  binance_key_configured: boolean;
+  settings_configured: boolean;
+};
+
+export default function HomePage() {
+  const [tokenReady, setTokenReady] = useState(false);
+  const [tab, setTab] = useState("dashboard");
+  const [email, setEmail] = useState("nawaf@example.com");
+  const [password, setPassword] = useState("");
+  const [authMode, setAuthMode] = useState<"login" | "register">("login");
+  const [registerEmail, setRegisterEmail] = useState("");
+  const [registerPassword, setRegisterPassword] = useState("");
+  const [registerInviteCode, setRegisterInviteCode] = useState("");
+  const [me, setMe] = useState<User | null>(null);
+  const [settings, setSettings] = useState<any>(null);
+  const [trades, setTrades] = useState<any[]>([]);
+  const [message, setMessage] = useState("");
+  const [binanceKey, setBinanceKey] = useState("");
+  const [binanceSecret, setBinanceSecret] = useState("");
+
+  const [settingsForm, setSettingsForm] = useState({
+    enabled: true,
+    allowed_symbols: "BTC/USDT,ETH/USDT",
+    max_order_usdt: 10,
+    max_daily_loss_usdt: 20,
+    max_trades_per_day: 3,
+    telegram_enabled: true,
+    email_enabled: true
+  });
+
+  const [signalForm, setSignalForm] = useState({
+    symbol: "BTC/USDT",
+    side: "BUY",
+    notional_usdt: 10,
+    reason: "dashboard manual test signal"
+  });
+
+  useEffect(() => {
+    setTokenReady(true);
+    if (getToken()) {
+      loadAll();
+    }
+  }, []);
+
+  async function registerUser() {
+    setMessage("");
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email: registerEmail,
+          password: registerPassword,
+          invite_code: registerInviteCode || null
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(JSON.stringify(data));
+      }
+
+      setToken(data.access_token);
+      setMessage("ØªÙ… Ø¥Ù†Ø´Ø§Ø¡ Ø§Ù„Ø­Ø³Ø§Ø¨ ÙˆØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø¨Ù†Ø¬Ø§Ø­");
+      await loadAll();
+    } catch (e: any) {
+      setMessage("ÙØ´Ù„ Ø¥Ù†Ø´Ø§Ø¡ Ø§Ù„Ø­Ø³Ø§Ø¨: " + e.message);
+    }
+  }
+
+  async function login() {
+    setMessage("");
+    try {
+      const body = new URLSearchParams();
+      body.append("username", email);
+      body.append("password", password);
+
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(JSON.stringify(data));
+      }
+
+      setToken(data.access_token);
+      setMessage("ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø¨Ù†Ø¬Ø§Ø­");
+      await loadAll();
+    } catch (e: any) {
+      setMessage("ÙØ´Ù„ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„: " + e.message);
+    }
+  }
+
+  async function loadAll() {
+    try {
+      const meData = await api("/me");
+      setMe(meData);
+
+      const settingsData = await api("/me/settings");
+      setSettings(settingsData);
+      if (settingsData) {
+        setSettingsForm(settingsData);
+      }
+
+      const tradesData = await api("/trades");
+      setTrades(tradesData);
+    } catch (e: any) {
+      setMessage("Ø®Ø·Ø£ ÙÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª: " + e.message);
+    }
+  }
+
+  async function saveSettings() {
+    setMessage("");
+    try {
+      const data = await api("/me/settings", {
+        method: "POST",
+        body: JSON.stringify(settingsForm)
+      });
+      setSettings(data.settings);
+      setMessage("ØªÙ… Ø­ÙØ¸ Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª");
+      await loadAll();
+    } catch (e: any) {
+      setMessage("ÙØ´Ù„ Ø­ÙØ¸ Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª: " + e.message);
+    }
+  }
+
+  async function saveBinanceKey() {
+    setMessage("");
+    try {
+      await api("/me/binance-key", {
+        method: "POST",
+        body: JSON.stringify({
+          api_key: binanceKey,
+          api_secret: binanceSecret
+        })
+      });
+      setBinanceKey("");
+      setBinanceSecret("");
+      setMessage("ØªÙ… Ø­ÙØ¸ Ù…ÙØ§ØªÙŠØ­ Binance Ø¨Ø´ÙƒÙ„ Ù…Ø´ÙØ±");
+      await loadAll();
+    } catch (e: any) {
+      setMessage("ÙØ´Ù„ Ø­ÙØ¸ Ø§Ù„Ù…ÙØ§ØªÙŠØ­: " + e.message);
+    }
+  }
+
+  async function testAlert() {
+    setMessage("");
+    try {
+      const data = await api("/bot/test-alert", { method: "POST" });
+      setMessage(`Telegram: ${data.telegram_sent} | Email: ${data.email_sent}`);
+    } catch (e: any) {
+      setMessage("ÙØ´Ù„ Ø§Ø®ØªØ¨Ø§Ø± Ø§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª: " + e.message);
+    }
+  }
+
+  async function testSignal() {
+    setMessage("");
+    try {
+      const data = await api("/bot/test-signal", {
+        method: "POST",
+        body: JSON.stringify(signalForm)
+      });
+      setMessage(`ØªÙ… ØªÙ†ÙÙŠØ° Ø§Ù„Ø¥Ø´Ø§Ø±Ø©. Status: ${data.status} | Mode: ${data.mode}`);
+      await loadAll();
+    } catch (e: any) {
+      setMessage("ÙØ´Ù„ ØªÙ†ÙÙŠØ° Ø§Ù„Ø¥Ø´Ø§Ø±Ø©: " + e.message);
+    }
+  }
+
+  async function emergencyStop() {
+    setMessage("");
+    try {
+      await api("/emergency-stop", { method: "POST" });
+      setMessage("ØªÙ… Ø¥ÙŠÙ‚Ø§Ù Ø§Ù„Ø¨ÙˆØª ÙÙˆØ±Ù‹Ø§");
+      await loadAll();
+    } catch (e: any) {
+      setMessage("ÙØ´Ù„ Ø§Ù„Ø¥ÙŠÙ‚Ø§Ù: " + e.message);
+    }
+  }
+
+  function logout() {
+    clearToken();
+    setMe(null);
+    setSettings(null);
+    setTrades([]);
+    setMessage("ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø®Ø±ÙˆØ¬");
+  }
+
+  function formatDate(value: string) {
+    if (!value) return "-";
+    try {
+      return new Date(value).toLocaleString("ar-SA", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    } catch {
+      return value;
+    }
+  }
+
+  function LastTradeCard({ trade }: { trade: any }) {
+    if (!trade) {
+      return (
+        <div className="card">
+          <h2>Ø¢Ø®Ø± ØµÙÙ‚Ø©</h2>
+          <p style={{ color: "#94a3b8" }}>Ù„Ø§ ØªÙˆØ¬Ø¯ ØµÙÙ‚Ø§Øª Ø¨Ø¹Ø¯.</p>
+        </div>
+      );
+    }
+
+    const isBuy = trade.side === "BUY";
+    const isClosed = trade.status === "closed";
+
+    return (
+      <div className="card last-trade-card">
+        <div className="last-trade-header">
+          <div>
+            <h2 style={{ margin: 0 }}>Ø¢Ø®Ø± ØµÙÙ‚Ø©</h2>
+            <p style={{ margin: "8px 0 0", color: "#94a3b8" }}>
+              Ø±Ù‚Ù… Ø§Ù„ØµÙÙ‚Ø© #{trade.id}
+            </p>
+          </div>
+
+          <div className="last-trade-badges">
+            <span className={isBuy ? "trade-badge buy" : "trade-badge sell"}>
+              {trade.side}
+            </span>
+            <span className={isClosed ? "trade-badge closed" : "trade-badge neutral"}>
+              {trade.status}
+            </span>
+            <span className="trade-badge mode">
+              {trade.mode}
+            </span>
+          </div>
+        </div>
+
+        <div className="trade-summary">
+          <div className="trade-main-symbol">
+            <span>Ø²ÙˆØ¬ Ø§Ù„ØªØ¯Ø§ÙˆÙ„</span>
+            <strong>{trade.symbol}</strong>
+          </div>
+
+          <div className="trade-main-value">
+            <span>Ø§Ù„Ù‚ÙŠÙ…Ø©</span>
+            <strong>{trade.notional_usdt} USDT</strong>
+          </div>
+        </div>
+
+        <div className="trade-details-grid">
+          <div className="trade-detail-item">
+            <span>Ø§Ù„ÙƒÙ…ÙŠØ©</span>
+            <strong>{trade.amount}</strong>
+          </div>
+
+          <div className="trade-detail-item">
+            <span>Ø§Ù„Ø³Ø¹Ø±</span>
+            <strong>{trade.price}</strong>
+          </div>
+
+          <div className="trade-detail-item">
+            <span>Ø§Ù„ÙˆÙ‚Øª</span>
+            <strong>{formatDate(trade.created_at)}</strong>
+          </div>
+
+          <div className="trade-detail-item">
+            <span>Ø§Ù„ÙˆØ¶Ø¹</span>
+            <strong>{trade.mode}</strong>
+          </div>
+        </div>
+
+        <div className="trade-reason">
+          <span>Ø³Ø¨Ø¨ Ø§Ù„ØµÙÙ‚Ø©</span>
+          <p>{trade.reason || "â€”"}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!tokenReady) return null;
+
+  if (!getToken() || !me) {
+    return (
+      <main className="container auth-page">
+
+      <div className="center-signature-badge">
+        <span className="center-signature-badge__label">Signature</span>
+        <span className="center-signature-badge__value">hunter_ksa1</span>
+      </div>
+
+        <div className="hunter-bg-signature">
+          <div className="hunter-mark">hunter_ksa1</div>
+          <div className="hunter-layers">16 LAYERS POWER ENGINE</div>
+        </div>
+
+        <div className="auth-card">
+          <div className="auth-glow" />
+
+          <div className="auth-brand">
+            <div className="brand-kicker">NDSP â€¢ Binance â€¢ Execution Bot</div>
+            <h1>NDSP Trading Bot</h1>
+            <p>Ù„ÙˆØ­Ø© ØªØ­ÙƒÙ… Ø§Ø­ØªØ±Ø§ÙÙŠØ© Ù„Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø¨ÙˆØªØŒ Ø§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§ØªØŒ Ø§Ù„ØµÙÙ‚Ø§ØªØŒ ÙˆÙ…ÙØ§ØªÙŠØ­ Binance.</p>
+          </div>
+
+          <div className="auth-switch">
+            <button
+              className={authMode === "login" ? "active" : ""}
+              onClick={() => setAuthMode("login")}
+            >
+              ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„
+            </button>
+            <button
+              className={authMode === "register" ? "active" : ""}
+              onClick={() => setAuthMode("register")}
+            >
+              Ø­Ø³Ø§Ø¨ Ø¬Ø¯ÙŠØ¯
+            </button>
+          </div>
+
+          {authMode === "login" ? (
+            <div className="auth-form">
+              <label>Ø§Ù„Ø¥ÙŠÙ…ÙŠÙ„</label>
+              <input
+                className="input"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                placeholder="nawaf@example.com"
+              />
+
+              <label style={{ marginTop: 12, display: "block" }}>ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±</label>
+              <input
+                className="input"
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+              />
+
+              <button className="btn btn-primary auth-main-btn" onClick={login}>
+                Ø¯Ø®ÙˆÙ„
+
+===== COMPOSE =====
+services:
+  api:
+    build: ./backend
+    container_name: ndsp_trading_api
+    ports:
+      - "127.0.0.1:8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    volumes:
+      - ./backend:/app
+
+  frontend:
+    build: ./frontend
+    container_name: ndsp_trading_frontend
+    ports:
+      - "127.0.0.1:3010:3000"
+    depends_on:
+      - api
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+  postgres:
+    image: postgres:16
+    container_name: ndsp_trading_postgres
+    environment:
+      POSTGRES_DB: tradingbot
+      POSTGRES_USER: tradingbot
+      POSTGRES_PASSWORD: tradingbot
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

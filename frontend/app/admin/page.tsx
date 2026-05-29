@@ -1,0 +1,123 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { api } from "../../lib/api";
+
+export default function AdminPage() {
+  const [users, setUsers] = useState<any[]>([]);
+  const [message, setMessage] = useState("");
+
+  async function loadUsers() {
+    setMessage("");
+    try {
+      const data = await api("/admin/users");
+      setUsers(data);
+    } catch (e: any) {
+      setMessage("فشل تحميل المستخدمين: " + e.message);
+    }
+  }
+
+  async function updateUser(id: number, patch: any) {
+    setMessage("");
+    try {
+      await api(`/admin/users/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(patch)
+      });
+      setMessage("تم تحديث المستخدم");
+      await loadUsers();
+    } catch (e: any) {
+      setMessage("فشل التحديث: " + e.message);
+    }
+  }
+
+  async function deleteUser(id: number, email: string) {
+    setMessage("");
+
+    const ok = window.confirm(`هل أنت متأكد من حذف المستخدم؟\n${email}`);
+    if (!ok) return;
+
+    try {
+      await api(`/admin/users/${id}`, {
+        method: "DELETE"
+      });
+      setMessage("تم حذف المستخدم");
+      await loadUsers();
+    } catch (e: any) {
+      setMessage("فشل الحذف: " + e.message);
+    }
+  }
+
+  useEffect(() => {
+    loadUsers();
+  }, []);
+
+  return (
+    <main className="container">
+      <div className="card admin-users-card">
+        <h1>Admin - إدارة الأصدقاء</h1>
+        <p>من هنا يمكنك تفعيل أو تعطيل المستخدمين، منح صلاحية Admin، أو حذف حساب مستخدم.</p>
+
+        {message && <div className="admin-message">{message}</div>}
+
+        <button className="btn btn-secondary" onClick={loadUsers} style={{ marginBottom: 18 }}>
+          تحديث القائمة
+        </button>
+
+        <div className="admin-users-grid">
+          {users.map(u => (
+            <div className="admin-user-box" key={u.id}>
+              <div className="admin-user-top">
+                <div>
+                  <div className="admin-user-id">ID #{u.id}</div>
+                  <div className="admin-user-email">{u.email}</div>
+                </div>
+
+                <div className="admin-user-badges">
+                  <span className={u.is_active ? "admin-badge active" : "admin-badge inactive"}>
+                    {u.is_active ? "Active" : "Disabled"}
+                  </span>
+
+                  <span className={u.is_admin ? "admin-badge admin" : "admin-badge user"}>
+                    {u.is_admin ? "Admin" : "User"}
+                  </span>
+
+                  <span className={u.binance_key_configured ? "admin-badge binance" : "admin-badge missing"}>
+                    {u.binance_key_configured ? "Binance OK" : "No Binance"}
+                  </span>
+                </div>
+              </div>
+
+              <div className="admin-user-actions">
+                <button
+                  className={u.is_active ? "btn btn-danger" : "btn btn-primary"}
+                  onClick={() => updateUser(u.id, { is_active: !u.is_active })}
+                >
+                  {u.is_active ? "تعطيل" : "تفعيل"}
+                </button>
+
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => updateUser(u.id, { is_admin: !u.is_admin })}
+                >
+                  {u.is_admin ? "إزالة Admin" : "تعيين Admin"}
+                </button>
+
+                <button
+                  className="btn btn-danger"
+                  onClick={() => deleteUser(u.id, u.email)}
+                >
+                  حذف
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <p style={{ marginTop: 22 }}>
+          <a href="/">العودة للوحة التحكم</a>
+        </p>
+      </div>
+    </main>
+  );
+}

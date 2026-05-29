@@ -1,0 +1,679 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #0f172a;
+  color: #e5e7eb;
+  font-family: Arial, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+input, textarea, button {
+  font-family: inherit;
+}
+
+.container {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.card {
+  background: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 18px;
+}
+
+.grid {
+  display: grid;
+  gap: 16px;
+}
+
+.grid-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #374151;
+  background: #020617;
+  color: white;
+  margin-top: 6px;
+}
+
+.btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.btn-primary {
+  background: #22c55e;
+  color: #052e16;
+}
+
+.btn-danger {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-secondary {
+  background: #334155;
+  color: white;
+}
+
+.badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.badge-green {
+  background: #14532d;
+  color: #86efac;
+}
+
+.badge-red {
+  background: #7f1d1d;
+  color: #fecaca;
+}
+
+.badge-blue {
+  background: #1e3a8a;
+  color: #bfdbfe;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow: hidden;
+}
+
+.table th,
+.table td {
+  border-bottom: 1px solid #1f2937;
+  padding: 10px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.table th {
+  color: #93c5fd;
+}
+
+.nav {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.nav button {
+  background: #1e293b;
+  color: white;
+  border: 1px solid #334155;
+  border-radius: 999px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.nav button.active {
+  background: #22c55e;
+  color: #052e16;
+}
+
+@media (max-width: 800px) {
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .container {
+    padding: 14px;
+  }
+}
+
+/* Improved Last Trade Card */
+.last-trade-card {
+  background:
+    radial-gradient(circle at top left, rgba(34, 197, 94, 0.12), transparent 32%),
+    linear-gradient(135deg, #111827 0%, #0f172a 100%);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.last-trade-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.last-trade-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.trade-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+.trade-badge.buy {
+  background: rgba(34, 197, 94, 0.16);
+  color: #86efac;
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+.trade-badge.sell {
+  background: rgba(239, 68, 68, 0.16);
+  color: #fecaca;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.trade-badge.closed {
+  background: rgba(59, 130, 246, 0.16);
+  color: #bfdbfe;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.trade-badge.neutral {
+  background: rgba(148, 163, 184, 0.16);
+  color: #e2e8f0;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.trade-badge.mode {
+  background: rgba(168, 85, 247, 0.16);
+  color: #e9d5ff;
+  border: 1px solid rgba(168, 85, 247, 0.25);
+}
+
+.trade-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.trade-main-symbol,
+.trade-main-value {
+  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.trade-main-symbol span,
+.trade-main-value span,
+.trade-detail-item span,
+.trade-reason span {
+  display: block;
+  color: #94a3b8;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.trade-main-symbol strong,
+.trade-main-value strong {
+  display: block;
+  font-size: 28px;
+  color: #f8fafc;
+}
+
+.trade-details-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.trade-detail-item {
+  background: rgba(2, 6, 23, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 14px;
+  padding: 14px;
+  min-width: 0;
+}
+
+.trade-detail-item strong {
+  display: block;
+  color: #e5e7eb;
+  font-size: 15px;
+  word-break: break-word;
+}
+
+.trade-reason {
+  margin-top: 14px;
+  background: rgba(2, 6, 23, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.trade-reason p {
+  margin: 0;
+  color: #f8fafc;
+  line-height: 1.7;
+  word-break: break-word;
+}
+
+@media (max-width: 900px) {
+  .last-trade-header {
+    flex-direction: column;
+  }
+
+  .last-trade-badges {
+    justify-content: flex-start;
+  }
+
+  .trade-summary,
+  .trade-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .trade-main-symbol strong,
+  .trade-main-value strong {
+    font-size: 24px;
+  }
+}
+
+/* Hunter KSA1 Premium Theme */
+body {
+  background:
+    radial-gradient(circle at 15% 15%, rgba(34, 197, 94, 0.13), transparent 28%),
+    radial-gradient(circle at 85% 20%, rgba(59, 130, 246, 0.14), transparent 30%),
+    radial-gradient(circle at 50% 85%, rgba(168, 85, 247, 0.12), transparent 34%),
+    linear-gradient(135deg, #020617 0%, #0f172a 52%, #020617 100%);
+  min-height: 100vh;
+}
+
+body::before {
+  content: "hunter_ksa1";
+  position: fixed;
+  inset: auto -80px 8% auto;
+  font-size: clamp(54px, 13vw, 180px);
+  font-weight: 900;
+  letter-spacing: 6px;
+  color: rgba(255, 255, 255, 0.035);
+  transform: rotate(-18deg);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: "16 LAYERS • NDSP POWER MATRIX • EXECUTION ENGINE";
+  position: fixed;
+  top: 22%;
+  left: -80px;
+  font-size: clamp(18px, 3vw, 42px);
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: rgba(34, 197, 94, 0.07);
+  transform: rotate(-90deg);
+  transform-origin: left top;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+}
+
+.card {
+  background:
+    linear-gradient(145deg, rgba(17, 24, 39, 0.94), rgba(15, 23, 42, 0.9));
+  backdrop-filter: blur(12px);
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.hunter-bg-signature {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.hunter-mark {
+  position: absolute;
+  top: 9%;
+  right: -40px;
+  font-size: clamp(44px, 10vw, 155px);
+  line-height: 1;
+  font-weight: 950;
+  letter-spacing: 7px;
+  color: rgba(255, 255, 255, 0.045);
+  transform: rotate(-12deg);
+  text-transform: uppercase;
+}
+
+.hunter-layers {
+  position: absolute;
+  bottom: 10%;
+  left: -30px;
+  font-size: clamp(20px, 4vw, 58px);
+  font-weight: 900;
+  letter-spacing: 5px;
+  color: rgba(34, 197, 94, 0.09);
+  transform: rotate(8deg);
+}
+
+.auth-card {
+  position: relative;
+  width: min(760px, 100%);
+  padding: clamp(24px, 5vw, 46px);
+  border-radius: 30px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background:
+    radial-gradient(circle at 10% 0%, rgba(34, 197, 94, 0.18), transparent 30%),
+    radial-gradient(circle at 90% 15%, rgba(59, 130, 246, 0.16), transparent 35%),
+    linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(2, 6, 23, 0.92));
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  overflow: hidden;
+}
+
+.auth-glow {
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  top: -120px;
+  left: -120px;
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.22), transparent 65%);
+  filter: blur(4px);
+}
+
+.auth-brand {
+  position: relative;
+  text-align: center;
+  margin-bottom: 26px;
+}
+
+.brand-kicker {
+  color: #86efac;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.auth-brand h1 {
+  margin: 0;
+  font-size: clamp(38px, 8vw, 76px);
+  letter-spacing: -2px;
+}
+
+.auth-brand p {
+  color: #cbd5e1;
+  line-height: 1.8;
+  margin: 14px auto 0;
+  max-width: 560px;
+}
+
+.signature-pill {
+  display: inline-flex;
+  margin-top: 16px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.12);
+  color: #86efac;
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  font-weight: 800;
+}
+
+.auth-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  background: rgba(2, 6, 23, 0.55);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 18px;
+  padding: 8px;
+  margin-bottom: 20px;
+}
+
+.auth-switch button {
+  border: 0;
+  border-radius: 14px;
+  padding: 13px;
+  background: transparent;
+  color: #cbd5e1;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.auth-switch button.active {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #052e16;
+}
+
+.auth-form label {
+  color: #e5e7eb;
+  font-weight: 800;
+}
+
+.auth-main-btn {
+  width: 100%;
+  margin-top: 18px;
+  font-size: 17px;
+}
+
+.auth-message {
+  margin-top: 16px;
+  padding: 13px;
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  color: #e5e7eb;
+}
+
+.auth-warning {
+  margin-top: 16px;
+  color: #fbbf24;
+  font-size: 13px;
+  text-align: center;
+}
+
+.nav button {
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+.nav button.active {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+
+@media (max-width: 700px) {
+  .auth-card {
+    border-radius: 22px;
+  }
+
+  .auth-brand h1 {
+    font-size: 42px;
+  }
+
+  .hunter-mark {
+    top: 4%;
+    right: -30px;
+    letter-spacing: 3px;
+  }
+
+  .hunter-layers {
+    bottom: 4%;
+    left: -20px;
+    letter-spacing: 2px;
+  }
+}
+
+/* === NDSP_SIGNATURE_CENTER_PATCH === */
+
+:root{
+  --sig-green: rgba(61, 232, 123, 0.88);
+  --sig-green-soft: rgba(61, 232, 123, 0.14);
+  --sig-blue-soft: rgba(39, 94, 255, 0.12);
+  --sig-border: rgba(97, 239, 147, 0.28);
+}
+
+/* خلفية فخمة مع توقيع في المنتصف */
+body{
+  position: relative;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(36, 142, 255, 0.12), transparent 32%),
+    radial-gradient(circle at 50% 50%, rgba(61, 232, 123, 0.08), transparent 48%),
+    linear-gradient(180deg, #06112b 0%, #071533 45%, #041127 100%);
+}
+
+body::before{
+  content: "hunter_ksa1";
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 0;
+  font-size: clamp(58px, 9vw, 140px);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: rgba(84, 255, 160, 0.11);
+  text-shadow:
+    0 0 18px rgba(61, 232, 123, 0.18),
+    0 0 40px rgba(61, 232, 123, 0.12),
+    0 0 80px rgba(45, 92, 255, 0.08);
+  transform: translateY(-2%);
+}
+
+body::after{
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(circle at center, black 35%, transparent 90%);
+  -webkit-mask-image: radial-gradient(circle at center, black 35%, transparent 90%);
+  opacity: 0.22;
+}
+
+/* اجعل المحتوى فوق الخلفية */
+main,
+section,
+header,
+footer,
+.app-shell,
+.page-shell,
+.dashboard-shell,
+.login-shell{
+  position: relative;
+  z-index: 1;
+}
+
+/* البادج العلوي */
+.center-signature-badge{
+  width: fit-content;
+  margin: 18px auto 26px auto;
+  padding: 14px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--sig-border);
+  background: linear-gradient(180deg, rgba(7, 22, 47, 0.78), rgba(6, 18, 36, 0.58));
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.03) inset,
+    0 0 28px rgba(61, 232, 123, 0.12),
+    0 0 60px rgba(35, 97, 255, 0.07);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  text-align: center;
+}
+
+.center-signature-badge__label{
+  display: inline-block;
+  margin-inline-end: 8px;
+  font-size: clamp(14px, 2vw, 18px);
+  font-weight: 700;
+  color: rgba(215, 228, 255, 0.88);
+}
+
+.center-signature-badge__value{
+  display: inline-block;
+  font-size: clamp(22px, 4vw, 34px);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  color: #8ef5b8;
+  text-shadow:
+    0 0 12px rgba(61, 232, 123, 0.22),
+    0 0 26px rgba(61, 232, 123, 0.14);
+}
+
+/* تحسين ظهور الكروت فوق الخلفية */
+.card,
+.panel,
+.box,
+.dashboard-card{
+  background: rgba(6, 17, 43, 0.74) !important;
+  border: 1px solid rgba(120, 164, 255, 0.12) !important;
+  box-shadow:
+    0 12px 40px rgba(0,0,0,0.24),
+    0 0 0 1px rgba(255,255,255,0.02) inset !important;
+}
+
+/* للهواتف */
+@media (max-width: 768px){
+  body::before{
+    font-size: clamp(46px, 12vw, 86px);
+    letter-spacing: 0.05em;
+    opacity: 1;
+  }
+
+  .center-signature-badge{
+    margin-top: 10px;
+    margin-bottom: 18px;
+    padding: 12px 18px;
+  }
+
+  .center-signature-badge__value{
+    font-size: clamp(20px, 6vw, 28px);
+  }
+}
+
+/* === /NDSP_SIGNATURE_CENTER_PATCH === */
