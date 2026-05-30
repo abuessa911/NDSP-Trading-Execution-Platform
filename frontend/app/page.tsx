@@ -12,7 +12,7 @@ type User = {
 };
 
 export default function HomePage() {
-  const [tokenReady, setTokenReady] = useState(false);
+const [tokenReady, setTokenReady] = useState(false);
   const [tab, setTab] = useState("dashboard");
   const [email, setEmail] = useState("nawaf@example.com");
   const [password, setPassword] = useState("");
@@ -226,8 +226,8 @@ export default function HomePage() {
     if (!trade) {
       return (
         <div className="card">
-          <h2>آخر صفقة</h2>
-          <p style={{ color: "#94a3b8" }}>لا توجد صفقات بعد.</p>
+          <h2>{"آخر صفقة"}</h2>
+          <p style={{ color: "#94a3b8" }}>{"لا توجد صفقات حتى الآن"}</p>
         </div>
       );
     }
@@ -239,7 +239,7 @@ export default function HomePage() {
       <div className="card last-trade-card">
         <div className="last-trade-header">
           <div>
-            <h2 style={{ margin: 0 }}>آخر صفقة</h2>
+            <h2 style={{ margin: 0 }}>{"آخر صفقة"}</h2>
             <p style={{ margin: "8px 0 0", color: "#94a3b8" }}>
               رقم الصفقة #{trade.id}
             </p>
@@ -260,34 +260,34 @@ export default function HomePage() {
 
         <div className="trade-summary">
           <div className="trade-main-symbol">
-            <span>زوج التداول</span>
+            <span>{"زوج التداول"}</span>
             <strong>{trade.symbol}</strong>
           </div>
 
           <div className="trade-main-value">
-            <span>القيمة</span>
+            <span>{"القيمة USDT"}</span>
             <strong>{trade.notional_usdt} USDT</strong>
           </div>
         </div>
 
         <div className="trade-details-grid">
           <div className="trade-detail-item">
-            <span>الكمية</span>
+            <span>{"الكمية"}</span>
             <strong>{trade.amount}</strong>
           </div>
 
           <div className="trade-detail-item">
-            <span>السعر</span>
+            <span>{"السعر"}</span>
             <strong>{trade.price}</strong>
           </div>
 
           <div className="trade-detail-item">
-            <span>الوقت</span>
+            <span>{"وقت الإنشاء"}</span>
             <strong>{formatDate(trade.created_at)}</strong>
           </div>
 
           <div className="trade-detail-item">
-            <span>الوضع</span>
+            <span>{"الوضع"}</span>
             <strong>{trade.mode}</strong>
           </div>
 
@@ -308,7 +308,7 @@ export default function HomePage() {
         </div>
 
         <div className="trade-reason">
-          <span>سبب الصفقة</span>
+          <span>{"السبب"}</span>
           <p>{trade.reason || "—"}</p>
         </div>
       </div>
@@ -357,7 +357,7 @@ export default function HomePage() {
 
           {authMode === "login" ? (
             <div className="auth-form">
-              <label>الإيميل</label>
+              <label>{"البريد الإلكتروني"}</label>
               <input
                 className="input"
                 value={email}
@@ -365,7 +365,7 @@ export default function HomePage() {
                 placeholder="nawaf@example.com"
               />
 
-              <label style={{ marginTop: 12, display: "block" }}>كلمة المرور</label>
+              <label style={{ marginTop: 12, display: "block" }}>{"كلمة المرور"}</label>
               <input
                 className="input"
                 type="password"
@@ -388,7 +388,7 @@ export default function HomePage() {
                 placeholder="friend@example.com"
               />
 
-              <label style={{ marginTop: 12, display: "block" }}>كلمة المرور</label>
+              <label style={{ marginTop: 12, display: "block" }}>{"كلمة المرور"}</label>
               <input
                 className="input"
                 type="password"
@@ -397,7 +397,7 @@ export default function HomePage() {
                 placeholder="8 أحرف على الأقل"
               />
 
-              <label style={{ marginTop: 12, display: "block" }}>كود الدعوة</label>
+              <label style={{ marginTop: 12, display: "block" }}>{"كود الدعوة"}</label>
               <input
                 className="input"
                 value={registerInviteCode}
@@ -429,7 +429,7 @@ export default function HomePage() {
             <h1 style={{ margin: 0 }}>NDSP Trading Bot</h1>
             <p style={{ marginBottom: 0 }}>مرحبًا، {me.email}</p>
           </div>
-          <button className="btn btn-secondary" onClick={logout}>تسجيل خروج</button>
+          <button className="btn btn-secondary" onClick={logout}>{"تسجيل الخروج"}</button>
         </div>
       </div>
 
@@ -460,7 +460,7 @@ export default function HomePage() {
         <>
           <div className="grid grid-3">
             <div className="card">
-              <h3>حالة البوت</h3>
+              <h3>{"حالة البوت"}</h3>
               <span className={`badge ${settings?.enabled ? "badge-green" : "badge-red"}`}>
                 {settings?.enabled ? "Enabled" : "Disabled"}
               </span>
@@ -474,7 +474,7 @@ export default function HomePage() {
             </div>
 
             <div className="card">
-              <h3>عدد الصفقات</h3>
+              <h3>{"عدد الصفقات"}</h3>
               <strong style={{ fontSize: 32 }}>{trades.length}</strong>
             </div>
           </div>
@@ -485,7 +485,7 @@ export default function HomePage() {
 
       {tab === "settings" && (
         <div className="card">
-          <h2>إعدادات البوت</h2>
+          <h2>{"إعدادات البوت"}</h2>
 
           <label>
             <input
@@ -496,7 +496,7 @@ export default function HomePage() {
             تشغيل البوت
           </label>
 
-          <label style={{ display: "block", marginTop: 14 }}>الأزواج المسموحة</label>
+          <label style={{ display: "block", marginTop: 14 }}>{"الأزواج المسموحة"}</label>
           <input className="input" value={settingsForm.allowed_symbols} onChange={e => setSettingsForm({ ...settingsForm, allowed_symbols: e.target.value })} />
 
           <div className="grid grid-3" style={{ marginTop: 14 }}>
@@ -515,7 +515,7 @@ export default function HomePage() {
           </div>
 
           <div className="risk-settings-panel">
-            <h3>إدارة المخاطر</h3>
+            <h3>{"إدارة المخاطر"}</h3>
 
             <div className="grid grid-3">
               <div>
@@ -619,7 +619,7 @@ export default function HomePage() {
       {tab === "trades" && (
         <div className="card">
           <h2>سجل الصفقات</h2>
-          <button className="btn btn-secondary" onClick={loadAll}>تحديث</button>
+          <button className="btn btn-secondary" onClick={loadAll}>{"تحديث"}</button>
           <div style={{ overflowX: "auto", marginTop: 14 }}>
             <table className="table">
               <thead>
@@ -671,7 +671,7 @@ export default function HomePage() {
 
       {tab === "links" && (
         <div className="card">
-          <h2>روابط متقدمة</h2>
+          <h2>{"روابط متقدمة"}</h2>
           <div className="grid grid-2">
             <a className="btn btn-secondary" href="/admin">صفحة Admin لإدارة الأصدقاء</a>
             <a className="btn btn-secondary" href="/account">تغيير كلمة المرور</a>
@@ -679,7 +679,7 @@ export default function HomePage() {
             <a className="btn btn-secondary" href="/safety">Live Safety</a>
             <a className="btn btn-secondary" href="/ndsp">NDSP Signal Bridge</a>
             <a className="btn btn-secondary" href="/webhook-config">Webhook Config</a>
-            <a className="btn btn-secondary" href="/logs">Logs Center</a>
+            <a className="btn btn-secondary" href="/logs">{"مركز السجلات"}</a>
             <a className="btn btn-secondary" href="/health">Health Monitor</a>
             <a className="btn btn-secondary" href="/backups">Backup Center</a>
             <a className="btn btn-secondary" href="/docs">Swagger API</a>
@@ -691,7 +691,7 @@ export default function HomePage() {
         <div className="card">
           <h2>Emergency Stop</h2>
           <p style={{ color: "#fecaca" }}>هذا الزر يوقف البوت فورًا للمستخدم الحالي.</p>
-          <button className="btn btn-danger" onClick={emergencyStop}>إيقاف طارئ</button>
+          <button className="btn btn-danger" onClick={emergencyStop}>{"إيقاف طارئ"}</button>
         </div>
       )}
     </main>

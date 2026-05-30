@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { api } from "../../lib/api";
 
 export default function HealthPage() {
-  const [health, setHealth] = useState<any>(null);
+const [health, setHealth] = useState<any>(null);
   const [message, setMessage] = useState("");
 
   async function loadHealth() {
@@ -78,10 +78,10 @@ export default function HealthPage() {
           </div>
         )}
 
-        <button className="btn btn-secondary" onClick={loadHealth}>تحديث</button>
+        <button className="btn btn-secondary" onClick={loadHealth}>{"تحديث"}</button>
 
         <p style={{ marginTop: 22 }}>
-          <a href="/">العودة للوحة التحكم</a>
+          <a href="/">{"العودة للوحة التحكم"}</a>
         </p>
       </div>
     </main>

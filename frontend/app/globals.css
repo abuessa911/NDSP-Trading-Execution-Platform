@@ -1626,3 +1626,187 @@ body:has(.global-controls) .container {
     padding: 0 !important;
   }
 }
+
+/* Clean i18n direction */
+html[dir="rtl"] body {
+  direction: rtl;
+  text-align: right;
+}
+
+html[dir="ltr"] body {
+  direction: ltr;
+  text-align: left;
+}
+
+html[dir="rtl"] input,
+html[dir="rtl"] textarea {
+  direction: rtl;
+  text-align: right;
+}
+
+html[dir="ltr"] input,
+html[dir="ltr"] textarea {
+  direction: ltr;
+  text-align: left;
+}
+
+pre,
+code,
+.webhook-pre,
+.ndsp-signal-details pre {
+  direction: ltr !important;
+  text-align: left !important;
+}
+
+/* Final compact global controls */
+.global-controls-fixed {
+  position: fixed !important;
+  top: 12px !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 2147483647 !important;
+  pointer-events: none !important;
+  height: 42px !important;
+}
+
+.home-pill-fixed,
+.lang-pill-fixed {
+  pointer-events: auto !important;
+  position: fixed !important;
+  top: 12px !important;
+  width: auto !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  padding: 0 12px !important;
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+  font-weight: 900 !important;
+  font-size: 13px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+  border: 1px solid rgba(148, 163, 184, 0.25) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+.home-pill-fixed {
+  left: 12px !important;
+  right: auto !important;
+  color: #eafff1 !important;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.30), rgba(15, 23, 42, 0.94)) !important;
+}
+
+.lang-pill-fixed {
+  right: 12px !important;
+  left: auto !important;
+  color: #e0f2fe !important;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.30), rgba(15, 23, 42, 0.94)) !important;
+  cursor: pointer !important;
+}
+
+.home-pill-fixed span,
+.lang-pill-fixed span {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 26px !important;
+  min-width: 26px !important;
+  height: 26px !important;
+  border-radius: 999px !important;
+  font-size: 12px !important;
+  background: rgba(255, 255, 255, 0.10) !important;
+}
+
+.home-pill-fixed b,
+.lang-pill-fixed b {
+  font-size: 13px !important;
+}
+
+.container {
+  padding-top: max(72px, env(safe-area-inset-top, 0px) + 64px);
+}
+
+@media (max-width: 700px) {
+  .global-controls-fixed {
+    top: calc(env(safe-area-inset-top, 0px) + 8px) !important;
+    height: 38px !important;
+  }
+
+  .home-pill-fixed,
+  .lang-pill-fixed {
+    top: calc(env(safe-area-inset-top, 0px) + 8px) !important;
+    height: 34px !important;
+    min-height: 34px !important;
+    max-height: 34px !important;
+    padding: 0 9px !important;
+    font-size: 12px !important;
+  }
+
+  .home-pill-fixed {
+    left: 8px !important;
+  }
+
+  .lang-pill-fixed {
+    right: 8px !important;
+  }
+
+  .home-pill-fixed span,
+  .lang-pill-fixed span {
+    width: 23px !important;
+    min-width: 23px !important;
+    height: 23px !important;
+    font-size: 11px !important;
+  }
+
+  .home-pill-fixed b,
+  .lang-pill-fixed b {
+    font-size: 11px !important;
+  }
+
+  .container {
+    padding-top: max(62px, env(safe-area-inset-top, 0px) + 54px) !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .home-pill-fixed,
+  .lang-pill-fixed {
+    width: 38px !important;
+    max-width: 38px !important;
+    padding: 0 !important;
+  }
+
+  .home-pill-fixed b,
+  .lang-pill-fixed b {
+    display: none !important;
+  }
+}
+
+/* i18n removed: static Arabic direction */
+html,
+body {
+  direction: rtl;
+  text-align: right;
+}
+
+pre,
+code,
+textarea.code,
+input[name*="key"],
+input[name*="secret"],
+input[name*="symbol"] {
+  direction: ltr !important;
+  text-align: left !important;
+}
+
+.lang-pill-fixed,
+.global-language-switcher {
+  display: none !important;
+}

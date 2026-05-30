@@ -4,7 +4,7 @@ import { useState } from "react";
 import { api } from "../../lib/api";
 
 export default function NdspSignalPage() {
-  const [form, setForm] = useState({
+const [form, setForm] = useState({
     symbol: "BTC/USDT",
     side: "BUY",
     notional_usdt: 10,
@@ -91,7 +91,7 @@ export default function NdspSignalPage() {
         {message && <div className="card">{message}</div>}
 
         <p style={{ marginTop: 22 }}>
-          <a href="/">العودة للوحة التحكم</a>
+          <a href="/">{"العودة للوحة التحكم"}</a>
         </p>
       </div>
     </main>

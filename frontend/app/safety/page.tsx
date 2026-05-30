@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { api } from "../../lib/api";
 
 export default function SafetyPage() {
-  const [status, setStatus] = useState<any>(null);
+const [status, setStatus] = useState<any>(null);
   const [checklist, setChecklist] = useState<any>(null);
   const [confirmText, setConfirmText] = useState("");
   const [message, setMessage] = useState("");
@@ -17,7 +17,7 @@ export default function SafetyPage() {
       setStatus(s);
       setChecklist(c);
     } catch (e: any) {
-      setMessage("فشل تحميل الحالة: " + e.message);
+      setMessage(`${"فشل تحميل البيانات"}: ` + e.message);
     }
   }
 
@@ -28,10 +28,10 @@ export default function SafetyPage() {
         method: "POST",
         body: JSON.stringify({ confirm_text: confirmText })
       });
-      setMessage("تم تأكيد مخاطر Live");
+      setMessage("تم تأكيد مخاطر التداول الحقيقي");
       await loadAll();
     } catch (e: any) {
-      setMessage("فشل التأكيد: " + e.message);
+      setMessage(`${"فشل التأكيد"}: ` + e.message);
     }
   }
 
@@ -42,21 +42,21 @@ export default function SafetyPage() {
   return (
     <main className="container">
       <div className="card">
-        <h1>Live Safety Center</h1>
+        <h1>{"مركز أمان التداول الحقيقي"}</h1>
 
         <p style={{ color: "#fbbf24", lineHeight: 1.8 }}>
           هذه الصفحة تمنع تفعيل التداول الحقيقي قبل اكتمال شروط الأمان. لا تستخدم Live إلا بعد نجاح Testnet وإضافة مفاتيح Binance بدون صلاحية Withdraw.
         </p>
 
         <div className="card">
-          <h2>الحالة العامة</h2>
+          <h2>{"الحالة العامة"}</h2>
           <span className={checklist?.all_ok ? "badge badge-green" : "badge badge-red"}>
             {checklist?.all_ok ? "جاهز مبدئيًا للـ Live" : "غير جاهز للـ Live"}
           </span>
         </div>
 
         <div className="card">
-          <h2>Checklist</h2>
+          <h2>{"قائمة التحقق"}</h2>
 
           <div className="live-checklist">
             {checklist?.checks?.map((item: any) => (
@@ -69,9 +69,9 @@ export default function SafetyPage() {
         </div>
 
         <div className="card">
-          <h2>تأكيد مخاطر Live</h2>
+          <h2>{"تأكيد مخاطر التداول الحقيقي"}</h2>
 
-          <p>اكتب النص التالي حرفيًا:</p>
+          <p>{"اكتب النص التالي حرفياً"}</p>
           <code>{checklist?.required_text || status?.required_text || "I UNDERSTAND LIVE RISK"}</code>
 
           <input
@@ -89,10 +89,10 @@ export default function SafetyPage() {
 
         {message && <div className="card">{message}</div>}
 
-        <button className="btn btn-secondary" onClick={loadAll}>تحديث</button>
+        <button className="btn btn-secondary" onClick={loadAll}>{"تحديث"}</button>
 
         <p style={{ marginTop: 22 }}>
-          <a href="/">العودة للوحة التحكم</a>
+          <a href="/">{"العودة للوحة التحكم"}</a>
         </p>
       </div>
     </main>

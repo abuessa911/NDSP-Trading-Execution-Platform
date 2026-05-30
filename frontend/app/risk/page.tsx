@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { api } from "../../lib/api";
 
 export default function RiskPage() {
-  const [summary, setSummary] = useState<any>(null);
+const [summary, setSummary] = useState<any>(null);
   const [message, setMessage] = useState("");
 
   async function loadSummary() {
@@ -57,10 +57,10 @@ export default function RiskPage() {
           </div>
         )}
 
-        <button className="btn btn-secondary" onClick={loadSummary}>تحديث</button>
+        <button className="btn btn-secondary" onClick={loadSummary}>{"تحديث"}</button>
 
         <p style={{ marginTop: 22 }}>
-          <a href="/">العودة للوحة التحكم</a>
+          <a href="/">{"العودة للوحة التحكم"}</a>
         </p>
       </div>
     </main>

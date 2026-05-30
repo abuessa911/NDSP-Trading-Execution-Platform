@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { api } from "../../lib/api";
 
 export default function WebhookConfigPage() {
-  const [config, setConfig] = useState<any>(null);
+const [config, setConfig] = useState<any>(null);
   const [newSecret, setNewSecret] = useState("");
   const [message, setMessage] = useState("");
   const [testBody, setTestBody] = useState<any>({
@@ -24,7 +24,7 @@ export default function WebhookConfigPage() {
       setConfig(data);
       setTestBody(data.example_body || testBody);
     } catch (e: any) {
-      setMessage("فشل تحميل إعدادات Webhook: " + e.message);
+      setMessage(`${"فشل تحميل إعدادات Webhook"}: ` + e.message);
     }
   }
 
@@ -46,7 +46,7 @@ export default function WebhookConfigPage() {
       setMessage("تم توليد Secret جديد. انسخه الآن واحفظه في منظومة NDSP.");
       await loadConfig();
     } catch (e: any) {
-      setMessage("فشل توليد Secret جديد: " + e.message);
+      setMessage(`${"فشل توليد Secret جديد"}: ` + e.message);
     }
   }
 
@@ -79,7 +79,7 @@ export default function WebhookConfigPage() {
 
       setMessage("تم اختبار Webhook بنجاح: " + JSON.stringify(data));
     } catch (e: any) {
-      setMessage("فشل اختبار Webhook: " + e.message);
+      setMessage(`${"فشل اختبار Webhook"}: ` + e.message);
     }
   }
 
@@ -90,7 +90,7 @@ export default function WebhookConfigPage() {
   return (
     <main className="container">
       <div className="card webhook-config-card">
-        <h1>NDSP Webhook Config</h1>
+        <h1>{"إعدادات NDSP Webhook"}</h1>
         <p>
           من هنا يتم ربط منظومة NDSP الحقيقية مع بوت التنفيذ عبر Webhook آمن.
         </p>
@@ -139,7 +139,7 @@ export default function WebhookConfigPage() {
             </div>
 
             <div className="card">
-              <h2>توليد Secret جديد</h2>
+              <h2>{"توليد Secret جديد"}</h2>
               <p style={{ color: "#fbbf24" }}>
                 بعد التوليد، انسخ Secret فورًا وضعه في منظومة NDSP. لن يتم عرضه مرة أخرى.
               </p>
@@ -150,14 +150,14 @@ export default function WebhookConfigPage() {
 
               {newSecret && (
                 <div className="new-secret-box">
-                  <span>Secret الجديد</span>
+                  <span>{"Secret الجديد"}</span>
                   <code>{newSecret}</code>
                 </div>
               )}
             </div>
 
             <div className="card">
-              <h2>اختبار Webhook من الصفحة</h2>
+              <h2>{"اختبار Webhook من الصفحة"}</h2>
 
               <label>User Email</label>
               <input
@@ -213,7 +213,7 @@ export default function WebhookConfigPage() {
         )}
 
         <p style={{ marginTop: 22 }}>
-          <a href="/">العودة للوحة التحكم</a>
+          <a href="/">{"العودة للوحة التحكم"}</a>
         </p>
       </div>
     </main>

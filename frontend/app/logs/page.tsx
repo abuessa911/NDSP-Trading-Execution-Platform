@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { api, getToken } from "../../lib/api";
 
 export default function LogsPage() {
-  const [summary, setSummary] = useState<any>(null);
+const [summary, setSummary] = useState<any>(null);
   const [rejections, setRejections] = useState<any[]>([]);
   const [trades, setTrades] = useState<any[]>([]);
   const [mode, setMode] = useState<"rejections" | "all">("rejections");
@@ -56,7 +56,7 @@ export default function LogsPage() {
 
       const blob = await res.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
+      const a = document.createElemen"a";
       a.href = url;
       a.download = rejectedOnly ? "rejected_trades.csv" : "trades.csv";
       document.body.appendChild(a);
@@ -95,7 +95,7 @@ export default function LogsPage() {
   return (
     <main className="container">
       <div className="card">
-        <h1>Logs Center</h1>
+        <h1>{"مركز السجلات"}</h1>
         <p>مركز متابعة الإشارات، الصفقات، وأسباب الرفض.</p>
 
         {message && <div className="card">{message}</div>}
@@ -238,7 +238,7 @@ export default function LogsPage() {
         </div>
 
         <p style={{ marginTop: 22 }}>
-          <a href="/">العودة للوحة التحكم</a>
+          <a href="/">{"العودة للوحة التحكم"}</a>
         </p>
       </div>
     </main>
