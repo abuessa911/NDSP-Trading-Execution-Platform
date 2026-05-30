@@ -56,7 +56,7 @@ const [summary, setSummary] = useState<any>(null);
 
       const blob = await res.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElemen"a";
+      const a = document.createElement("a");
       a.href = url;
       a.download = rejectedOnly ? "rejected_trades.csv" : "trades.csv";
       document.body.appendChild(a);
