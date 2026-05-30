@@ -152,7 +152,38 @@ async def execute_signal(
         api_secret = decrypt_text(user.api_key.api_secret_encrypted)
 
     client = BinanceClient(api_key=api_key, api_secret=api_secret, market_type=market_type)
-    response = client.market_order_by_notional(symbol, side, notional_usdt)
+    try:
+        response = client.market_order_by_notional(symbol, side, notional_usdt)
+    except ccxt.AuthenticationError as e:
+        return {
+            "status": "rejected",
+            "symbol": symbol,
+            "side": side,
+            "notional_usdt": notional_usdt,
+            "market_type": market_type,
+            "reason": "Binance API authentication failed. Check Futures/Spot API key, IP whitelist, and permissions.",
+            "error": str(e),
+        }
+    except ccxt.PermissionDenied as e:
+        return {
+            "status": "rejected",
+            "symbol": symbol,
+            "side": side,
+            "notional_usdt": notional_usdt,
+            "market_type": market_type,
+            "reason": "Binance API permission denied. Enable the required Spot/Futures trading permission.",
+            "error": str(e),
+        }
+    except Exception as e:
+        return {
+            "status": "rejected",
+            "symbol": symbol,
+            "side": side,
+            "notional_usdt": notional_usdt,
+            "market_type": market_type,
+            "reason": "Exchange order failed.",
+            "error": str(e),
+        }
 
     amount = float(response.get("amount", 0) or 0)
     price = float(response.get("price", 0) or 0)
