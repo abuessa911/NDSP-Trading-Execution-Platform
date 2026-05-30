@@ -17,6 +17,7 @@ from app.models.models import User, TradeLog, BinanceApiKey, BotSettings
 from app.api.routes import get_current_user
 from app.schemas.schemas import ChangePasswordRequest, NdspSignalRequest, LiveSafetyConfirmRequest
 from app.services.execution import execute_signal
+from app.services.symbols import normalize_symbol
 from app.services.risk_service import calculate_daily_pnl, pre_trade_risk_check, live_safety_checklist
 
 try:
@@ -173,7 +174,8 @@ async def ndsp_signal(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    pre_trade_risk_check(db, user, payload.symbol, payload.side)
+    normalized_symbol = normalize_symbol(payload.symbol)
+    pre_trade_risk_check(db, user, normalized_symbol, payload.side)
 
     reason = payload.reason
     if payload.ndsp_layer:
@@ -182,7 +184,7 @@ async def ndsp_signal(
     trade = await execute_signal(
         db=db,
         user=user,
-        symbol=payload.symbol,
+        symbol=normalized_symbol,
         side=payload.side,
         notional_usdt=payload.notional_usdt,
         reason=reason,
@@ -267,12 +269,13 @@ async def ndsp_webhook_signal(
     if payload.signal_id:
         reason = f"{reason} | Signal ID: {payload.signal_id}"
 
-    pre_trade_risk_check(db, target_user, payload.symbol, payload.side)
+    normalized_symbol = normalize_symbol(payload.symbol)
+    pre_trade_risk_check(db, target_user, normalized_symbol, payload.side)
 
     trade = await execute_signal(
         db=db,
         user=target_user,
-        symbol=payload.symbol,
+        symbol=normalized_symbol,
         side=payload.side,
         notional_usdt=payload.notional_usdt,
         reason=reason,

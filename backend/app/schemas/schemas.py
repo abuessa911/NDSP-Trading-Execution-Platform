@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 
 class RegisterRequest(BaseModel):
@@ -24,6 +24,7 @@ class BinanceKeyRequest(BaseModel):
 
 class BotSettingsRequest(BaseModel):
     enabled: bool = False
+    market_type: str = "spot"
     allowed_symbols: str = "BTC/USDT,ETH/USDT"
     max_order_usdt: float = 25.0
     max_daily_loss_usdt: float = 20.0
@@ -33,6 +34,14 @@ class BotSettingsRequest(BaseModel):
     prevent_duplicate_positions: bool = True
     telegram_enabled: bool = True
     email_enabled: bool = True
+
+    @field_validator("market_type")
+    @classmethod
+    def validate_market_type(cls, value: str) -> str:
+        normalized = (value or "spot").strip().lower()
+        if normalized not in {"spot", "futures"}:
+            raise ValueError("market_type must be spot or futures")
+        return normalized
 
 
 class TestSignalRequest(BaseModel):

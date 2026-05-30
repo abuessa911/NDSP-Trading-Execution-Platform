@@ -39,6 +39,7 @@ class BotSettings(Base):
 
     enabled: Mapped[bool] = mapped_column(Boolean, default=False)
     allowed_symbols: Mapped[str] = mapped_column(String(500), default="BTC/USDT,ETH/USDT")
+    market_type: Mapped[str] = mapped_column(String(20), default="spot")
     max_order_usdt: Mapped[float] = mapped_column(Float, default=25.0)
     max_daily_loss_usdt: Mapped[float] = mapped_column(Float, default=20.0)
     max_trades_per_day: Mapped[int] = mapped_column(Integer, default=3)

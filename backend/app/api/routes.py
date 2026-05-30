@@ -17,6 +17,8 @@ from app.services.execution import execute_signal
 from app.services.risk_service import pre_trade_risk_check
 from app.services.notifications import send_telegram, send_email
 from app.core.config import settings
+from app.exchange.binance_client import get_active_symbols
+from app.services.symbols import normalize_market_type, normalize_symbol, serialize_allowed_symbols
 
 
 router = APIRouter()
@@ -110,7 +112,8 @@ def update_settings(
         db.add(existing)
 
     existing.enabled = payload.enabled
-    existing.allowed_symbols = payload.allowed_symbols
+    existing.market_type = normalize_market_type(payload.market_type)
+    existing.allowed_symbols = serialize_allowed_symbols(payload.allowed_symbols)
     existing.max_order_usdt = payload.max_order_usdt
     existing.max_daily_loss_usdt = payload.max_daily_loss_usdt
     existing.max_trades_per_day = payload.max_trades_per_day
@@ -134,6 +137,7 @@ def get_settings(
 
     return {
         "enabled": user.settings.enabled,
+        "market_type": getattr(user.settings, "market_type", "spot") or "spot",
         "allowed_symbols": user.settings.allowed_symbols,
         "max_order_usdt": user.settings.max_order_usdt,
         "max_daily_loss_usdt": user.settings.max_daily_loss_usdt,
@@ -157,12 +161,13 @@ async def test_signal(
     ينفذ إشارة يدوية.
     في وضع dryrun لا يتم تنفيذ صفقة حقيقية.
     """
-    pre_trade_risk_check(db, user, payload.symbol, payload.side)
+    normalized_symbol = normalize_symbol(payload.symbol)
+    pre_trade_risk_check(db, user, normalized_symbol, payload.side)
 
     trade = await execute_signal(
         db=db,
         user=user,
-        symbol=payload.symbol,
+        symbol=normalized_symbol,
         side=payload.side,
         notional_usdt=payload.notional_usdt,
         reason=payload.reason,
@@ -175,6 +180,50 @@ async def test_signal(
         "status": trade.status,
         "mode": trade.mode,
         "reason": trade.reason,
+    }
+
+
+@router.get("/symbols/spot")
+def spot_symbols():
+    symbols = get_active_symbols("spot", "USDT")
+    return {
+        "ok": True,
+        "market_type": "spot",
+        "quote": "USDT",
+        "count": len(symbols),
+        "symbols": symbols,
+    }
+
+
+@router.get("/symbols/futures")
+def futures_symbols():
+    symbols = get_active_symbols("futures", "USDT")
+    return {
+        "ok": True,
+        "market_type": "futures",
+        "quote": "USDT",
+        "count": len(symbols),
+        "symbols": symbols,
+    }
+
+
+@router.get("/symbols/summary")
+def symbols_summary():
+    spot = get_active_symbols("spot", "USDT")
+    futures = get_active_symbols("futures", "USDT")
+    return {
+        "ok": True,
+        "quote": "USDT",
+        "spot": {
+            "market_type": "spot",
+            "count": len(spot),
+            "symbols": spot,
+        },
+        "futures": {
+            "market_type": "futures",
+            "count": len(futures),
+            "symbols": futures,
+        },
     }
 
 

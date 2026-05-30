@@ -7,6 +7,7 @@ from app.db.session import Base, engine
 from app.api.routes import router
 from app.api.advanced_routes import router as advanced_router
 from app.core.config import settings
+from app.db.runtime_migrations import ensure_runtime_columns
 
 
 def wait_for_database(max_attempts: int = 30, delay_seconds: int = 2):
@@ -25,6 +26,7 @@ def wait_for_database(max_attempts: int = 30, delay_seconds: int = 2):
 
 wait_for_database()
 Base.metadata.create_all(bind=engine)
+ensure_runtime_columns()
 
 app = FastAPI(
     title=settings.APP_NAME,

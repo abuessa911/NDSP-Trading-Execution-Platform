@@ -4,6 +4,7 @@ from app.models.models import User, TradeLog
 from app.services.crypto_service import decrypt_text
 from app.services.risk import validate_trade
 from app.exchange.binance_client import BinanceClient
+from app.services.symbols import normalize_market_type, normalize_symbol
 from app.services.notifications import send_telegram, send_email
 from app.core.config import settings
 
@@ -116,6 +117,10 @@ async def execute_signal(
     notional_usdt: float,
     reason: str,
 ) -> TradeLog:
+    symbol = normalize_symbol(symbol)
+    side = side.upper()
+    market_type = normalize_market_type(getattr(user.settings, "market_type", "spot") if user.settings else "spot")
+
     ok, risk_reason = validate_trade(db, user, symbol, side, notional_usdt)
 
     if not ok:
@@ -146,7 +151,7 @@ async def execute_signal(
         api_key = decrypt_text(user.api_key.api_key_encrypted)
         api_secret = decrypt_text(user.api_key.api_secret_encrypted)
 
-    client = BinanceClient(api_key=api_key, api_secret=api_secret)
+    client = BinanceClient(api_key=api_key, api_secret=api_secret, market_type=market_type)
     response = client.market_order_by_notional(symbol, side, notional_usdt)
 
     amount = float(response.get("amount", 0) or 0)
@@ -167,7 +172,7 @@ async def execute_signal(
 
         if settings.BINANCE_MODE == "testnet" and status in ["closed", "filled"]:
             protective_orders_result = await place_protective_orders_testnet(
-                exchange=exchange,
+                exchange=client.exchange,
                 symbol=symbol,
                 side=side,
                 amount=amount,

@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.models.models import User, TradeLog
 from app.core.config import settings
+from app.services.symbols import normalize_symbol
 
 
 def today_bounds():
@@ -109,6 +110,8 @@ def ensure_live_safety(user: User):
 
 
 def ensure_no_duplicate_trade(db: Session, user: User, symbol: str, side: str):
+    symbol = normalize_symbol(symbol)
+    side = side.upper()
     if not user.settings or not user.settings.prevent_duplicate_positions:
         return
 
@@ -146,6 +149,8 @@ def ensure_daily_loss_limit(db: Session, user: User):
 
 
 def pre_trade_risk_check(db: Session, user: User, symbol: str, side: str):
+    symbol = normalize_symbol(symbol)
+    side = side.upper()
     if not user.settings or not user.settings.enabled:
         raise HTTPException(status_code=403, detail="Bot is disabled")
 
