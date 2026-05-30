@@ -24,11 +24,14 @@ const [tokenReady, setTokenReady] = useState(false);
   const [settings, setSettings] = useState<any>(null);
   const [trades, setTrades] = useState<any[]>([]);
   const [message, setMessage] = useState("");
+  const [availableSymbols, setAvailableSymbols] = useState<string[]>([]);
+  const [symbolsLoading, setSymbolsLoading] = useState(false);
   const [binanceKey, setBinanceKey] = useState("");
   const [binanceSecret, setBinanceSecret] = useState("");
 
   const [settingsForm, setSettingsForm] = useState({
     enabled: true,
+    market_type: "spot",
     allowed_symbols: "BTC/USDT,ETH/USDT",
     max_order_usdt: 10,
     max_daily_loss_usdt: 20,
@@ -109,6 +112,24 @@ const [tokenReady, setTokenReady] = useState(false);
       await loadAll();
     } catch (e: any) {
       setMessage("فشل تسجيل الدخول: " + e.message);
+    }
+  }
+
+  async function loadAvailableSymbols(marketType?: string) {
+    const selectedMarket = marketType || settingsForm.market_type || "spot";
+    setSymbolsLoading(true);
+    try {
+      const data = await api(`/symbols/${selectedMarket}`);
+      const symbols = Array.isArray(data?.symbols) ? data.symbols : [];
+      setAvailableSymbols(symbols);
+
+      if (symbols.length && !symbols.includes(signalForm.symbol)) {
+        setSignalForm(prev => ({ ...prev, symbol: symbols.includes("BTC/USDT") ? "BTC/USDT" : symbols[0] }));
+      }
+    } catch (e: any) {
+      setMessage("فشل تحميل قائمة العملات: " + e.message);
+    } finally {
+      setSymbolsLoading(false);
     }
   }
 
@@ -595,8 +616,18 @@ const [tokenReady, setTokenReady] = useState(false);
         <div className="card">
           <h2>اختبار صفقة Testnet</h2>
 
-          <label>Symbol</label>
-          <input className="input" value={signalForm.symbol} onChange={e => setSignalForm({ ...signalForm, symbol: e.target.value })} />
+          <label>العملة</label>
+          <select
+            className="input technical-input"
+            value={signalForm.symbol}
+            onChange={e => setSignalForm({ ...signalForm, symbol: e.target.value })}
+          >
+            {symbolsLoading && <option value={signalForm.symbol}>جاري تحميل العملات...</option>}
+            {!symbolsLoading && availableSymbols.length === 0 && <option value={signalForm.symbol}>{signalForm.symbol}</option>}
+            {availableSymbols.map(symbol => (
+              <option key={symbol} value={symbol}>{symbol}</option>
+            ))}
+          </select>
 
           <label style={{ marginTop: 14, display: "block" }}>Side</label>
           <select className="input" value={signalForm.side} onChange={e => setSignalForm({ ...signalForm, side: e.target.value })}>

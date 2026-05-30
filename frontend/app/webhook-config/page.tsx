@@ -7,6 +7,9 @@ export default function WebhookConfigPage() {
 const [config, setConfig] = useState<any>(null);
   const [newSecret, setNewSecret] = useState("");
   const [message, setMessage] = useState("");
+  const [marketType, setMarketType] = useState("spot");
+  const [availableSymbols, setAvailableSymbols] = useState<string[]>([]);
+  const [symbolsLoading, setSymbolsLoading] = useState(false);
   const [testBody, setTestBody] = useState<any>({
     user_email: "nawaf@example.com",
     symbol: "ETH/USDT",
@@ -16,6 +19,28 @@ const [config, setConfig] = useState<any>(null);
     ndsp_layer: "layer-1",
     signal_id: "webhook-config-test"
   });
+
+  async function loadSymbols(selectedMarket = "spot") {
+    setSymbolsLoading(true);
+    try {
+      const data = await api(`/symbols/${selectedMarket}`);
+      const symbols = Array.isArray(data?.symbols) ? data.symbols : [];
+      setAvailableSymbols(symbols);
+
+      if (symbols.length) {
+        setTestBody(prev => ({
+          ...prev,
+          symbol: symbols.includes(prev.symbol)
+            ? prev.symbol
+            : (symbols.includes("BTC/USDT") ? "BTC/USDT" : symbols[0])
+        }));
+      }
+    } catch (e: any) {
+      setMessage("فشل تحميل قائمة العملات: " + e.message);
+    } finally {
+      setSymbolsLoading(false);
+    }
+  }
 
   async function loadConfig() {
     setMessage("");
@@ -85,6 +110,7 @@ const [config, setConfig] = useState<any>(null);
 
   useEffect(() => {
     loadConfig();
+    loadSymbols("spot");
   }, []);
 
   return (
@@ -166,12 +192,32 @@ const [config, setConfig] = useState<any>(null);
                 onChange={e => setTestBody({ ...testBody, user_email: e.target.value })}
               />
 
-              <label style={{ display: "block", marginTop: 12 }}>Symbol</label>
-              <input
-                className="input"
+              <label style={{ display: "block", marginTop: 12 }}>نوع السوق</label>
+              <select
+                className="input technical-input"
+                value={marketType}
+                onChange={e => {
+                  const value = e.target.value;
+                  setMarketType(value);
+                  loadSymbols(value);
+                }}
+              >
+                <option value="spot">سبوت Spot</option>
+                <option value="futures">عقود آجلة Futures</option>
+              </select>
+
+              <label style={{ display: "block", marginTop: 12 }}>العملة</label>
+              <select
+                className="input technical-input"
                 value={testBody.symbol}
                 onChange={e => setTestBody({ ...testBody, symbol: e.target.value })}
-              />
+              >
+                {symbolsLoading && <option value={testBody.symbol}>جاري تحميل العملات...</option>}
+                {!symbolsLoading && availableSymbols.length === 0 && <option value={testBody.symbol}>{testBody.symbol}</option>}
+                {availableSymbols.map(symbol => (
+                  <option key={symbol} value={symbol}>{symbol}</option>
+                ))}
+              </select>
 
               <label style={{ display: "block", marginTop: 12 }}>Side</label>
               <select

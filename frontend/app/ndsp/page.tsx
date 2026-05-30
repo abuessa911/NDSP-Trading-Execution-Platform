@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "../../lib/api";
 
 export default function NdspSignalPage() {
@@ -23,6 +23,35 @@ const [form, setForm] = useState({
   });
 
   const [message, setMessage] = useState("");
+  const [marketType, setMarketType] = useState("spot");
+  const [availableSymbols, setAvailableSymbols] = useState<string[]>([]);
+  const [symbolsLoading, setSymbolsLoading] = useState(false);
+
+  async function loadSymbols(selectedMarket = "spot") {
+    setSymbolsLoading(true);
+    try {
+      const data = await api(`/symbols/${selectedMarket}`);
+      const symbols = Array.isArray(data?.symbols) ? data.symbols : [];
+      setAvailableSymbols(symbols);
+
+      if (symbols.length) {
+        setForm(prev => ({
+          ...prev,
+          symbol: symbols.includes(prev.symbol)
+            ? prev.symbol
+            : (symbols.includes("BTC/USDT") ? "BTC/USDT" : symbols[0])
+        }));
+      }
+    } catch (e: any) {
+      setMessage("فشل تحميل قائمة العملات: " + e.message);
+    } finally {
+      setSymbolsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadSymbols("spot");
+  }, []);
 
   async function sendSignal() {
     setMessage("");
@@ -46,8 +75,32 @@ const [form, setForm] = useState({
         <div className="card">
           <h2>اختبار داخلي عبر جلسة المستخدم</h2>
 
-          <label>Symbol</label>
-          <input className="input" value={form.symbol} onChange={e => setForm({ ...form, symbol: e.target.value })} />
+          <label>نوع السوق</label>
+          <select
+            className="input technical-input"
+            value={marketType}
+            onChange={e => {
+              const value = e.target.value;
+              setMarketType(value);
+              loadSymbols(value);
+            }}
+          >
+            <option value="spot">سبوت Spot</option>
+            <option value="futures">عقود آجلة Futures</option>
+          </select>
+
+          <label>العملة</label>
+          <select
+            className="input technical-input"
+            value={form.symbol}
+            onChange={e => setForm({ ...form, symbol: e.target.value })}
+          >
+            {symbolsLoading && <option value={form.symbol}>جاري تحميل العملات...</option>}
+            {!symbolsLoading && availableSymbols.length === 0 && <option value={form.symbol}>{form.symbol}</option>}
+            {availableSymbols.map(symbol => (
+              <option key={symbol} value={symbol}>{symbol}</option>
+            ))}
+          </select>
 
           <label style={{ display: "block", marginTop: 14 }}>Side</label>
           <select className="input" value={form.side} onChange={e => setForm({ ...form, side: e.target.value })}>
