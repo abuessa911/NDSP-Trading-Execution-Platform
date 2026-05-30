@@ -517,8 +517,43 @@ const [tokenReady, setTokenReady] = useState(false);
             تشغيل البوت
           </label>
 
-          <label style={{ display: "block", marginTop: 14 }}>{"الأزواج المسموحة"}</label>
-          <input className="input" value={settingsForm.allowed_symbols} onChange={e => setSettingsForm({ ...settingsForm, allowed_symbols: e.target.value })} />
+            <label style={{ display: "block", marginTop: 14 }}>نوع السوق</label>
+            <select
+              className="input technical-input"
+              value={settingsForm.market_type || "spot"}
+              onChange={e => {
+                const marketType = e.target.value;
+                setSettingsForm({ ...settingsForm, market_type: marketType });
+                loadAvailableSymbols(marketType);
+              }}
+            >
+              <option value="spot">سبوت Spot</option>
+              <option value="futures">عقود آجلة Futures</option>
+            </select>
+
+            <label style={{ display: "block", marginTop: 14 }}>الأزواج المسموحة</label>
+            <select
+              className="input technical-input"
+              value={settingsForm.allowed_symbols || "BTC/USDT,ETH/USDT"}
+              onChange={e => setSettingsForm({ ...settingsForm, allowed_symbols: e.target.value })}
+            >
+              <option value="BTC/USDT,ETH/USDT">BTC/USDT,ETH/USDT</option>
+              <option value="ALL_SPOT_USDT">كل أزواج السبوت USDT</option>
+              <option value="ALL_FUTURES_USDT">كل أزواج العقود USDT</option>
+              <option value="ALL_USDT">كل أزواج USDT حسب نوع السوق</option>
+              {availableSymbols.map(symbol => (
+                <option key={`allowed-${symbol}`} value={symbol}>{symbol}</option>
+              ))}
+            </select>
+
+            <button
+              type="button"
+              className="btn btn-secondary"
+              style={{ marginTop: 10 }}
+              onClick={() => loadAvailableSymbols(settingsForm.market_type || "spot")}
+            >
+              {symbolsLoading ? "جاري تحميل العملات..." : "تحديث قائمة العملات"}
+            </button>
 
           <div className="grid grid-3" style={{ marginTop: 14 }}>
             <div>
