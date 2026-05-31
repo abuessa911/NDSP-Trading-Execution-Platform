@@ -1810,3 +1810,531 @@ input[name*="symbol"] {
 .global-language-switcher {
   display: none !important;
 }
+
+/* Hunter Cyber Command Pages */
+.hunter-page {
+  position: relative;
+  min-height: 100vh;
+}
+
+.hunter-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(34, 211, 238, 0.16), transparent 28%),
+    radial-gradient(circle at 85% 18%, rgba(168, 85, 247, 0.14), transparent 30%),
+    radial-gradient(circle at 55% 85%, rgba(16, 185, 129, 0.10), transparent 26%),
+    linear-gradient(135deg, #020617, #050816 45%, #0b1120);
+}
+
+.hunter-page::after {
+  content: "hunter_ksa1";
+  position: fixed;
+  inset-inline-end: 4vw;
+  bottom: 4vh;
+  z-index: -1;
+  font-size: clamp(42px, 12vw, 150px);
+  font-weight: 900;
+  color: rgba(34, 211, 238, 0.045);
+  pointer-events: none;
+  user-select: none;
+}
+
+.hunter-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 18px 0;
+  padding: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 20px;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(18px);
+}
+
+.hunter-brand {
+  display: grid;
+  gap: 2px;
+}
+
+.hunter-brand strong {
+  color: #f8fafc;
+  font-size: 20px;
+}
+
+.hunter-brand span {
+  color: #22d3ee;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+}
+
+.hunter-links,
+.hunter-actions,
+.quick-links,
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.hunter-links a {
+  color: #cbd5e1;
+  text-decoration: none;
+  padding: 9px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.10);
+  background: rgba(2, 6, 23, 0.22);
+}
+
+.hunter-links a:hover {
+  color: #22d3ee;
+  border-color: rgba(34, 211, 238, 0.34);
+}
+
+.hunter-hero {
+  position: relative;
+  overflow: hidden;
+  margin: 18px 0;
+  padding: 28px;
+  border-radius: 28px;
+  border: 1px solid rgba(34, 211, 238, 0.24);
+  background:
+    radial-gradient(circle at top left, rgba(34, 211, 238, 0.2), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(168, 85, 247, 0.16), transparent 36%),
+    rgba(15, 23, 42, 0.80);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.34);
+}
+
+.hunter-hero.admin {
+  border-color: rgba(168, 85, 247, 0.34);
+}
+
+.hunter-hero.register {
+  border-color: rgba(16, 185, 129, 0.34);
+}
+
+.hunter-hero h1 {
+  margin: 0;
+  color: #f8fafc;
+  font-size: clamp(30px, 5vw, 58px);
+  letter-spacing: -0.04em;
+}
+
+.hunter-hero p {
+  color: #94a3b8;
+  max-width: 760px;
+}
+
+.eyebrow {
+  color: #22d3ee !important;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.hunter-watermark {
+  position: absolute;
+  inset-inline-end: 22px;
+  bottom: 0;
+  font-size: clamp(48px, 10vw, 130px);
+  font-weight: 900;
+  color: rgba(34, 211, 238, 0.055);
+}
+
+.hunter-grid {
+  display: grid;
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.hunter-grid.two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.hunter-grid.three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.hunter-card {
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 22px;
+  background: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(18px);
+  padding: 20px;
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.22);
+}
+
+.hunter-card h2 {
+  margin-top: 0;
+  color: #f8fafc;
+}
+
+.hunter-alert {
+  border: 1px solid rgba(245, 158, 11, 0.42);
+  background: rgba(245, 158, 11, 0.10);
+  color: #fde68a;
+  border-radius: 18px;
+  padding: 14px 16px;
+  margin: 14px 0;
+}
+
+.hunter-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 4px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 12px;
+  border: 1px solid rgba(251, 113, 133, 0.35);
+  color: #fb7185;
+  background: rgba(251, 113, 133, 0.10);
+}
+
+.hunter-badge.ok {
+  border-color: rgba(16, 185, 129, 0.35);
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.10);
+}
+
+.hunter-badge.danger {
+  border-color: rgba(239, 68, 68, 0.36);
+  color: #fb7185;
+  background: rgba(239, 68, 68, 0.10);
+}
+
+.kv {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.10);
+  padding: 9px 0;
+}
+
+.kv span {
+  color: #94a3b8;
+}
+
+.kv strong {
+  color: #e5e7eb;
+  text-align: end;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.hunter-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 760px;
+}
+
+.hunter-table th,
+.hunter-table td {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.10);
+  padding: 10px;
+  text-align: start;
+  vertical-align: top;
+}
+
+.hunter-table th {
+  color: #22d3ee;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.hunter-table td {
+  color: #cbd5e1;
+}
+
+.hunter-list {
+  color: #cbd5e1;
+  display: grid;
+  gap: 10px;
+}
+
+.warning-text {
+  color: #fbbf24;
+}
+
+@media (max-width: 900px) {
+  .hunter-grid.two,
+  .hunter-grid.three {
+    grid-template-columns: 1fr;
+  }
+
+  .hunter-nav {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+/* Hunter Cyber Command Pages */
+.hunter-page {
+  position: relative;
+  min-height: 100vh;
+}
+
+.hunter-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(34, 211, 238, 0.16), transparent 28%),
+    radial-gradient(circle at 85% 18%, rgba(168, 85, 247, 0.14), transparent 30%),
+    radial-gradient(circle at 55% 85%, rgba(16, 185, 129, 0.10), transparent 26%),
+    linear-gradient(135deg, #020617, #050816 45%, #0b1120);
+}
+
+.hunter-page::after {
+  content: "hunter_ksa1";
+  position: fixed;
+  inset-inline-end: 4vw;
+  bottom: 4vh;
+  z-index: -1;
+  font-size: clamp(42px, 12vw, 150px);
+  font-weight: 900;
+  color: rgba(34, 211, 238, 0.045);
+  pointer-events: none;
+  user-select: none;
+}
+
+.hunter-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 18px 0;
+  padding: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 20px;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(18px);
+}
+
+.hunter-brand {
+  display: grid;
+  gap: 2px;
+}
+
+.hunter-brand strong {
+  color: #f8fafc;
+  font-size: 20px;
+}
+
+.hunter-brand span {
+  color: #22d3ee;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+}
+
+.hunter-links,
+.hunter-actions,
+.quick-links,
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.hunter-links a {
+  color: #cbd5e1;
+  text-decoration: none;
+  padding: 9px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.10);
+  background: rgba(2, 6, 23, 0.22);
+}
+
+.hunter-links a:hover {
+  color: #22d3ee;
+  border-color: rgba(34, 211, 238, 0.34);
+}
+
+.hunter-hero {
+  position: relative;
+  overflow: hidden;
+  margin: 18px 0;
+  padding: 28px;
+  border-radius: 28px;
+  border: 1px solid rgba(34, 211, 238, 0.24);
+  background:
+    radial-gradient(circle at top left, rgba(34, 211, 238, 0.2), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(168, 85, 247, 0.16), transparent 36%),
+    rgba(15, 23, 42, 0.80);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.34);
+}
+
+.hunter-hero.admin {
+  border-color: rgba(168, 85, 247, 0.34);
+}
+
+.hunter-hero.register {
+  border-color: rgba(16, 185, 129, 0.34);
+}
+
+.hunter-hero h1 {
+  margin: 0;
+  color: #f8fafc;
+  font-size: clamp(30px, 5vw, 58px);
+  letter-spacing: -0.04em;
+}
+
+.hunter-hero p {
+  color: #94a3b8;
+  max-width: 760px;
+}
+
+.eyebrow {
+  color: #22d3ee !important;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.hunter-watermark {
+  position: absolute;
+  inset-inline-end: 22px;
+  bottom: 0;
+  font-size: clamp(48px, 10vw, 130px);
+  font-weight: 900;
+  color: rgba(34, 211, 238, 0.055);
+}
+
+.hunter-grid {
+  display: grid;
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.hunter-grid.two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.hunter-grid.three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.hunter-card {
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 22px;
+  background: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(18px);
+  padding: 20px;
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.22);
+}
+
+.hunter-card h2 {
+  margin-top: 0;
+  color: #f8fafc;
+}
+
+.hunter-alert {
+  border: 1px solid rgba(245, 158, 11, 0.42);
+  background: rgba(245, 158, 11, 0.10);
+  color: #fde68a;
+  border-radius: 18px;
+  padding: 14px 16px;
+  margin: 14px 0;
+}
+
+.hunter-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 4px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 12px;
+  border: 1px solid rgba(251, 113, 133, 0.35);
+  color: #fb7185;
+  background: rgba(251, 113, 133, 0.10);
+}
+
+.hunter-badge.ok {
+  border-color: rgba(16, 185, 129, 0.35);
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.10);
+}
+
+.hunter-badge.danger {
+  border-color: rgba(239, 68, 68, 0.36);
+  color: #fb7185;
+  background: rgba(239, 68, 68, 0.10);
+}
+
+.kv {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.10);
+  padding: 9px 0;
+}
+
+.kv span {
+  color: #94a3b8;
+}
+
+.kv strong {
+  color: #e5e7eb;
+  text-align: end;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.hunter-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 760px;
+}
+
+.hunter-table th,
+.hunter-table td {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.10);
+  padding: 10px;
+  text-align: start;
+  vertical-align: top;
+}
+
+.hunter-table th {
+  color: #22d3ee;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.hunter-table td {
+  color: #cbd5e1;
+}
+
+.hunter-list {
+  color: #cbd5e1;
+  display: grid;
+  gap: 10px;
+}
+
+.warning-text {
+  color: #fbbf24;
+}
+
+@media (max-width: 900px) {
+  .hunter-grid.two,
+  .hunter-grid.three {
+    grid-template-columns: 1fr;
+  }
+
+  .hunter-nav {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
