@@ -12,12 +12,32 @@ const [config, setConfig] = useState<any>(null);
   const [symbolsLoading, setSymbolsLoading] = useState(false);
   const [testBody, setTestBody] = useState<any>({
     user_email: "nawaf@example.com",
-    symbol: "ETH/USDT",
-    side: "BUY",
-    notional_usdt: 10,
-    reason: "NDSP webhook config page test",
+    symbol: "BTC/USDT",
+    notional_usdt: 5,
+    reason: "NDSP webhook config page safe no_trade test",
     ndsp_layer: "layer-1",
-    signal_id: "webhook-config-test"
+    signal_id: "webhook-config-test",
+    decision: {
+      direction: "neutral",
+      confidence: 0,
+      grade: "F",
+      quality_label: "Structurally Invalid",
+      execution_allowed: false
+    },
+    execution: {
+      allowed: false,
+      mode: "decision_support_only"
+    },
+    market_alignment: {
+      signal: "NO_SIGNAL"
+    },
+    states: {
+      risk_state: "normal",
+      system_state: "live"
+    },
+    explanation: {
+      guidance: "Decision-support text only; not a primary execution signal."
+    }
   });
 
   async function loadSymbols(selectedMarket = "spot") {
@@ -120,6 +140,7 @@ const [config, setConfig] = useState<any>(null);
         <p>
           من هنا يتم ربط منظومة NDSP الحقيقية مع بوت التنفيذ عبر Webhook آمن.
         </p>
+        <p>NDSP يمكنه إرسال Decision Support Payload كامل بدون BUY/SELL، وسيقوم البوت بتفسير direction داخليًا.</p>
 
         {message && <div className="card">{message}</div>}
 
@@ -219,14 +240,68 @@ const [config, setConfig] = useState<any>(null);
                 ))}
               </select>
 
-              <label style={{ display: "block", marginTop: 12 }}>Side</label>
+              <label style={{ display: "block", marginTop: 12 }}>NDSP Direction</label>
               <select
                 className="input"
-                value={testBody.side}
-                onChange={e => setTestBody({ ...testBody, side: e.target.value })}
+                value={testBody.decision?.direction || "neutral"}
+                onChange={e => setTestBody({
+                  ...testBody,
+                  decision: { ...(testBody.decision || {}), direction: e.target.value }
+                })}
               >
-                <option value="BUY">BUY</option>
-                <option value="SELL">SELL</option>
+                <option value="neutral">neutral - لا تداول</option>
+                <option value="bullish">bullish - يفسر داخليًا كـ BUY</option>
+                <option value="bearish">bearish - يفسر داخليًا كـ SELL</option>
+              </select>
+
+              <label style={{ display: "block", marginTop: 12 }}>Confidence</label>
+              <input
+                className="input"
+                type="number"
+                value={testBody.decision?.confidence ?? 0}
+                onChange={e => setTestBody({
+                  ...testBody,
+                  decision: { ...(testBody.decision || {}), confidence: Number(e.target.value) }
+                })}
+              />
+
+              <label style={{ display: "block", marginTop: 12 }}>
+                <input
+                  type="checkbox"
+                  checked={!!testBody.decision?.execution_allowed}
+                  onChange={e => setTestBody({
+                    ...testBody,
+                    decision: { ...(testBody.decision || {}), execution_allowed: e.target.checked }
+                  })}
+                />{" "}
+                decision.execution_allowed
+              </label>
+
+              <label style={{ display: "block", marginTop: 12 }}>
+                <input
+                  type="checkbox"
+                  checked={!!testBody.execution?.allowed}
+                  onChange={e => setTestBody({
+                    ...testBody,
+                    execution: { ...(testBody.execution || {}), allowed: e.target.checked, mode: "decision_support_only" }
+                  })}
+                />{" "}
+                execution.allowed
+              </label>
+
+              <label style={{ display: "block", marginTop: 12 }}>Market Signal</label>
+              <select
+                className="input"
+                value={testBody.market_alignment?.signal || "NO_SIGNAL"}
+                onChange={e => setTestBody({
+                  ...testBody,
+                  market_alignment: { ...(testBody.market_alignment || {}), signal: e.target.value }
+                })}
+              >
+                <option value="NO_SIGNAL">NO_SIGNAL</option>
+                <option value="CONTINUATION_SIGNAL">CONTINUATION_SIGNAL</option>
+                <option value="REVERSAL_SIGNAL">REVERSAL_SIGNAL</option>
+                <option value="TESTING_ZONE">TESTING_ZONE</option>
               </select>
 
               <label style={{ display: "block", marginTop: 12 }}>Notional USDT</label>

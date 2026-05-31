@@ -2,6 +2,7 @@ import secrets
 import csv
 import io
 from datetime import datetime, timedelta
+from typing import Any
 from fastapi.responses import StreamingResponse
 import os
 import subprocess
@@ -9,7 +10,7 @@ from pathlib import Path
 from fastapi import APIRouter, Depends, HTTPException, Header
 from sqlalchemy.orm import Session
 from sqlalchemy import text
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.db.session import get_db
 from app.core.config import settings
@@ -17,6 +18,7 @@ from app.models.models import User, TradeLog, BinanceApiKey, BotSettings
 from app.api.routes import get_current_user
 from app.schemas.schemas import ChangePasswordRequest, NdspSignalRequest, LiveSafetyConfirmRequest
 from app.services.execution import execute_signal
+from app.services.ndsp_decision_interpreter import interpret_ndsp_payload
 from app.services.symbols import normalize_symbol
 from app.services.risk_service import calculate_daily_pnl, pre_trade_risk_check, live_safety_checklist
 
@@ -37,14 +39,49 @@ router = APIRouter()
 
 
 class NdspWebhookSignalRequest(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     user_email: str
-    symbol: str
-    side: str
-    notional_usdt: float
+    symbol: str | None = None
+    side: str | None = None
+    notional_usdt: float = 10.0
+    confidence: float | None = None
     reason: str = "NDSP webhook signal"
     ndsp_layer: str | None = None
     signal_id: str | None = None
+    context: dict[str, Any] | None = None
+    decision: dict[str, Any] | None = None
+    ndsp_decision: dict[str, Any] | None = None
+    execution: dict[str, Any] | None = None
+    market_alignment: dict[str, Any] | None = None
+    states: dict[str, Any] | None = None
+    explanation: dict[str, Any] | None = None
+    meta: dict[str, Any] | None = None
 
+
+def _payload_dict(payload: BaseModel | dict[str, Any]) -> dict[str, Any]:
+    if isinstance(payload, dict):
+        return payload
+    return payload.model_dump(mode="python", exclude_none=True)
+
+
+def _payload_symbol(payload_data: dict[str, Any]) -> str:
+    meta = payload_data.get("meta") if isinstance(payload_data.get("meta"), dict) else {}
+    symbol = payload_data.get("symbol") or meta.get("symbol_id") or meta.get("symbol")
+    if not symbol:
+        raise HTTPException(status_code=400, detail="NDSP payload symbol is required")
+    return normalize_symbol(str(symbol))
+
+
+def _payload_reason(payload_data: dict[str, Any], default_reason: str) -> str:
+    reason = payload_data.get("reason") or default_reason
+    ndsp_layer = payload_data.get("ndsp_layer")
+    signal_id = payload_data.get("signal_id")
+    if ndsp_layer:
+        reason = f"{reason} | NDSP Layer: {ndsp_layer}"
+    if signal_id:
+        reason = f"{reason} | Signal ID: {signal_id}"
+    return reason
 
 
 def require_admin(user: User):
@@ -174,29 +211,41 @@ async def ndsp_signal(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    normalized_symbol = normalize_symbol(payload.symbol)
-    pre_trade_risk_check(db, user, normalized_symbol, payload.side)
+    payload_data = _payload_dict(payload)
+    interpretation = interpret_ndsp_payload(payload_data)
+    normalized_symbol = _payload_symbol(payload_data)
 
-    reason = payload.reason
-    if payload.ndsp_layer:
-        reason = f"{reason} | NDSP Layer: {payload.ndsp_layer}"
+    if interpretation["action"] == "NO_TRADE":
+        return {
+            "status": "no_trade",
+            "symbol": normalized_symbol,
+            "side": "NO_TRADE",
+            "action": "NO_TRADE",
+            "reason": interpretation["reason"],
+            "interpretation": interpretation,
+        }
+
+    action = interpretation["action"]
+    pre_trade_risk_check(db, user, normalized_symbol, action)
 
     trade = await execute_signal(
         db=db,
         user=user,
         symbol=normalized_symbol,
-        side=payload.side,
-        notional_usdt=payload.notional_usdt,
-        reason=reason,
+        side=action,
+        notional_usdt=float(payload_data.get("notional_usdt") or 10.0),
+        reason=_payload_reason(payload_data, interpretation["reason"]),
     )
 
     return {
         "id": trade.id,
         "symbol": trade.symbol,
         "side": trade.side,
+        "action": action,
         "status": trade.status,
         "mode": trade.mode,
         "reason": trade.reason,
+        "interpretation": interpretation,
     }
 
 
@@ -256,6 +305,7 @@ async def ndsp_webhook_signal(
     if x_ndsp_secret != settings.NDSP_WEBHOOK_SECRET:
         raise HTTPException(status_code=401, detail="Invalid NDSP webhook secret")
 
+    payload_data = _payload_dict(payload)
     target_user = db.query(User).filter(User.email == payload.user_email).first()
     if not target_user:
         raise HTTPException(status_code=404, detail="Target user not found")
@@ -263,22 +313,30 @@ async def ndsp_webhook_signal(
     if not target_user.is_active:
         raise HTTPException(status_code=403, detail="Target user is disabled")
 
-    reason = payload.reason
-    if payload.ndsp_layer:
-        reason = f"{reason} | NDSP Layer: {payload.ndsp_layer}"
-    if payload.signal_id:
-        reason = f"{reason} | Signal ID: {payload.signal_id}"
+    interpretation = interpret_ndsp_payload(payload_data)
+    normalized_symbol = _payload_symbol(payload_data)
 
-    normalized_symbol = normalize_symbol(payload.symbol)
-    pre_trade_risk_check(db, target_user, normalized_symbol, payload.side)
+    if interpretation["action"] == "NO_TRADE":
+        return {
+            "status": "no_trade",
+            "user_email": target_user.email,
+            "symbol": normalized_symbol,
+            "side": "NO_TRADE",
+            "action": "NO_TRADE",
+            "reason": interpretation["reason"],
+            "interpretation": interpretation,
+        }
+
+    action = interpretation["action"]
+    pre_trade_risk_check(db, target_user, normalized_symbol, action)
 
     trade = await execute_signal(
         db=db,
         user=target_user,
         symbol=normalized_symbol,
-        side=payload.side,
-        notional_usdt=payload.notional_usdt,
-        reason=reason,
+        side=action,
+        notional_usdt=float(payload_data.get("notional_usdt") or 10.0),
+        reason=_payload_reason(payload_data, interpretation["reason"]),
     )
 
     return {
@@ -287,9 +345,11 @@ async def ndsp_webhook_signal(
         "user_email": target_user.email,
         "symbol": trade.symbol,
         "side": trade.side,
+        "action": action,
         "mode": trade.mode,
         "trade_status": trade.status,
         "reason": trade.reason,
+        "interpretation": interpretation,
     }
 
 
@@ -611,9 +671,29 @@ def ndsp_webhook_config(
         "example_body": {
             "user_email": user.email,
             "symbol": "ETH/USDT",
-            "side": "BUY",
             "notional_usdt": 10,
             "reason": "NDSP webhook signal",
+            "decision": {
+                "direction": "bullish",
+                "confidence": 85,
+                "grade": "A",
+                "quality_label": "Valid",
+                "execution_allowed": True
+            },
+            "execution": {
+                "allowed": True,
+                "mode": "decision_support_only"
+            },
+            "market_alignment": {
+                "signal": "CONTINUATION_SIGNAL"
+            },
+            "states": {
+                "risk_state": "normal",
+                "system_state": "live"
+            },
+            "explanation": {
+                "guidance": "Decision support context only; not a primary execution signal."
+            },
             "ndsp_layer": "layer-1",
             "signal_id": "ndsp-signal-001"
         }

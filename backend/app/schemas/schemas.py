@@ -1,4 +1,6 @@
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from typing import Any
+
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 
 class RegisterRequest(BaseModel):
@@ -57,11 +59,22 @@ class ChangePasswordRequest(BaseModel):
 
 
 class NdspSignalRequest(BaseModel):
-    symbol: str
-    side: str
-    notional_usdt: float
+    model_config = ConfigDict(extra="allow")
+
+    symbol: str | None = None
+    side: str | None = None
+    notional_usdt: float = 10.0
+    confidence: float | None = None
     reason: str = "NDSP signal"
     ndsp_layer: str | None = None
+    context: dict[str, Any] | None = None
+    decision: dict[str, Any] | None = None
+    ndsp_decision: dict[str, Any] | None = None
+    execution: dict[str, Any] | None = None
+    market_alignment: dict[str, Any] | None = None
+    states: dict[str, Any] | None = None
+    explanation: dict[str, Any] | None = None
+    meta: dict[str, Any] | None = None
 
 
 class LiveSafetyConfirmRequest(BaseModel):

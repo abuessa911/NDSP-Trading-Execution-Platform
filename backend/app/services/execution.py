@@ -1,3 +1,4 @@
+import ccxt
 import json
 from sqlalchemy.orm import Session
 from app.models.models import User, TradeLog
