@@ -11,6 +11,139 @@ type User = {
   settings_configured: boolean;
 };
 
+
+
+
+function LaunchSafetyGuide() {
+  return (
+    <div className="card">
+      <h2>كيف يتم التشغيل</h2>
+
+      <div style={{ lineHeight: 1.9, color: "#dbeafe" }}>
+        <div className="card">
+          <h3>1. وضع التشغيل</h3>
+          <p>
+            إذا كان <code>BINANCE_MODE</code> مضبوطًا على <code>live</code> فهذا يعني أن النظام
+            يستطيع تنفيذ صفقات حقيقية عند وصول إشارة صالحة ومسموحة.
+          </p>
+          <ul>
+            <li><strong>dryrun:</strong> محاكاة فقط بدون تنفيذ حقيقي.</li>
+            <li><strong>testnet:</strong> اختبار على Binance Testnet.</li>
+            <li><strong>live:</strong> تنفيذ حقيقي بأموال حقيقية.</li>
+            <li><strong>Live Safety:</strong> حتى لو كان النظام في وضع live، لن يسمح بتنفيذ صفقات حقيقية إلا بعد تأكيد مخاطر التداول الحقيقي بكتابة: <code>I UNDERSTAND LIVE RISK</code>.</li>
+          </ul>
+        </div>
+
+        <div className="card">
+          <h3>2. مفاتيح Binance</h3>
+          <ul>
+            <li>استخدم API Key حقيقي فقط عند الإطلاق الحقيقي.</li>
+            <li>لا تفعّل صلاحية Withdraw أبدًا.</li>
+            <li>فعّل IP whitelist على IP السيرفر: <code>161.97.144.189</code>.</li>
+            <li>لـ Spot تأكد من تفعيل صلاحية Spot Trading.</li>
+            <li>لـ Futures تحتاج مفاتيح وصلاحيات Futures منفصلة.</li>
+          </ul>
+        </div>
+
+        <div className="card">
+          <h3>3. البداية الآمنة</h3>
+          <ul>
+            <li>ابدأ بـ Spot فقط.</li>
+            <li>اجعل قيمة الصفقة صغيرة جدًا، مثل 5 أو 10 USDT.</li>
+            <li>اجعل أقصى عدد صفقات يوميًا 1 أو 2 في البداية.</li>
+            <li>لا تستخدم Futures Live قبل اختبار Futures Testnet بنجاح.</li>
+              <li>لا يسمح النظام بتنفيذ صفقات حقيقية إلا بعد تأكيد Live Safety بكتابة: <code>I UNDERSTAND LIVE RISK</code>.</li>
+          </ul>
+        </div>
+
+        <div className="card">
+          <h3>4. اختيار العملات</h3>
+          <ul>
+            <li><code>BTC/USDT,ETH/USDT</code>: يسمح فقط بهذه الأزواج.</li>
+            <li><code>ALL_SPOT_USDT</code>: يسمح بجميع أزواج Spot USDT في Binance.</li>
+            <li><code>ALL_FUTURES_USDT</code>: يسمح بجميع أزواج Futures USDT في Binance.</li>
+            <li><code>ALL_USDT</code>: يسمح بأزواج USDT حسب نوع السوق المختار.</li>
+          </ul>
+        </div>
+
+        <div className="card">
+          <h3>5. خطوات التشغيل</h3>
+          <ol>
+            <li>سجّل الدخول.</li>
+            <li>أضف Binance API Key و Secret.</li>
+            <li>اذهب إلى الإعدادات واختر نوع السوق.</li>
+            <li>اختر الأزواج المسموحة.</li>
+            <li>حدد قيمة الصفقة والحدود اليومية.</li>
+            <li>اضغط حفظ الإعدادات.</li>
+            <li>اختبر صفقة صغيرة جدًا.</li>
+            <li>راقب السجلات قبل الاعتماد على التشغيل الحقيقي.</li>
+          </ol>
+        </div>
+
+        <p style={{ color: "#fbbf24", fontWeight: 800 }}>
+          تنبيه مهم: إذا كان النظام في وضع live، فأي إشارة صالحة قد تنفذ صفقة حقيقية.
+          استخدم Spot أولًا ولا تستخدم Futures Live إلا بعد التأكد من المفاتيح والصلاحيات والاختبارات.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function LaunchSafetyModal({ onClose, onOpenGuide }: { onClose: () => void; onOpenGuide: () => void }) {
+  return (
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 9999,
+        background: "rgba(2, 6, 23, 0.86)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 18,
+      }}
+    >
+      <div
+        className="card"
+        style={{
+          width: "min(760px, 100%)",
+          maxHeight: "88vh",
+          overflow: "auto",
+          border: "1px solid rgba(251, 191, 36, 0.45)",
+          boxShadow: "0 20px 80px rgba(0,0,0,0.45)",
+        }}
+      >
+        <h2 style={{ color: "#fbbf24" }}>تنبيه قبل التشغيل الحقيقي</h2>
+
+        <p style={{ lineHeight: 1.9 }}>
+          النظام قد يكون في وضع <code>live</code>. هذا يعني أن أي إشارة صالحة ومسموحة
+          قد تنفذ صفقة حقيقية عبر Binance API.
+        </p>
+
+        <ul style={{ lineHeight: 1.9 }}>
+          <li>لا تستخدم API Key فيه صلاحية Withdraw.</li>
+          <li>فعّل IP whitelist على IP السيرفر: <code>161.97.144.189</code>.</li>
+          <li>ابدأ بـ Spot فقط.</li>
+          <li>ابدأ بقيمة صغيرة جدًا مثل 5 أو 10 USDT.</li>
+          <li>لا تستخدم Futures Live قبل اختبار Futures Testnet بنجاح.</li>
+              <li>لا يسمح النظام بتنفيذ صفقات حقيقية إلا بعد تأكيد Live Safety بكتابة: <code>I UNDERSTAND LIVE RISK</code>.</li>
+          <li>تأكد من اختيار الأزواج المسموحة والحدود اليومية قبل إرسال أي إشارة.</li>
+        </ul>
+
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 18 }}>
+          <button className="btn" onClick={onClose}>
+            فهمت، إغلاق
+          </button>
+          <button className="btn btn-secondary" onClick={onOpenGuide}>
+            افتح كيف يتم التشغيل
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 export default function HomePage() {
 const [tokenReady, setTokenReady] = useState(false);
   const [tab, setTab] = useState("dashboard");
@@ -24,6 +157,7 @@ const [tokenReady, setTokenReady] = useState(false);
   const [settings, setSettings] = useState<any>(null);
   const [trades, setTrades] = useState<any[]>([]);
   const [message, setMessage] = useState("");
+  const [showLaunchNotice, setShowLaunchNotice] = useState(false);
   const [availableSymbols, setAvailableSymbols] = useState<string[]>([]);
   const [symbolsLoading, setSymbolsLoading] = useState(false);
   const [binanceKey, setBinanceKey] = useState("");
@@ -109,6 +243,7 @@ const [tokenReady, setTokenReady] = useState(false);
 
       setToken(data.access_token);
       setMessage("تم تسجيل الدخول بنجاح");
+      setShowLaunchNotice(true);
       await loadAll();
     } catch (e: any) {
       setMessage("فشل تسجيل الدخول: " + e.message);
@@ -432,7 +567,83 @@ const [tokenReady, setTokenReady] = useState(false);
             </div>
           )}
 
-          {message && <p className="auth-message">{message}</p>}
+  
+        {/* HOWTO_VISIBLE_BLOCK */}
+        {tab === "howto" && (
+          <div className="card">
+            <h2>كيف يتم التشغيل</h2>
+
+            <div style={{ lineHeight: 1.9, color: "#dbeafe" }}>
+              <div className="card">
+                <h3>1. وضع التشغيل</h3>
+                <p>
+                  إذا كان <code>BINANCE_MODE</code> مضبوطًا على <code>live</code> فهذا يعني أن النظام
+                  يستطيع تنفيذ صفقات حقيقية عند وصول إشارة صالحة ومسموحة.
+                </p>
+                <ul>
+                  <li><strong>dryrun:</strong> محاكاة فقط بدون تنفيذ حقيقي.</li>
+                  <li><strong>testnet:</strong> اختبار على Binance Testnet.</li>
+                  <li><strong>live:</strong> تنفيذ حقيقي بأموال حقيقية.</li>
+            <li><strong>Live Safety:</strong> حتى لو كان النظام في وضع live، لن يسمح بتنفيذ صفقات حقيقية إلا بعد تأكيد مخاطر التداول الحقيقي بكتابة: <code>I UNDERSTAND LIVE RISK</code>.</li>
+                </ul>
+              </div>
+
+              <div className="card">
+                <h3>2. مفاتيح Binance</h3>
+                <ul>
+                  <li>استخدم API Key حقيقي فقط عند الإطلاق الحقيقي.</li>
+                  <li>لا تفعّل صلاحية Withdraw أبدًا.</li>
+                  <li>فعّل IP whitelist على IP السيرفر: <code>161.97.144.189</code>.</li>
+                  <li>لـ Spot تأكد من تفعيل صلاحية Spot Trading.</li>
+                  <li>لـ Futures تحتاج مفاتيح وصلاحيات Futures منفصلة.</li>
+                </ul>
+              </div>
+
+              <div className="card">
+                <h3>3. البداية الآمنة</h3>
+                <ul>
+                  <li>ابدأ بـ Spot فقط.</li>
+                  <li>اجعل قيمة الصفقة صغيرة جدًا مثل 5 أو 10 USDT.</li>
+                  <li>اجعل أقصى عدد صفقات يوميًا 1 أو 2 في البداية.</li>
+                  <li>لا تستخدم Futures Live قبل اختبار Futures Testnet بنجاح.</li>
+              <li>لا يسمح النظام بتنفيذ صفقات حقيقية إلا بعد تأكيد Live Safety بكتابة: <code>I UNDERSTAND LIVE RISK</code>.</li>
+                </ul>
+              </div>
+
+              <div className="card">
+                <h3>4. اختيار العملات</h3>
+                <ul>
+                  <li><code>BTC/USDT,ETH/USDT</code>: يسمح فقط بهذه الأزواج.</li>
+                  <li><code>ALL_SPOT_USDT</code>: يسمح بجميع أزواج Spot USDT في Binance.</li>
+                  <li><code>ALL_FUTURES_USDT</code>: يسمح بجميع أزواج Futures USDT في Binance.</li>
+                  <li><code>ALL_USDT</code>: يسمح بأزواج USDT حسب نوع السوق المختار.</li>
+                </ul>
+              </div>
+
+              <div className="card">
+                <h3>5. خطوات التشغيل</h3>
+                <ol>
+                  <li>سجّل الدخول.</li>
+                  <li>أضف Binance API Key و Secret.</li>
+                  <li>اذهب إلى الإعدادات واختر نوع السوق.</li>
+                  <li>اختر الأزواج المسموحة.</li>
+                  <li>حدد قيمة الصفقة والحدود اليومية.</li>
+                  <li>اضغط حفظ الإعدادات.</li>
+                  <li>اذهب إلى صفحة Safety / Live Safety وأكد مخاطر التداول الحقيقي بكتابة: <code>I UNDERSTAND LIVE RISK</code>.</li>
+                  <li>اختبر صفقة صغيرة جدًا.</li>
+                  <li>راقب السجلات قبل الاعتماد على التشغيل الحقيقي.</li>
+                </ol>
+              </div>
+
+              <p style={{ color: "#fbbf24", fontWeight: 800 }}>
+                تنبيه مهم: إذا كان النظام في وضع live، فأي إشارة صالحة قد تنفذ صفقة حقيقية.
+                استخدم Spot أولًا ولا تستخدم Futures Live إلا بعد التأكد من المفاتيح والصلاحيات والاختبارات.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {message && <p className="auth-message">{message}</p>}
 
           <div className="auth-warning">
             لا تستخدم مفاتيح Binance Live قبل تفعيل إدارة المخاطر الكاملة.
@@ -444,7 +655,132 @@ const [tokenReady, setTokenReady] = useState(false);
 
   return (
     <main className="container">
-      <div className="card">
+      {/* LAUNCH_NOTICE_MODAL_VISIBLE */}
+      {showLaunchNotice && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 9999,
+            background: "rgba(2, 6, 23, 0.88)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 18,
+          }}
+        >
+          <div
+            className="card"
+            style={{
+              width: "min(760px, 100%)",
+              maxHeight: "88vh",
+              overflow: "auto",
+              border: "1px solid rgba(251, 191, 36, 0.45)",
+            }}
+          >
+            <h2 style={{ color: "#fbbf24" }}>تنبيه قبل التشغيل الحقيقي</h2>
+
+            <p style={{ lineHeight: 1.9 }}>
+              النظام في وضع live قد ينفذ صفقات حقيقية عند وصول إشارة صالحة ومسموحة.
+            </p>
+
+            <ul style={{ lineHeight: 1.9 }}>
+              <li>لا تستخدم API Key فيه صلاحية Withdraw.</li>
+              <li>فعّل IP whitelist على IP السيرفر: <code>161.97.144.189</code>.</li>
+              <li>ابدأ بـ Spot فقط.</li>
+              <li>ابدأ بقيمة صغيرة جدًا مثل 5 أو 10 USDT.</li>
+              <li>لا تستخدم Futures Live قبل اختبار Futures Testnet بنجاح.</li>
+              <li>لا يسمح النظام بتنفيذ صفقات حقيقية إلا بعد تأكيد Live Safety بكتابة: <code>I UNDERSTAND LIVE RISK</code>.</li>
+            </ul>
+
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 18 }}>
+              <button className="btn" onClick={() => setShowLaunchNotice(false)}>
+                فهمت، إغلاق
+              </button>
+
+              <button
+                className="btn btn-secondary"
+                onClick={() => {
+                  setShowLaunchNotice(false);
+                  setMessage("");
+                  setTab("howto");
+                }}
+              >
+                افتح كيف يتم التشغيل
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showLaunchNotice && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 9999,
+            background: "rgba(2, 6, 23, 0.88)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 18,
+          }}
+        >
+          <div
+            className="card"
+            style={{
+              width: "min(760px, 100%)",
+              maxHeight: "88vh",
+              overflow: "auto",
+              border: "1px solid rgba(251, 191, 36, 0.45)",
+              boxShadow: "0 20px 80px rgba(0,0,0,0.45)",
+            }}
+          >
+            <h2 style={{ color: "#fbbf24" }}>تنبيه قبل التشغيل الحقيقي</h2>
+
+            <p style={{ lineHeight: 1.9 }}>
+              النظام قد يكون في وضع <code>live</code>. هذا يعني أن أي إشارة صالحة ومسموحة
+              قد تنفذ صفقة حقيقية عبر Binance API.
+            </p>
+
+            <ul style={{ lineHeight: 1.9 }}>
+              <li>لا تستخدم API Key فيه صلاحية Withdraw.</li>
+              <li>فعّل IP whitelist على IP السيرفر: <code>161.97.144.189</code>.</li>
+              <li>ابدأ بـ Spot فقط.</li>
+              <li>ابدأ بقيمة صغيرة جدًا مثل 5 أو 10 USDT.</li>
+              <li>لا تستخدم Futures Live قبل اختبار Futures Testnet بنجاح.</li>
+              <li>لا يسمح النظام بتنفيذ صفقات حقيقية إلا بعد تأكيد Live Safety بكتابة: <code>I UNDERSTAND LIVE RISK</code>.</li>
+              <li>تأكد من اختيار الأزواج المسموحة والحدود اليومية قبل إرسال أي إشارة.</li>
+            </ul>
+
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 18 }}>
+              <button
+                className="btn"
+                onClick={() => {
+                  sessionStorage.setItem(`ndsp_launch_notice_seen_${me.email}`, "1");
+                  setShowLaunchNotice(false);
+                }}
+              >
+                فهمت، إغلاق
+              </button>
+
+              <button
+                className="btn btn-secondary"
+                onClick={() => {
+                  sessionStorage.setItem(`ndsp_launch_notice_seen_${me.email}`, "1");
+                  setShowLaunchNotice(false);
+                  setMessage("");
+                  setTab("howto");
+                }}
+              >
+                افتح كيف يتم التشغيل
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+<div className="card">
         <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
           <div>
             <h1 style={{ margin: 0 }}>NDSP Trading Bot</h1>
@@ -463,15 +799,91 @@ const [tokenReady, setTokenReady] = useState(false);
           ["trades", "الصفقات"],
           ["alerts", "التنبيهات"],
           ["risk", "إيقاف طارئ"],
-          ["links", "روابط متقدمة"]
+          ["links", "روابط متقدمة"],
+            ["howto", "كيف يتم التشغيل"]
         ].map(([id, label]) => (
-          <button key={id} className={tab === id ? "active" : ""} onClick={() => setTab(id)}>
+          <button key={id} className={tab === id ? "active" : ""} onClick={() => { setTab(id); if (id === "howto") setMessage(""); }}>
             {label}
           </button>
         ))}
       </div>
 
-      {message && (
+        {/* HOWTO_DIRECT_RENDER */}
+        {tab === "howto" && (
+          <div className="card">
+            <h2>كيف يتم التشغيل</h2>
+
+            <div style={{ lineHeight: 1.9, color: "#dbeafe" }}>
+              <div className="card">
+                <h3>1. وضع التشغيل</h3>
+                <p>
+                  إذا كان <code>BINANCE_MODE</code> مضبوطًا على <code>live</code> فهذا يعني أن النظام
+                  يستطيع تنفيذ صفقات حقيقية عند وصول إشارة صالحة ومسموحة.
+                </p>
+                <ul>
+                  <li><strong>dryrun:</strong> محاكاة فقط بدون تنفيذ حقيقي.</li>
+                  <li><strong>testnet:</strong> اختبار على Binance Testnet.</li>
+                  <li><strong>live:</strong> تنفيذ حقيقي بأموال حقيقية.</li>
+            <li><strong>Live Safety:</strong> حتى لو كان النظام في وضع live، لن يسمح بتنفيذ صفقات حقيقية إلا بعد تأكيد مخاطر التداول الحقيقي بكتابة: <code>I UNDERSTAND LIVE RISK</code>.</li>
+                </ul>
+              </div>
+
+              <div className="card">
+                <h3>2. مفاتيح Binance</h3>
+                <ul>
+                  <li>استخدم API Key حقيقي فقط عند الإطلاق الحقيقي.</li>
+                  <li>لا تفعّل صلاحية Withdraw أبدًا.</li>
+                  <li>فعّل IP whitelist على IP السيرفر: <code>161.97.144.189</code>.</li>
+                  <li>لـ Spot تأكد من تفعيل صلاحية Spot Trading.</li>
+                  <li>لـ Futures تحتاج مفاتيح وصلاحيات Futures منفصلة.</li>
+                </ul>
+              </div>
+
+              <div className="card">
+                <h3>3. البداية الآمنة</h3>
+                <ul>
+                  <li>ابدأ بـ Spot فقط.</li>
+                  <li>اجعل قيمة الصفقة صغيرة جدًا مثل 5 أو 10 USDT.</li>
+                  <li>اجعل أقصى عدد صفقات يوميًا 1 أو 2 في البداية.</li>
+                  <li>لا تستخدم Futures Live قبل اختبار Futures Testnet بنجاح.</li>
+              <li>لا يسمح النظام بتنفيذ صفقات حقيقية إلا بعد تأكيد Live Safety بكتابة: <code>I UNDERSTAND LIVE RISK</code>.</li>
+                </ul>
+              </div>
+
+              <div className="card">
+                <h3>4. اختيار العملات</h3>
+                <ul>
+                  <li><code>BTC/USDT,ETH/USDT</code>: يسمح فقط بهذه الأزواج.</li>
+                  <li><code>ALL_SPOT_USDT</code>: يسمح بجميع أزواج Spot USDT في Binance.</li>
+                  <li><code>ALL_FUTURES_USDT</code>: يسمح بجميع أزواج Futures USDT في Binance.</li>
+                  <li><code>ALL_USDT</code>: يسمح بأزواج USDT حسب نوع السوق المختار.</li>
+                </ul>
+              </div>
+
+              <div className="card">
+                <h3>5. خطوات التشغيل</h3>
+                <ol>
+                  <li>سجّل الدخول.</li>
+                  <li>أضف Binance API Key و Secret.</li>
+                  <li>اذهب إلى الإعدادات واختر نوع السوق.</li>
+                  <li>اختر الأزواج المسموحة.</li>
+                  <li>حدد قيمة الصفقة والحدود اليومية.</li>
+                  <li>اضغط حفظ الإعدادات.</li>
+                  <li>اذهب إلى صفحة Safety / Live Safety وأكد مخاطر التداول الحقيقي بكتابة: <code>I UNDERSTAND LIVE RISK</code>.</li>
+                  <li>اختبر صفقة صغيرة جدًا.</li>
+                  <li>راقب السجلات قبل الاعتماد على التشغيل الحقيقي.</li>
+                </ol>
+              </div>
+
+              <p style={{ color: "#fbbf24", fontWeight: 800 }}>
+                تنبيه مهم: إذا كان النظام في وضع live، فأي إشارة صالحة قد تنفذ صفقة حقيقية.
+                استخدم Spot أولًا ولا تستخدم Futures Live إلا بعد التأكد من المفاتيح والصلاحيات والاختبارات.
+              </p>
+            </div>
+          </div>
+        )}
+
+      {message && tab !== "howto" && (
         <div className="card">
           <strong>{message}</strong>
         </div>
