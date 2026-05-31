@@ -10,9 +10,9 @@ def _decision_root(payload: dict[str, Any]) -> dict[str, Any]:
 
     ndsp_decision = payload.get("ndsp_decision")
     if isinstance(ndsp_decision, dict):
-        nested = ndsp_decision.get("decision")
-        if isinstance(nested, dict):
-            return nested
+        nested_decision = ndsp_decision.get("decision")
+        if isinstance(nested_decision, dict):
+            return nested_decision
         return ndsp_decision
 
     return {}
@@ -31,10 +31,10 @@ def _as_bool(value: Any) -> bool | None:
     if isinstance(value, bool):
         return value
     if isinstance(value, str):
-        v = value.strip().lower()
-        if v in {"true", "1", "yes", "y", "allowed"}:
+        normalized = value.strip().lower()
+        if normalized in {"true", "1", "yes", "y", "allowed"}:
             return True
-        if v in {"false", "0", "no", "n", "blocked", "denied"}:
+        if normalized in {"false", "0", "no", "n", "blocked", "denied"}:
             return False
     return None
 
@@ -60,12 +60,19 @@ def _no_trade(source_direction: Any, confidence: float | None, reason: str) -> d
 
 
 def interpret_ndsp_payload(payload: dict, min_confidence: int = 80) -> dict:
+    """
+    Interpret a full NDSP decision-support payload into an internal action.
+
+    NDSP remains decision_support_only: this function only maps structured
+    direction fields to BUY/SELL/NO_TRADE after decision-support gates pass.
+    Free-text explanation.guidance is intentionally not used as a primary
+    execution signal.
+    """
     if not isinstance(payload, dict):
         return _no_trade(None, None, "Invalid payload")
 
     decision = _decision_root(payload)
     legacy_side = payload.get("side")
-
     source_direction = decision.get("direction")
     confidence = _as_number(decision.get("confidence"))
     if confidence is None:
@@ -101,7 +108,6 @@ def interpret_ndsp_payload(payload: dict, min_confidence: int = 80) -> dict:
 
     if confidence is None and not legacy_side:
         return _no_trade(source_direction, confidence, "Missing confidence")
-
     if confidence is not None and confidence < min_confidence:
         return _no_trade(source_direction, confidence, f"Confidence below {min_confidence}")
 
@@ -129,3 +135,4 @@ def interpret_ndsp_payload(payload: dict, min_confidence: int = 80) -> dict:
         "reason": "NDSP decision-support payload accepted",
         "ndsp_decision_support": True,
     }
+
