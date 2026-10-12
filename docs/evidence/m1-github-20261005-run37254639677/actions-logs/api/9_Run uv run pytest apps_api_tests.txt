@@ -1,0 +1,36 @@
+﻿2026-10-05T02:15:23.5190630Z ##[group]Run uv run pytest apps/api/tests
+2026-10-05T02:15:23.5190979Z [36;1muv run pytest apps/api/tests[0m
+2026-10-05T02:15:23.5251394Z shell: /usr/bin/bash -e {0}
+2026-10-05T02:15:23.5251617Z env:
+2026-10-05T02:15:23.5251853Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:15:23.5252250Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+2026-10-05T02:15:23.5252621Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:15:23.5252930Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:15:23.5253229Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:15:23.5253537Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+2026-10-05T02:15:23.5253836Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+2026-10-05T02:15:23.5254087Z ##[endgroup]
+2026-10-05T02:15:26.0892424Z ============================= test session starts ==============================
+2026-10-05T02:15:26.0893709Z platform linux -- Python 3.12.14, pytest-8.3.5, pluggy-1.6.0
+2026-10-05T02:15:26.0901243Z rootdir: /home/runner/work/nex/nex
+2026-10-05T02:15:26.0901868Z configfile: pyproject.toml
+2026-10-05T02:15:26.0902721Z plugins: asyncio-0.25.3, anyio-4.15.1
+2026-10-05T02:15:26.0903890Z asyncio: mode=Mode.AUTO, asyncio_default_fixture_loop_scope=function
+2026-10-05T02:15:26.0905050Z collected 32 items
+2026-10-05T02:15:26.0905514Z 
+2026-10-05T02:15:26.0959653Z apps/api/tests/test_config.py .....                                      [ 15%]
+2026-10-05T02:15:26.1136689Z apps/api/tests/test_contract.py .                                        [ 18%]
+2026-10-05T02:15:26.1415428Z apps/api/tests/test_health.py ..                                         [ 25%]
+2026-10-05T02:15:26.6115554Z apps/api/tests/test_oidc.py .........                                    [ 53%]
+2026-10-05T02:15:26.6225846Z apps/api/tests/test_postgres_m1.py sssssss                               [ 75%]
+2026-10-05T02:15:26.6315150Z apps/api/tests/test_redaction.py ....                                    [ 87%]
+2026-10-05T02:15:26.6343321Z apps/api/tests/test_secrets.py ...                                       [ 96%]
+2026-10-05T02:15:26.6525329Z apps/api/tests/test_tenant_isolation.py .                                [100%]
+2026-10-05T02:15:26.6525780Z 
+2026-10-05T02:15:26.6544817Z =============================== warnings summary ===============================
+2026-10-05T02:15:26.6545576Z .venv/lib/python3.12/site-packages/starlette/testclient.py:37
+2026-10-05T02:15:26.6552098Z   /home/runner/work/nex/nex/.venv/lib/python3.12/site-packages/starlette/testclient.py:37: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+2026-10-05T02:15:26.6574837Z     _PortalFactoryType = typing.Callable[[], typing.ContextManager[anyio.abc.BlockingPortal]]
+2026-10-05T02:15:26.6579218Z 
+2026-10-05T02:15:26.6579734Z -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+2026-10-05T02:15:26.6580800Z =================== 25 passed, 7 skipped, 1 warning in 1.15s ===================

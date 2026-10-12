@@ -1,0 +1,19 @@
+{
+  "javascript_errors": [
+    "UNCLASSIFIED_JAVASCRIPT_ERROR"
+  ],
+  "responses": [
+    {
+      "path": "/",
+      "status": 200
+    },
+    {
+      "path": "/assets/index-B4kak9qM.js",
+      "status": 200
+    },
+    {
+      "path": "/assets/index-BK8KS85p.css",
+      "status": 200
+    }
+  ]
+}

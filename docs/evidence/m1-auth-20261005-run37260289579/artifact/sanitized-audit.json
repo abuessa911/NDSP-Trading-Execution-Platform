@@ -1,0 +1,366 @@
+[
+  {
+    "action": "INITIAL_OWNER_PROVISIONED",
+    "outcome": "SUCCESS",
+    "reason_code": null,
+    "actor_type": "SYSTEM",
+    "correlation_id": "a0872e39-49cc-4ca5-80a0-3a327db65fd8",
+    "metadata_json": {}
+  },
+  {
+    "action": "getBrowserSession",
+    "outcome": "DENIED",
+    "reason_code": "SESSION_REVOKED",
+    "actor_type": "SYSTEM",
+    "correlation_id": "c777c31b-2023-4ce2-bd11-a68464694e28",
+    "metadata_json": {
+      "status_code": 401
+    }
+  },
+  {
+    "action": "LOGIN_STARTED",
+    "outcome": "SUCCESS",
+    "reason_code": null,
+    "actor_type": "SYSTEM",
+    "correlation_id": "1b751a4b-87b4-4037-b5e2-e7ad30f23661",
+    "metadata_json": {}
+  },
+  {
+    "action": "LOGIN_SUCCESS",
+    "outcome": "SUCCESS",
+    "reason_code": null,
+    "actor_type": "USER",
+    "correlation_id": "ce90a2a2-35d9-4745-b186-53559220070a",
+    "metadata_json": {}
+  },
+  {
+    "action": "getBrowserSession",
+    "outcome": "SUCCESS",
+    "reason_code": null,
+    "actor_type": "USER",
+    "correlation_id": "c1d9e2fc-e886-4381-ae7b-ef7ac70fac1c",
+    "metadata_json": {
+      "status_code": 200
+    }
+  },
+  {
+    "action": "getMe",
+    "outcome": "SUCCESS",
+    "reason_code": null,
+    "actor_type": "USER",
+    "correlation_id": "59c0c9b2-a01d-46d4-9632-e59f76333015",
+    "metadata_json": {
+      "status_code": 200
+    }
+  },
+  {
+    "action": "getMe",
+    "outcome": "SUCCESS",
+    "reason_code": null,
+    "actor_type": "USER",
+    "correlation_id": "8e370c0e-704d-47c1-a32a-faf4854e3968",
+    "metadata_json": {
+      "status_code": 200
+    }
+  },
+  {
+    "action": "getBrowserSession",
+    "outcome": "SUCCESS",
+    "reason_code": null,
+    "actor_type": "USER",
+    "correlation_id": "3811bbd0-27ce-416d-9ea0-b933becad4b0",
+    "metadata_json": {
+      "status_code": 200
+    }
+  },
+  {
+    "action": "TOKEN_REFRESH_SUCCESS",
+    "outcome": "SUCCESS",
+    "reason_code": null,
+    "actor_type": "USER",
+    "correlation_id": "43634608-7402-4581-af46-81f28a395964",
+    "metadata_json": {}
+  },
+  {
+    "action": "getBrowserSession",
+    "outcome": "SUCCESS",
+    "reason_code": null,
+    "actor_type": "USER",
+    "correlation_id": "2fe246c8-e5b8-4206-99fe-f7687ec6c4ce",
+    "metadata_json": {
+      "status_code": 200
+    }
+  },
+  {
+    "action": "SESSION_REVOKED",
+    "outcome": "SUCCESS",
+    "reason_code": null,
+    "actor_type": "USER",
+    "correlation_id": "f0df22e9-8b4b-487e-ac43-7855559f4f49",
+    "metadata_json": {}
+  },
+  {
+    "action": "LOGOUT_SUCCESS",
+    "outcome": "SUCCESS",
+    "reason_code": null,
+    "actor_type": "USER",
+    "correlation_id": "f0df22e9-8b4b-487e-ac43-7855559f4f49",
+    "metadata_json": {}
+  },
+  {
+    "action": "getBrowserSession",
+    "outcome": "DENIED",
+    "reason_code": "SESSION_REVOKED",
+    "actor_type": "SYSTEM",
+    "correlation_id": "651324ed-d5b8-45d2-a155-340117b552c0",
+    "metadata_json": {
+      "status_code": 401
+    }
+  },
+  {
+    "action": "getMe",
+    "outcome": "DENIED",
+    "reason_code": "SESSION_REVOKED",
+    "actor_type": "SYSTEM",
+    "correlation_id": "b5954b5c-a64f-4101-b935-257169b2cea1",
+    "metadata_json": {
+      "status_code": 401
+    }
+  },
+  {
+    "action": "TOKEN_REFRESH_DENIED",
+    "outcome": "DENIED",
+    "reason_code": "SESSION_REVOKED",
+    "actor_type": "SYSTEM",
+    "correlation_id": "c60e3ad6-f76d-4c9f-97cc-33d7736a7d95",
+    "metadata_json": {}
+  },
+  {
+    "action": "getMe",
+    "outcome": "DENIED",
+    "reason_code": "SESSION_REVOKED",
+    "actor_type": "SYSTEM",
+    "correlation_id": "1d0403ff-55c5-4381-bd85-211916c0cf0c",
+    "metadata_json": {
+      "status_code": 401
+    }
+  },
+  {
+    "action": "LOGOUT_FAILED",
+    "outcome": "DENIED",
+    "reason_code": "SESSION_REVOKED",
+    "actor_type": "SYSTEM",
+    "correlation_id": "59511fae-340d-4ca9-9a4f-64572b4f9404",
+    "metadata_json": {}
+  },
+  {
+    "action": "LOGIN_STARTED",
+    "outcome": "SUCCESS",
+    "reason_code": null,
+    "actor_type": "SYSTEM",
+    "correlation_id": "daafaacc-02e0-4900-b8d4-aaa82ef99bbf",
+    "metadata_json": {}
+  },
+  {
+    "action": "getBrowserSession",
+    "outcome": "DENIED",
+    "reason_code": "SESSION_REVOKED",
+    "actor_type": "SYSTEM",
+    "correlation_id": "3a019b61-e3f8-4df0-9b65-b25314c581ef",
+    "metadata_json": {
+      "status_code": 401
+    }
+  },
+  {
+    "action": "getBrowserSession",
+    "outcome": "DENIED",
+    "reason_code": "SESSION_REVOKED",
+    "actor_type": "SYSTEM",
+    "correlation_id": "e76fe182-ec0c-4f78-9400-3e5629391ecf",
+    "metadata_json": {
+      "status_code": 401
+    }
+  },
+  {
+    "action": "LOGIN_STARTED",
+    "outcome": "SUCCESS",
+    "reason_code": null,
+    "actor_type": "SYSTEM",
+    "correlation_id": "78716f32-0e97-443f-bc6e-14b2b3d74355",
+    "metadata_json": {}
+  },
+  {
+    "action": "LOGIN_DENIED",
+    "outcome": "DENIED",
+    "reason_code": "USER_DISABLED",
+    "actor_type": "USER",
+    "correlation_id": "2fe20292-9c6f-48a9-9cb9-1473f534a3e4",
+    "metadata_json": {}
+  },
+  {
+    "action": "getBrowserSession",
+    "outcome": "DENIED",
+    "reason_code": "SESSION_REVOKED",
+    "actor_type": "SYSTEM",
+    "correlation_id": "0b95917d-854f-479a-b8c3-7d7be4b4057f",
+    "metadata_json": {
+      "status_code": 401
+    }
+  },
+  {
+    "action": "getMe",
+    "outcome": "DENIED",
+    "reason_code": "SESSION_REVOKED",
+    "actor_type": "SYSTEM",
+    "correlation_id": "6aab58b3-8def-41d8-951d-2e5dbff38955",
+    "metadata_json": {
+      "status_code": 401
+    }
+  },
+  {
+    "action": "getBrowserSession",
+    "outcome": "DENIED",
+    "reason_code": "SESSION_REVOKED",
+    "actor_type": "SYSTEM",
+    "correlation_id": "d4bd1446-0eff-4440-b66b-8936324404bb",
+    "metadata_json": {
+      "status_code": 401
+    }
+  },
+  {
+    "action": "LOGIN_STARTED",
+    "outcome": "SUCCESS",
+    "reason_code": null,
+    "actor_type": "SYSTEM",
+    "correlation_id": "9ea99347-6f66-40d8-8c76-530e9a9e2183",
+    "metadata_json": {}
+  },
+  {
+    "action": "LOGIN_DENIED",
+    "outcome": "DENIED",
+    "reason_code": "TENANT_DISABLED",
+    "actor_type": "USER",
+    "correlation_id": "aeb8bce6-18d7-41ae-84ae-9bd3f6bd7111",
+    "metadata_json": {}
+  },
+  {
+    "action": "getBrowserSession",
+    "outcome": "DENIED",
+    "reason_code": "SESSION_REVOKED",
+    "actor_type": "SYSTEM",
+    "correlation_id": "09dea777-5361-4d99-9567-a5147c0e32c7",
+    "metadata_json": {
+      "status_code": 401
+    }
+  },
+  {
+    "action": "getMe",
+    "outcome": "DENIED",
+    "reason_code": "SESSION_REVOKED",
+    "actor_type": "SYSTEM",
+    "correlation_id": "27cd037f-7da3-453e-8e27-630055af3491",
+    "metadata_json": {
+      "status_code": 401
+    }
+  },
+  {
+    "action": "getBrowserSession",
+    "outcome": "DENIED",
+    "reason_code": "SESSION_REVOKED",
+    "actor_type": "SYSTEM",
+    "correlation_id": "a2bb0724-a299-4fc5-bb99-20f9c102237a",
+    "metadata_json": {
+      "status_code": 401
+    }
+  },
+  {
+    "action": "LOGIN_STARTED",
+    "outcome": "SUCCESS",
+    "reason_code": null,
+    "actor_type": "SYSTEM",
+    "correlation_id": "6d37e892-0a3a-4d92-be40-759b029b6a40",
+    "metadata_json": {}
+  },
+  {
+    "action": "LOGIN_DENIED",
+    "outcome": "DENIED",
+    "reason_code": "OIDC_TOKEN_NOT_VALID",
+    "actor_type": "SYSTEM",
+    "correlation_id": "cf31e752-cacf-42bd-848d-c9885e52ed2f",
+    "metadata_json": {}
+  },
+  {
+    "action": "getBrowserSession",
+    "outcome": "DENIED",
+    "reason_code": "SESSION_REVOKED",
+    "actor_type": "SYSTEM",
+    "correlation_id": "a4cfddfd-e355-429b-a1be-129dbcca16fe",
+    "metadata_json": {
+      "status_code": 401
+    }
+  },
+  {
+    "action": "getMe",
+    "outcome": "DENIED",
+    "reason_code": "SESSION_REVOKED",
+    "actor_type": "SYSTEM",
+    "correlation_id": "002dd65f-46c0-42f8-bbcc-ed6b80e9f5de",
+    "metadata_json": {
+      "status_code": 401
+    }
+  },
+  {
+    "action": "getBrowserSession",
+    "outcome": "DENIED",
+    "reason_code": "SESSION_REVOKED",
+    "actor_type": "SYSTEM",
+    "correlation_id": "c9e6d9a3-c074-4237-b19c-6a2b007325d5",
+    "metadata_json": {
+      "status_code": 401
+    }
+  },
+  {
+    "action": "LOGIN_STARTED",
+    "outcome": "SUCCESS",
+    "reason_code": null,
+    "actor_type": "SYSTEM",
+    "correlation_id": "4e3a06f2-80af-402a-8d05-9253ff99b812",
+    "metadata_json": {}
+  },
+  {
+    "action": "LOGIN_FAILED",
+    "outcome": "FAILED",
+    "reason_code": "OIDC_EXCHANGE_FAILED",
+    "actor_type": "SYSTEM",
+    "correlation_id": "5823006b-1844-4f2a-aaf2-32b1b51877a1",
+    "metadata_json": {}
+  },
+  {
+    "action": "getBrowserSession",
+    "outcome": "DENIED",
+    "reason_code": "SESSION_REVOKED",
+    "actor_type": "SYSTEM",
+    "correlation_id": "9dc4fdfc-b111-4684-bcf2-557dd5e1c2a0",
+    "metadata_json": {
+      "status_code": 401
+    }
+  },
+  {
+    "action": "getMe",
+    "outcome": "DENIED",
+    "reason_code": "SESSION_REVOKED",
+    "actor_type": "SYSTEM",
+    "correlation_id": "c58a8fc9-98bb-4431-bc30-1bd940a9ac01",
+    "metadata_json": {
+      "status_code": 401
+    }
+  },
+  {
+    "action": "LOGIN_FAILED",
+    "outcome": "FAILED",
+    "reason_code": "OIDC_PROVIDER_UNAVAILABLE",
+    "actor_type": "SYSTEM",
+    "correlation_id": "c32f95d3-05f0-46cf-b9fe-e8f88e77100e",
+    "metadata_json": {}
+  }
+]

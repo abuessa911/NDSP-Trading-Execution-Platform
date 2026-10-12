@@ -1,0 +1,6 @@
+{
+  "verdict": "FAIL",
+  "checks": [],
+  "failed_stage": "fresh isolated setup",
+  "failure_class": "FileNotFoundError"
+}

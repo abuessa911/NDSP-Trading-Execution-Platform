@@ -1,0 +1,2 @@
+Provisioned initial tenant owner. Tenant ID: c3b6d9b6-1b02-4397-9bf3-8cda14c94267
+ Container nex-m1-isolated-verification-authci37259369563a1-db-1  Running

@@ -1,0 +1,42 @@
+[
+  {
+    "service": "api",
+    "image": "nex-m1-auth-test:isolated",
+    "image_id": "sha256:58437986f1a91de2e23bac09beb5c6da4d7be42609de150808bb1e8488a3d755",
+    "user": "10001:10001",
+    "running": true,
+    "health": "healthy"
+  },
+  {
+    "service": "db",
+    "image": "postgres:16-alpine",
+    "image_id": "sha256:81bd698b4594e751a3269e4dcd3e03a4a0ec0daf7b72e7aa1abd43cce9887542",
+    "user": "",
+    "running": true,
+    "health": "healthy"
+  },
+  {
+    "service": "gateway",
+    "image": "nginx:1.27-alpine",
+    "image_id": "sha256:6769dc3a703c719c1d2756bda113659be28ae16cf0da58dd5fd823d6b9a050ea",
+    "user": "",
+    "running": true,
+    "health": null
+  },
+  {
+    "service": "keycloak",
+    "image": "quay.io/keycloak/keycloak:26.6.3",
+    "image_id": "sha256:82b7258ee764bcee4668750297f122c3204048ef048aec853cfa88aeaf0df22b",
+    "user": "1000",
+    "running": true,
+    "health": null
+  },
+  {
+    "service": "redis",
+    "image": "redis:7-alpine",
+    "image_id": "sha256:f84b0c4678011602b9b98c227a4dcd5468bf8b088b02fdd4165cb7758bad8058",
+    "user": "",
+    "running": true,
+    "health": "healthy"
+  }
+]

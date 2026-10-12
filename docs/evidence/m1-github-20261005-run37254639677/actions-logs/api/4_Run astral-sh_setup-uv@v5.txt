@@ -1,0 +1,37 @@
+﻿2026-10-05T02:15:00.7008521Z ##[group]Run astral-sh/setup-uv@v5
+2026-10-05T02:15:00.7008795Z with:
+2026-10-05T02:15:00.7009020Z   enable-cache: true
+2026-10-05T02:15:00.7010968Z   github-token: ***
+2026-10-05T02:15:00.7011211Z   cache-dependency-glob: **/uv.lock
+**/requirements*.txt
+
+2026-10-05T02:15:00.7011484Z   prune-cache: true
+2026-10-05T02:15:00.7011672Z   ignore-nothing-to-cache: false
+2026-10-05T02:15:00.7011883Z   ignore-empty-workdir: false
+2026-10-05T02:15:00.7012076Z env:
+2026-10-05T02:15:00.7012291Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:15:00.7012668Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+2026-10-05T02:15:00.7013004Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:15:00.7013296Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:15:00.7013588Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:15:00.7013977Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+2026-10-05T02:15:00.7014525Z ##[endgroup]
+2026-10-05T02:15:01.1790053Z (node:1990) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-05T02:15:01.1808892Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-05T02:15:01.4907323Z Downloading uv from "https://github.com/astral-sh/uv/releases/download/0.12.23/uv-x86_64-unknown-linux-gnu.tar.gz" ...
+2026-10-05T02:15:02.0059638Z [command]/usr/bin/tar xz --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/fb7ccaf0-4c31-4b4b-8ebb-2cf4e6190ded -f /home/runner/work/_temp/8dd94179-7b55-4cfe-a22f-398b9606e518
+2026-10-05T02:15:03.1383911Z Added /home/runner/.local/bin to the path
+2026-10-05T02:15:03.1386634Z Added /opt/hostedtoolcache/uv/0.12.23/x86_64 to the path
+2026-10-05T02:15:03.1395601Z Set UV_CACHE_DIR to /home/runner/work/_temp/setup-uv-cache
+2026-10-05T02:15:03.1396312Z Successfully installed uv version 0.12.23
+2026-10-05T02:15:03.1397086Z Searching files using cache dependency glob: **/uv.lock,**/requirements*.txt
+2026-10-05T02:15:03.1847848Z /home/runner/work/nex/nex/uv.lock
+2026-10-05T02:15:03.1862985Z Found 1 files to hash.
+2026-10-05T02:15:03.8802082Z Trying to restore uv cache from GitHub Actions cache with key: setup-uv-1-x86_64-unknown-linux-gnu-3.12.14-926880dc79daf43d2a03a6a142b02420b02c4a08af7d3f24e903e7c547065837
+2026-10-05T02:15:03.9698643Z Cache hit for: setup-uv-1-x86_64-unknown-linux-gnu-3.12.14-926880dc79daf43d2a03a6a142b02420b02c4a08af7d3f24e903e7c547065837
+2026-10-05T02:15:03.9785806Z (node:1990) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-05T02:15:04.1235719Z Received 1439 of 1439 (100.0%), 0.0 MBs/sec
+2026-10-05T02:15:04.1236711Z Cache Size: ~0 MB (1439 B)
+2026-10-05T02:15:04.1272423Z [command]/usr/bin/tar -xf /home/runner/work/_temp/528b7bda-221c-4baa-8197-e753ace69436/cache.tzst -P -C /home/runner/work/nex/nex --use-compress-program unzstd
+2026-10-05T02:15:04.1346435Z Cache restored successfully
+2026-10-05T02:15:04.1352076Z uv cache restored from GitHub Actions cache with key: setup-uv-1-x86_64-unknown-linux-gnu-3.12.14-926880dc79daf43d2a03a6a142b02420b02c4a08af7d3f24e903e7c547065837

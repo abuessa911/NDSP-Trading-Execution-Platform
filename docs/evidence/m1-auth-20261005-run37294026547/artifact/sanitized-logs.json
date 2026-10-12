@@ -1,0 +1,12 @@
+{
+  "provider_startup": [
+    "keycloak-1  | Running the server in development mode. DO NOT use this configuration in production.",
+    "keycloak-1  | 2026-10-05 10:05:55,831 INFO  [org.keycloak.exportimport.util.ImportUtils] (main) Realm 'nex-m1-test' imported",
+    "keycloak-1  | 2026-10-05 10:05:56,240 INFO  [io.quarkus] (main) Keycloak 26.6.3 on JVM (powered by Quarkus 3.33.2) started in 20.730s. Listening on: http://127.0.0.1:9080",
+    "keycloak-1  | Running the server in development mode. DO NOT use this configuration in production.",
+    "keycloak-1  | 2026-10-05 10:06:28,715 INFO  [org.keycloak.exportimport.util.ImportUtils] (main) Realm 'nex-m1-test' already exists. Import skipped",
+    "keycloak-1  | 2026-10-05 10:06:28,942 INFO  [io.quarkus] (main) Keycloak 26.6.3 on JVM (powered by Quarkus 3.33.2) started in 10.823s. Listening on: http://127.0.0.1:9080"
+  ],
+  "api_operational_events": [],
+  "policy": "allowlisted fields only; raw logs intentionally not retained"
+}

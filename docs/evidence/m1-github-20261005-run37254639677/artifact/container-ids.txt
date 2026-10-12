@@ -1,0 +1,10 @@
++ docker ps -aq --filter label=com.docker.compose.project=nex-m1-isolated-verification-ci37254639677a1
+59174159b9cc
+e4b7514c9951
+476593fd61b4
+a9e075c701e0
+
+exit=0
++ docker ps -aq --filter label=com.docker.compose.project=nex-m1-isolated-verification-ci37254639677a1
+
+exit=0

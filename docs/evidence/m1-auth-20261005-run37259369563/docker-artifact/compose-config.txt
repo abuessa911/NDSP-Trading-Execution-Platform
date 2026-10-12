@@ -1,0 +1,265 @@
++ docker compose --env-file /dev/null -p nex-m1-isolated-verification-ci37259369563a1 -f docker-compose.yml -f infra/testing/compose.m1.yml --profile tools config --format json
+{
+  "name": "nex-m1-isolated-verification-ci37259369563a1",
+  "networks": {
+    "nex": {
+      "name": "nex-m1-isolated-verification-ci37259369563a1_nex",
+      "driver": "bridge",
+      "ipam": {}
+    }
+  },
+  "services": {
+    "api": {
+      "build": {
+        "context": "/home/runner/work/_temp/m1-committed-source",
+        "dockerfile": "apps/api/Dockerfile"
+      },
+      "command": [
+        "sh",
+        "-c",
+        "python /app/apps/api/tests/oidc_fixture.py \u0026 exec python -m uvicorn nex_api.main:app --host 0.0.0.0 --port 8000 --no-access-log"
+      ],
+      "depends_on": {
+        "db": {
+          "condition": "service_healthy",
+          "required": true
+        },
+        "redis": {
+          "condition": "service_healthy",
+          "required": true
+        }
+      },
+      "entrypoint": null,
+      "environment": {
+        "BINANCE_ALLOW_WITHDRAW": "false",
+        "DATABASE_URL": "postgresql+asyncpg://nex_app:synthetic-runtime-only@db:5432/nex",
+        "ENVIRONMENT": "test",
+        "GLOBAL_KILL_SWITCH": "true",
+        "LIVE_TRADING_ENABLED": "false",
+        "NEX_SESSION_ENCRYPTION_KEY": "",
+        "NEX_SESSION_SECONDS": "1800",
+        "OIDC_ALLOWED_ALGORITHM": "RS256",
+        "OIDC_AUDIENCE": "nex-m1-test",
+        "OIDC_BROWSER_LOGIN_ENABLED": "false",
+        "OIDC_CLIENT_ID": "",
+        "OIDC_CLIENT_SECRET": "",
+        "OIDC_ISSUER": "http://localhost:9090",
+        "OIDC_JWKS_URL": "http://localhost:9090/jwks",
+        "OIDC_POST_LOGOUT_REDIRECT_URI": "",
+        "OIDC_REDIRECT_URI": "",
+        "PORT": "8000",
+        "REDIS_URL": "redis://:synthetic-redis-only@redis:6379/0",
+        "SECRETS_DIRECTORY": "/run/secrets",
+        "SECRET_PROVIDER": "env",
+        "TRADING_MODE": "paper"
+      },
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health/ready', timeout=2)"
+        ],
+        "timeout": "3s",
+        "interval": "10s",
+        "retries": 5,
+        "start_period": "15s"
+      },
+      "image": "nex-m1-remediation:isolated",
+      "networks": {
+        "nex": null
+      },
+      "restart": "unless-stopped"
+    },
+    "bootstrap": {
+      "profiles": [
+        "tools"
+      ],
+      "build": {
+        "context": "/home/runner/work/_temp/m1-committed-source",
+        "dockerfile": "apps/api/Dockerfile"
+      },
+      "command": [
+        "python",
+        "-m",
+        "nex_api.bootstrap"
+      ],
+      "depends_on": {
+        "db": {
+          "condition": "service_healthy",
+          "required": true
+        }
+      },
+      "entrypoint": null,
+      "environment": {
+        "BINANCE_ALLOW_WITHDRAW": "false",
+        "GLOBAL_KILL_SWITCH": "true",
+        "LIVE_TRADING_ENABLED": "false",
+        "MIGRATION_DATABASE_URL": "postgresql+asyncpg://nex_migrator:synthetic-migrator-only@db:5432/nex",
+        "OIDC_AUDIENCE": "nex-m1-test",
+        "OIDC_ISSUER": "http://localhost:9090",
+        "OIDC_JWKS_URL": "http://localhost:9090/jwks",
+        "TRADING_MODE": "paper"
+      },
+      "image": "nex-m1-remediation:isolated",
+      "networks": {
+        "nex": null
+      }
+    },
+    "db": {
+      "command": null,
+      "entrypoint": null,
+      "environment": {
+        "NEX_APP_DB_PASSWORD": "synthetic-runtime-only",
+        "NEX_MIGRATOR_DB_PASSWORD": "synthetic-migrator-only",
+        "POSTGRES_DB": "nex",
+        "POSTGRES_PASSWORD": "synthetic-bootstrap-only",
+        "POSTGRES_USER": "nex_test_bootstrap"
+      },
+      "healthcheck": {
+        "test": [
+          "CMD-SHELL",
+          "pg_isready -U \"$${POSTGRES_USER}\" -d nex"
+        ],
+        "timeout": "3s",
+        "interval": "5s",
+        "retries": 15
+      },
+      "image": "postgres:16-alpine",
+      "networks": {
+        "nex": null
+      },
+      "restart": "unless-stopped",
+      "volumes": [
+        {
+          "type": "volume",
+          "source": "nex_postgres_data",
+          "target": "/var/lib/postgresql/data",
+          "volume": {}
+        },
+        {
+          "type": "bind",
+          "source": "/home/runner/work/_temp/m1-committed-source/infra/postgres/init",
+          "target": "/docker-entrypoint-initdb.d",
+          "read_only": true,
+          "bind": {
+            "create_host_path": true
+          }
+        }
+      ]
+    },
+    "gateway": {
+      "command": null,
+      "depends_on": {
+        "api": {
+          "condition": "service_healthy",
+          "required": true
+        }
+      },
+      "entrypoint": null,
+      "image": "nginx:1.27-alpine",
+      "networks": {
+        "nex": null
+      },
+      "ports": [
+        {
+          "mode": "ingress",
+          "host_ip": "127.0.0.1",
+          "target": 8080,
+          "published": "18081",
+          "protocol": "tcp"
+        }
+      ],
+      "restart": "unless-stopped",
+      "volumes": [
+        {
+          "type": "bind",
+          "source": "/home/runner/work/_temp/m1-committed-source/infra/nginx/nginx.conf",
+          "target": "/etc/nginx/nginx.conf",
+          "read_only": true,
+          "bind": {
+            "create_host_path": true
+          }
+        }
+      ]
+    },
+    "migrate": {
+      "profiles": [
+        "tools"
+      ],
+      "build": {
+        "context": "/home/runner/work/_temp/m1-committed-source",
+        "dockerfile": "apps/api/Dockerfile"
+      },
+      "command": [
+        "python",
+        "-m",
+        "alembic",
+        "-c",
+        "apps/api/alembic.ini",
+        "upgrade",
+        "head"
+      ],
+      "depends_on": {
+        "db": {
+          "condition": "service_healthy",
+          "required": true
+        }
+      },
+      "entrypoint": null,
+      "environment": {
+        "BINANCE_ALLOW_WITHDRAW": "false",
+        "GLOBAL_KILL_SWITCH": "true",
+        "LIVE_TRADING_ENABLED": "false",
+        "MIGRATION_DATABASE_URL": "postgresql+asyncpg://nex_migrator:synthetic-migrator-only@db:5432/nex",
+        "TRADING_MODE": "paper"
+      },
+      "image": "nex-m1-remediation:isolated",
+      "networks": {
+        "nex": null
+      }
+    },
+    "redis": {
+      "command": [
+        "sh",
+        "-c",
+        "exec redis-server --appendonly yes --requirepass \"$${REDIS_PASSWORD}\""
+      ],
+      "entrypoint": null,
+      "environment": {
+        "REDIS_PASSWORD": "synthetic-redis-only"
+      },
+      "healthcheck": {
+        "test": [
+          "CMD-SHELL",
+          "redis-cli -a \"$${REDIS_PASSWORD}\" ping | grep -q PONG"
+        ],
+        "timeout": "3s",
+        "interval": "5s",
+        "retries": 15
+      },
+      "image": "redis:7-alpine",
+      "networks": {
+        "nex": null
+      },
+      "restart": "unless-stopped",
+      "volumes": [
+        {
+          "type": "volume",
+          "source": "nex_redis_data",
+          "target": "/data",
+          "volume": {}
+        }
+      ]
+    }
+  },
+  "volumes": {
+    "nex_postgres_data": {
+      "name": "nex-m1-isolated-verification-ci37259369563a1_nex_postgres_data"
+    },
+    "nex_redis_data": {
+      "name": "nex-m1-isolated-verification-ci37259369563a1_nex_redis_data"
+    }
+  }
+}
+exit=0

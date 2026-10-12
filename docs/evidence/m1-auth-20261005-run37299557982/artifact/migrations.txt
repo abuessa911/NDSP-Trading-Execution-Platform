@@ -1,0 +1,9 @@
+ Container nex-m1-isolated-verification-authci37299557982a1-db-1  Running
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001_m1_foundation, M1 identity, tenancy, and append-only audit schema.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001_m1_foundation, M1 identity, tenancy, and append-only audit schema.
+INFO  [alembic.runtime.migration] Running upgrade 0001_m1_foundation -> 0002_m1_remediation, Direct tenancy and Appendix B audit; preserve legacy evidence, refuse guessed identities.
+INFO  [alembic.runtime.migration] Running upgrade 0001_m1_foundation -> 0002_m1_remediation, Direct tenancy and Appendix B audit; preserve legacy evidence, refuse guessed identities.

@@ -1,0 +1,24 @@
+kind = "web"
+previewPath = "/"
+title = "NAWAF M1 Console"
+description = "Next.js user and fail-closed admin console for NEX M1 identity, tenancy, entitlements and service health. Later milestones are explicitly unavailable; M1 remains NOT ACCEPTED."
+version = "1.0.0"
+id = "artifacts/ndsp-console"
+router = "path"
+
+[[services]]
+name = "web"
+paths = ["/"]
+localPort = 18200
+
+[services.development]
+run = "pnpm --filter @workspace/ndsp-console run dev"
+
+[services.production]
+build = ["pnpm", "--filter", "@workspace/ndsp-console", "run", "build"]
+serve = "static"
+publicDir = "artifacts/ndsp-console/out"
+
+[services.env]
+PORT = "18200"
+BASE_PATH = "/"

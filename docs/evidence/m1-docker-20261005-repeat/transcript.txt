@@ -1,0 +1,358 @@
+START UTC: 2026-10-05T00:14:33.793777+00:00
+
+COMMAND: ["git", "rev-parse", "HEAD"] CWD: /home/runner/workspace
+4fd4e6c1f1edd68d8fcddf9b2ee4e138003619fc
+EXIT: 0
+
+COMMAND: ["git", "status", "--porcelain"] CWD: /home/runner/workspace
+?? docs/evidence/m1-docker-20261005-repeat/
+EXIT: 0
+
+COMMAND: ["sha256sum", "M1_EVIDENCE_REPORT.md", "M1_REMEDIATION_REPORT.md"] CWD: /home/runner/workspace
+194302a7a2a5d301f188b0a59ee9b0f5669501efa1d5edfa7d61a0b728b085b7  M1_EVIDENCE_REPORT.md
+a082a7ad3c250928e0bde3affce3e796c412f46b32404157992d9d5659e494da  M1_REMEDIATION_REPORT.md
+EXIT: 0
+
+COMMAND: ["docker", "version"] CWD: /home/runner/workspace
+Client:
+ Version:           27.5.1
+ API version:       1.47
+ Go version:        go1.24.6
+ Git commit:        v27.5.1
+ Built:             Thu Jan  1 00:00:00 1970
+ OS/Arch:           linux/amd64
+ Context:           default
+
+Server:
+ Engine:
+  Version:          27.5.1
+  API version:      1.47 (minimum version 1.24)
+  Go version:       go1.24.6
+  Git commit:       v27.5.1
+  Built:            Tue Jan  1 00:00:00 1980
+  OS/Arch:          linux/amd64
+  Experimental:     false
+ containerd:
+  Version:          v2.1.4
+  GitCommit:        refs/tags/v2.1.4
+ runc:
+  Version:          1.2.4
+  GitCommit:        
+ docker-init:
+  Version:          0.19.0
+  GitCommit:        
+EXIT: 0
+
+COMMAND: ["docker", "compose", "version"] CWD: /home/runner/workspace
+Docker Compose version 2.36.0
+EXIT: 0
+
+COMMAND: ["docker", "info", "--format", "ID={{.ID}} Name={{.Name}} Driver={{.Driver}} Runtime={{.DefaultRuntime}}"] CWD: /home/runner/workspace
+ID=5a023435-8233-4ef3-9595-3c08471a86a8 Name=repl Driver=overlay2 Runtime=runc
+EXIT: 0
+
+COMMAND: ["docker", "ps", "-aq", "--filter", "label=com.docker.compose.project=nex-m1-isolated-verification-repeat20261005"] CWD: /home/runner/workspace
+EXIT: 0
+
+COMMAND: ["docker", "volume", "ls", "-q", "--filter", "label=com.docker.compose.project=nex-m1-isolated-verification-repeat20261005"] CWD: /home/runner/workspace
+EXIT: 0
+
+COMMAND: ["docker", "network", "ls", "-q", "--filter", "label=com.docker.compose.project=nex-m1-isolated-verification-repeat20261005"] CWD: /home/runner/workspace
+EXIT: 0
+COMMAND: git archive HEAD | tar -x -C /home/runner/workspace/.cache/m1-clean-repeat20261005
+Clean archive: 251 tracked file contents match HEAD
+SAFETY api {'TRADING_MODE': 'paper', 'LIVE_TRADING_ENABLED': 'false', 'GLOBAL_KILL_SWITCH': 'true', 'BINANCE_ALLOW_WITHDRAW': 'false'}
+SAFETY migrate {'TRADING_MODE': 'paper', 'LIVE_TRADING_ENABLED': 'false', 'GLOBAL_KILL_SWITCH': 'true', 'BINANCE_ALLOW_WITHDRAW': 'false'}
+SAFETY bootstrap {'TRADING_MODE': 'paper', 'LIVE_TRADING_ENABLED': 'false', 'GLOBAL_KILL_SWITCH': 'true', 'BINANCE_ALLOW_WITHDRAW': 'false'}
+
+COMMAND: ["cat", "scripts/post-merge.sh", "lib/db/package.json", "apps/api/Dockerfile"] CWD: /home/runner/workspace/.cache/m1-clean-repeat20261005
+#!/bin/bash
+set -e
+pnpm install --frozen-lockfile
+# NEX uses explicit operator-run Alembic migrations only. Never mutate a database
+# on merge (including the inherited, unused Drizzle template).
+{
+  "name": "@workspace/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema/index.ts"
+  },
+  "scripts": {
+    "push": "node -e \"throw new Error('Disabled: NEX schema authority is explicit Alembic migrations')\"",
+    "push-force": "node -e \"throw new Error('Disabled: NEX schema authority is explicit Alembic migrations')\""
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "~5.9.3"
+  }
+}
+FROM ghcr.io/astral-sh/uv:0.6.14 AS uv-bin
+
+FROM python:3.12-slim AS runtime
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy \
+    UV_CACHE_DIR=/tmp/uv-cache
+
+WORKDIR /app
+COPY --from=uv-bin /uv /uvx /bin/
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-dev --no-install-project
+COPY apps/api ./apps/api
+ENV PYTHONPATH=/app/apps/api
+RUN groupadd --gid 10001 nex && useradd --uid 10001 --gid nex --no-create-home nex \
+    && chown -R nex:nex /app /tmp/uv-cache
+USER 10001:10001
+ENV PORT=8000
+ENV PATH="/app/.venv/bin:$PATH"
+EXPOSE 8000
+CMD ["sh", "-c", "exec python -m uvicorn nex_api.main:app --host 0.0.0.0 --port \"$PORT\" --no-access-log"]EXIT: 0
+
+COMMAND: ["python", "scripts/verify-m1-compose.py", "--project", "nex-m1-isolated-verification-repeat20261005"] CWD: /home/runner/workspace/.cache/m1-clean-repeat20261005
+Compose can now delegate builds to bake for better performance.
+ To do so, set COMPOSE_BAKE=true.
+#0 building with "default" instance using docker driver
+
+#1 [api internal] load build definition from Dockerfile
+#1 transferring dockerfile: 750B done
+#1 DONE 0.0s
+
+#2 [api internal] load metadata for ghcr.io/astral-sh/uv:0.6.14
+#2 DONE 0.6s
+
+#3 [api internal] load metadata for docker.io/library/python:3.12-slim
+#3 DONE 1.1s
+
+#4 [api internal] load .dockerignore
+#4 transferring context: 215B done
+#4 DONE 0.0s
+
+#5 [api uv-bin 1/1] FROM ghcr.io/astral-sh/uv:0.6.14@sha256:3362a526af7eca2fcd8604e6a07e873fb6e4286d8837cb753503558ce1213664
+#5 DONE 0.0s
+
+#6 [api runtime 1/7] FROM docker.io/library/python:3.12-slim@sha256:02108f5d322dd89f1c9e552442c25acb0543dfdbc455693a5599624f20d9155d
+#6 DONE 0.0s
+
+#7 [api internal] load build context
+#7 transferring context: 193.19kB 0.0s done
+#7 DONE 0.0s
+
+#8 [api runtime 6/7] COPY apps/api ./apps/api
+#8 CACHED
+
+#9 [api runtime 2/7] WORKDIR /app
+#9 CACHED
+
+#10 [api runtime 3/7] COPY --from=uv-bin /uv /uvx /bin/
+#10 CACHED
+
+#11 [api runtime 4/7] COPY pyproject.toml uv.lock ./
+#11 CACHED
+
+#12 [api runtime 5/7] RUN uv sync --frozen --no-dev --no-install-project
+#12 CACHED
+
+#13 [api runtime 7/7] RUN groupadd --gid 10001 nex && useradd --uid 10001 --gid nex --no-create-home nex     && chown -R nex:nex /app /tmp/uv-cache
+#13 CACHED
+
+#14 [api] exporting to image
+#14 exporting layers done
+#14 writing image sha256:5282d739525c00ab34d24df2c8c5321d3c0867dc02fe39445738617ce28fa5e3 done
+#14 naming to docker.io/library/nex-m1-remediation:isolated done
+#14 DONE 0.0s
+
+#15 [api] resolving provenance for metadata file
+#15 DONE 0.0s
+ api  Built
+ Network nex-m1-isolated-verification-repeat20261005_nex  Creating
+ Network nex-m1-isolated-verification-repeat20261005_nex  Created
+ Volume "nex-m1-isolated-verification-repeat20261005_nex_postgres_data"  Creating
+ Volume "nex-m1-isolated-verification-repeat20261005_nex_postgres_data"  Created
+ Volume "nex-m1-isolated-verification-repeat20261005_nex_redis_data"  Creating
+ Volume "nex-m1-isolated-verification-repeat20261005_nex_redis_data"  Created
+ Container nex-m1-isolated-verification-repeat20261005-db-1  Creating
+ Container nex-m1-isolated-verification-repeat20261005-redis-1  Creating
+ Container nex-m1-isolated-verification-repeat20261005-redis-1  Created
+ Container nex-m1-isolated-verification-repeat20261005-db-1  Created
+ Container nex-m1-isolated-verification-repeat20261005-db-1  Starting
+ Container nex-m1-isolated-verification-repeat20261005-redis-1  Starting
+ Container nex-m1-isolated-verification-repeat20261005-db-1  Started
+ Container nex-m1-isolated-verification-repeat20261005-redis-1  Started
+ Container nex-m1-isolated-verification-repeat20261005-redis-1  Waiting
+ Container nex-m1-isolated-verification-repeat20261005-db-1  Waiting
+ Container nex-m1-isolated-verification-repeat20261005-redis-1  Healthy
+container nex-m1-isolated-verification-repeat20261005-db-1 is unhealthy
+Traceback (most recent call last):
+  File "/home/runner/workspace/.cache/m1-clean-repeat20261005/scripts/verify-m1-compose.py", line 98, in <module>
+    main()
+  File "/home/runner/workspace/.cache/m1-clean-repeat20261005/scripts/verify-m1-compose.py", line 62, in main
+    run("up", "-d", "--wait", "db", "redis")
+  File "/home/runner/workspace/.cache/m1-clean-repeat20261005/scripts/verify-m1-compose.py", line 36, in run
+    subprocess.run(COMMAND + list(args), check=True, env=os.environ | ENV)
+  File "/nix/store/iizfzmqjdfvbyx82gqw92glb5zl6m4my-python3-3.12.12/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['docker', 'compose', '--env-file', '/dev/null', '-p', 'nex-m1-isolated-verification-repeat20261005', '-f', 'docker-compose.yml', '-f', 'infra/testing/compose.m1.yml', 'up', '-d', '--wait', 'db', 'redis']' returned non-zero exit status 1.
+EXIT: 1
+CLEAN COMPOSE RESULT: 1
+
+COMMAND: ["docker", "inspect", "nex-m1-isolated-verification-repeat20261005-db-1", "--format", "{{.Name}} image={{.Image}} state={{json .State}} networks={{json .NetworkSettings.Networks}}"] CWD: /home/runner/workspace
+/nex-m1-isolated-verification-repeat20261005-db-1 image=sha256:81bd698b4594e751a3269e4dcd3e03a4a0ec0daf7b72e7aa1abd43cce9887542 state={"Status":"running","Running":true,"Paused":false,"Restarting":false,"OOMKilled":false,"Dead":false,"Pid":13070,"ExitCode":0,"Error":"","StartedAt":"2026-10-05T00:14:37.678850673Z","FinishedAt":"0001-01-01T00:00:00Z","Health":{"Status":"unhealthy","FailingStreak":15,"Log":[{"Start":"2026-10-05T00:15:33.710712733Z","End":"2026-10-05T00:15:33.741493074Z","ExitCode":-1,"Output":"OCI runtime exec failed: exec failed: unable to start container process: error executing setns process: exit status 1: unknown"},{"Start":"2026-10-05T00:15:38.742606832Z","End":"2026-10-05T00:15:38.773903009Z","ExitCode":-1,"Output":"OCI runtime exec failed: exec failed: unable to start container process: error executing setns process: exit status 1: unknown"},{"Start":"2026-10-05T00:15:43.774931403Z","End":"2026-10-05T00:15:43.82002404Z","ExitCode":-1,"Output":"OCI runtime exec failed: exec failed: unable to start container process: error executing setns process: exit status 1: unknown"},{"Start":"2026-10-05T00:15:48.821211945Z","End":"2026-10-05T00:15:48.85928178Z","ExitCode":-1,"Output":"OCI runtime exec failed: exec failed: unable to start container process: error executing setns process: exit status 1: unknown"},{"Start":"2026-10-05T00:15:53.860211727Z","End":"2026-10-05T00:15:53.892872964Z","ExitCode":-1,"Output":"OCI runtime exec failed: exec failed: unable to start container process: error executing setns process: exit status 1: unknown"}]}} networks={"nex-m1-isolated-verification-repeat20261005_nex":{"IPAMConfig":null,"Links":null,"Aliases":["nex-m1-isolated-verification-repeat20261005-db-1","db"],"MacAddress":"02:42:ac:13:00:03","DriverOpts":null,"NetworkID":"93782af3ae75aea1c533729a5d377f94336993409db7d5b415fcff3b77101e29","EndpointID":"40a36eed715d3419f31b5f92004f3d6a29b5e9ec4317e7ae192910859bce0bf0","Gateway":"172.19.0.1","IPAddress":"172.19.0.3","IPPrefixLen":16,"IPv6Gateway":"","GlobalIPv6Address":"","GlobalIPv6PrefixLen":0,"DNSNames":["nex-m1-isolated-verification-repeat20261005-db-1","db","8fff870e3eda"]}}
+EXIT: 0
+
+COMMAND: ["docker", "logs", "nex-m1-isolated-verification-repeat20261005-db-1"] CWD: /home/runner/workspace
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.utf8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+sh: locale: not found
+2026-10-05 00:14:39.496 UTC [34] WARNING:  no usable system locales were found
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+initdb: warning: enabling "trust" authentication for local connections
+initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+waiting for server to start....2026-10-05 00:14:42.077 UTC [40] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-05 00:14:42.079 UTC [40] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-05 00:14:42.086 UTC [43] LOG:  database system was shut down at 2026-10-05 00:14:40 UTC
+2026-10-05 00:14:42.097 UTC [40] LOG:  database system is ready to accept connections
+ done
+server started
+CREATE DATABASE
+
+
+/usr/local/bin/docker-entrypoint.sh: sourcing /docker-entrypoint-initdb.d/001-roles.sh
+CREATE ROLE
+CREATE ROLE
+GRANT
+GRANT
+GRANT
+ALTER DEFAULT PRIVILEGES
+
+waiting for server to shut down...2026-10-05 00:14:42.400 UTC [40] LOG:  received fast shutdown request
+.2026-10-05 00:14:42.402 UTC [40] LOG:  aborting any active transactions
+2026-10-05 00:14:42.408 UTC [40] LOG:  background worker "logical replication launcher" (PID 46) exited with exit code 1
+2026-10-05 00:14:42.408 UTC [41] LOG:  shutting down
+2026-10-05 00:14:42.410 UTC [41] LOG:  checkpoint starting: shutdown immediate
+2026-10-05 00:14:43.213 UTC [41] LOG:  checkpoint complete: wrote 938 buffers (5.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.026 s, sync=0.768 s, total=0.806 s; sync files=308, longest=0.114 s, average=0.003 s; distance=4289 kB, estimate=4289 kB; lsn=0/1927878, redo lsn=0/1927878
+2026-10-05 00:14:43.219 UTC [40] LOG:  database system is shut down
+ done
+server stopped
+
+PostgreSQL init process complete; ready for start up.
+
+2026-10-05 00:14:43.326 UTC [1] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-05 00:14:43.326 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-10-05 00:14:43.326 UTC [1] LOG:  could not create IPv6 socket for address "::": Address family not supported by protocol
+2026-10-05 00:14:43.329 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-05 00:14:43.342 UTC [58] LOG:  database system was shut down at 2026-10-05 00:14:43 UTC
+2026-10-05 00:14:43.360 UTC [1] LOG:  database system is ready to accept connections
+EXIT: 0
+
+COMMAND: ["docker", "inspect", "nex-m1-isolated-verification-repeat20261005-redis-1", "--format", "{{.Name}} image={{.Image}} state={{json .State}} networks={{json .NetworkSettings.Networks}}"] CWD: /home/runner/workspace
+/nex-m1-isolated-verification-repeat20261005-redis-1 image=sha256:f84b0c4678011602b9b98c227a4dcd5468bf8b088b02fdd4165cb7758bad8058 state={"Status":"running","Running":true,"Paused":false,"Restarting":false,"OOMKilled":false,"Dead":false,"Pid":13080,"ExitCode":0,"Error":"","StartedAt":"2026-10-05T00:14:37.669769719Z","FinishedAt":"0001-01-01T00:00:00Z","Health":{"Status":"healthy","FailingStreak":0,"Log":[{"Start":"2026-10-05T00:15:29.101934367Z","End":"2026-10-05T00:15:29.163000536Z","ExitCode":0,"Output":"Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.\n"},{"Start":"2026-10-05T00:15:34.163921193Z","End":"2026-10-05T00:15:34.245274289Z","ExitCode":0,"Output":"Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.\n"},{"Start":"2026-10-05T00:15:39.246074608Z","End":"2026-10-05T00:15:39.325820237Z","ExitCode":0,"Output":"Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.\n"},{"Start":"2026-10-05T00:15:44.326541828Z","End":"2026-10-05T00:15:44.413151547Z","ExitCode":0,"Output":"Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.\n"},{"Start":"2026-10-05T00:15:49.41388261Z","End":"2026-10-05T00:15:49.4780897Z","ExitCode":0,"Output":"Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.\n"}]}} networks={"nex-m1-isolated-verification-repeat20261005_nex":{"IPAMConfig":null,"Links":null,"Aliases":["nex-m1-isolated-verification-repeat20261005-redis-1","redis"],"MacAddress":"02:42:ac:13:00:02","DriverOpts":null,"NetworkID":"93782af3ae75aea1c533729a5d377f94336993409db7d5b415fcff3b77101e29","EndpointID":"e853a17f5c745b335f59b7467123ae750d1ee2db8caa8d6b0965b1f0c7c0fd50","Gateway":"172.19.0.1","IPAddress":"172.19.0.2","IPPrefixLen":16,"IPv6Gateway":"","GlobalIPv6Address":"","GlobalIPv6PrefixLen":0,"DNSNames":["nex-m1-isolated-verification-repeat20261005-redis-1","redis","5674ba59b614"]}}
+EXIT: 0
+
+COMMAND: ["docker", "logs", "nex-m1-isolated-verification-repeat20261005-redis-1"] CWD: /home/runner/workspace
+1:C 05 Oct 2026 00:14:38.248 # WARNING Memory overcommit must be enabled! Without it, a background save or replication may fail under low memory condition. Being disabled, it can also cause failures without low memory condition, see https://github.com/jemalloc/jemalloc/issues/1328. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+1:C 05 Oct 2026 00:14:38.248 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1:C 05 Oct 2026 00:14:38.248 * Redis version=7.4.11, bits=64, commit=00000000, modified=0, pid=1, just started
+1:C 05 Oct 2026 00:14:38.248 * Configuration loaded
+1:M 05 Oct 2026 00:14:38.249 * monotonic clock: POSIX clock_gettime
+1:M 05 Oct 2026 00:14:38.250 * Running mode=standalone, port=6379.
+1:M 05 Oct 2026 00:14:38.250 # Warning: Could not create server TCP listening socket ::*:6379: unable to bind socket, errno: 97
+1:M 05 Oct 2026 00:14:38.250 * Server initialized
+1:M 05 Oct 2026 00:14:38.328 * Creating AOF base file appendonly.aof.1.base.rdb on server start
+1:M 05 Oct 2026 00:14:38.338 * Creating AOF incr file appendonly.aof.1.incr.aof on server start
+1:M 05 Oct 2026 00:14:38.338 * Ready to accept connections tcp
+EXIT: 0
+
+COMMAND: ["docker", "exec", "nex-m1-isolated-verification-repeat20261005-db-1", "pg_isready", "-U", "nex_test_bootstrap", "-d", "nex"] CWD: /home/runner/workspace
+OCI runtime exec failed: exec failed: unable to start container process: error executing setns process: exit status 1: unknown
+EXIT: 126
+
+COMMAND: ["docker", "exec", "nex-m1-isolated-verification-repeat20261005-redis-1", "sh", "-c", "REDISCLI_AUTH=\"$REDIS_PASSWORD\" redis-cli ping; redis-server --version"] CWD: /home/runner/workspace
+PONG
+Redis server v=7.4.11 sha=00000000:0 malloc=jemalloc-5.3.0 bits=64 build=40ff01a501d8e4b6
+EXIT: 0
+
+COMMAND: ["docker", "image", "inspect", "nex-m1-remediation:isolated", "postgres:16-alpine", "redis:7-alpine", "--format", "tags={{json .RepoTags}} id={{.Id}} digests={{json .RepoDigests}} user={{.Config.User}}"] CWD: /home/runner/workspace
+tags=["nex-m1-remediation:isolated"] id=sha256:5282d739525c00ab34d24df2c8c5321d3c0867dc02fe39445738617ce28fa5e3 digests=[] user=10001:10001
+tags=["postgres:16-alpine"] id=sha256:81bd698b4594e751a3269e4dcd3e03a4a0ec0daf7b72e7aa1abd43cce9887542 digests=["postgres@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"] user=
+tags=["redis:7-alpine"] id=sha256:f84b0c4678011602b9b98c227a4dcd5468bf8b088b02fdd4165cb7758bad8058 digests=["redis@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499"] user=
+EXIT: 0
+
+COMMAND: ["docker", "run", "--name", "nex-m1-isolated-verification-repeat20261005-versionprobe", "--network", "none", "--entrypoint", "python", "nex-m1-remediation:isolated", "-c", "import os,sys,importlib.metadata as m; print(\"uid/gid\",os.getuid(),os.getgid()); print(sys.version); [print(p,m.version(p)) for p in (\"fastapi\",\"uvicorn\",\"alembic\",\"asyncpg\",\"redis\",\"sqlalchemy\")]"] CWD: /home/runner/workspace
+uid/gid 10001 10001
+3.12.15 (main, Oct  1 2026, 21:47:32) [GCC 14.2.0]
+fastapi 0.115.12
+uvicorn 0.34.0
+alembic 1.15.1
+asyncpg 0.30.0
+redis 5.2.1
+sqlalchemy 2.0.38
+EXIT: 0
+
+COMMAND: ["python", "scripts/verify-m1-compose.py", "--project", "nex-m1-isolated-verification-repeat20261005", "--down"] CWD: /home/runner/workspace/.cache/m1-clean-repeat20261005
+ Container nex-m1-isolated-verification-repeat20261005-db-1  Stopping
+ Container nex-m1-isolated-verification-repeat20261005-redis-1  Stopping
+ Container nex-m1-isolated-verification-repeat20261005-db-1  Stopped
+ Container nex-m1-isolated-verification-repeat20261005-db-1  Removing
+ Container nex-m1-isolated-verification-repeat20261005-db-1  Removed
+ Container nex-m1-isolated-verification-repeat20261005-redis-1  Stopped
+ Container nex-m1-isolated-verification-repeat20261005-redis-1  Removing
+ Container nex-m1-isolated-verification-repeat20261005-redis-1  Removed
+ Volume nex-m1-isolated-verification-repeat20261005_nex_redis_data  Removing
+ Volume nex-m1-isolated-verification-repeat20261005_nex_postgres_data  Removing
+ Network nex-m1-isolated-verification-repeat20261005_nex  Removing
+ Volume nex-m1-isolated-verification-repeat20261005_nex_redis_data  Removed
+ Volume nex-m1-isolated-verification-repeat20261005_nex_postgres_data  Removed
+ Network nex-m1-isolated-verification-repeat20261005_nex  Removed
+EXIT: 0
+
+COMMAND: ["docker", "rm", "nex-m1-isolated-verification-repeat20261005-versionprobe"] CWD: /home/runner/workspace
+nex-m1-isolated-verification-repeat20261005-versionprobe
+EXIT: 0
+
+COMMAND: ["docker", "ps", "-aq", "--filter", "label=com.docker.compose.project=nex-m1-isolated-verification-repeat20261005"] CWD: /home/runner/workspace
+EXIT: 0
+
+COMMAND: ["docker", "volume", "ls", "-q", "--filter", "label=com.docker.compose.project=nex-m1-isolated-verification-repeat20261005"] CWD: /home/runner/workspace
+EXIT: 0
+
+COMMAND: ["docker", "network", "ls", "-q", "--filter", "label=com.docker.compose.project=nex-m1-isolated-verification-repeat20261005"] CWD: /home/runner/workspace
+EXIT: 0
+
+COMMAND: ["docker", "ps", "-a", "--format", "{{.Names}} {{.Status}}"] CWD: /home/runner/workspace
+nex-m1-isolated-verification-task6-runtimeprobe Exited (1) 22 minutes ago
+nex-m1-isolated-verification-task6-redis-1 Up 24 minutes (healthy)
+nex-m1-isolated-verification-task6-db-1 Up 24 minutes (unhealthy)
+EXIT: 0
+
+COMMAND: ["docker", "volume", "ls", "--format", "{{.Name}}"] CWD: /home/runner/workspace
+nex-m1-isolated-verification-task6_nex_postgres_data
+nex-m1-isolated-verification-task6_nex_redis_data
+EXIT: 0
+END UTC: 2026-10-05T00:15:57.139878+00:00

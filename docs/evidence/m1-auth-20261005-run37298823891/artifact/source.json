@@ -1,0 +1,11 @@
+{
+  "commit": "1dd7b0d0d6729da3d417b3761148a4854623eabf",
+  "provider": "Keycloak 26.6.3",
+  "issuer": "https://localhost:18443/oidc/realms/nex-m1-test",
+  "configuration": "committed isolated realm + Compose override; synthetic inputs only",
+  "production": false,
+  "mfa_configured": true,
+  "admin_policy": "keycloak-password-totp-v1",
+  "admin_client": "nex-m1-admin",
+  "mfa_verification": "pending actual browser/provider result"
+}

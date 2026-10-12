@@ -1,0 +1,19 @@
+{
+  "name": "@workspace/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema/index.ts"
+  },
+  "scripts": {
+    "push": "node -e \"throw new Error('Disabled: NEX schema authority is explicit Alembic migrations')\"",
+    "push-force": "node -e \"throw new Error('Disabled: NEX schema authority is explicit Alembic migrations')\""
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "~5.9.3"
+  }
+}

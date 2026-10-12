@@ -1,0 +1,27 @@
+{
+  "javascript_errors": [
+    "UNCLASSIFIED_JAVASCRIPT_ERROR"
+  ],
+  "responses": [
+    {
+      "path": "/",
+      "status": 200,
+      "content_type": "text/html"
+    },
+    {
+      "path": "/",
+      "status": 200,
+      "content_type": "text/html"
+    },
+    {
+      "path": "/api/health/auth",
+      "status": 200,
+      "content_type": "application/json"
+    },
+    {
+      "path": "/api/v1/auth/session",
+      "status": 401,
+      "content_type": "application/json"
+    }
+  ]
+}

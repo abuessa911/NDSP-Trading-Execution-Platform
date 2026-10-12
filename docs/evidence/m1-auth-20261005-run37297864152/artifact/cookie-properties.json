@@ -1,0 +1,9 @@
+{
+  "name": "__Secure-nex_session",
+  "domain": "localhost",
+  "path": "/api",
+  "secure": true,
+  "httpOnly": true,
+  "sameSite": "Lax",
+  "expires": 1791198671.440805
+}

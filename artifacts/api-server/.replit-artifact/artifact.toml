@@ -1,0 +1,26 @@
+kind = "api"
+previewPath = "/api"
+title = "NEX Control API"
+version = "1.0.0"
+id = "3B4_FFSkEVBkAeYMFRJ2e"
+
+[[services]]
+localPort = 8080
+name = "API Server"
+paths = ["/api", "/admin/v1"]
+
+[services.development]
+run = "pnpm --filter @workspace/api-server run dev"
+
+[services.production.build]
+args = ["sh", "-c", "uv sync --frozen --no-dev"]
+
+[services.production.run]
+args = ["sh", "-c", "cd apps/api && PYTHONPATH=. ../../.venv/bin/uvicorn nex_api.main:app --host 0.0.0.0 --port ${PORT:-8080}"]
+
+[services.production.run.env]
+PORT = "8080"
+ENVIRONMENT = "production"
+
+[services.production.health.startup]
+path = "/api/health/live"

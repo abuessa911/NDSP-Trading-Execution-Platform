@@ -1,0 +1,26 @@
+ Container nex-m1-isolated-verification-clean20261005-redis-1  Stopping
+ Container nex-m1-isolated-verification-clean20261005-db-1  Stopping
+ Container nex-m1-isolated-verification-clean20261005-db-1  Stopped
+ Container nex-m1-isolated-verification-clean20261005-db-1  Removing
+ Container nex-m1-isolated-verification-clean20261005-db-1  Removed
+ Container nex-m1-isolated-verification-clean20261005-redis-1  Stopped
+ Container nex-m1-isolated-verification-clean20261005-redis-1  Removing
+ Container nex-m1-isolated-verification-clean20261005-redis-1  Removed
+ Network nex-m1-isolated-verification-clean20261005_nex  Removing
+ Volume nex-m1-isolated-verification-clean20261005_nex_postgres_data  Removing
+ Volume nex-m1-isolated-verification-clean20261005_nex_redis_data  Removing
+ Volume nex-m1-isolated-verification-clean20261005_nex_postgres_data  Removed
+ Volume nex-m1-isolated-verification-clean20261005_nex_redis_data  Removed
+ Network nex-m1-isolated-verification-clean20261005_nex  Removed
+nex-m1-isolated-verification-clean20261005-versionprobe
+diagnostic_remove_exit=0
+2026-10-05T00:09:33Z
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+DRIVER    VOLUME NAME
+NETWORK ID   NAME      DRIVER    SCOPE
+Earlier resources retained:
+nex-m1-isolated-verification-task6-runtimeprobe Exited (1) 16 minutes ago
+nex-m1-isolated-verification-task6-redis-1 Up 18 minutes (healthy)
+nex-m1-isolated-verification-task6-db-1 Up 18 minutes (unhealthy)
+nex-m1-isolated-verification-task6_nex_postgres_data
+nex-m1-isolated-verification-task6_nex_redis_data

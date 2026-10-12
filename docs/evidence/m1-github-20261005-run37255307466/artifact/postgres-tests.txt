@@ -1,0 +1,37 @@
++ uv run --frozen pytest apps/api/tests/test_postgres_m1.py
+Using CPython 3.12.14 interpreter at: /opt/hostedtoolcache/Python/3.12.14/x64/bin/python3
+Creating virtual environment at: .venv
+Downloading cryptography (4.5MiB)
+Downloading uvloop (4.3MiB)
+Downloading pydantic-core (2.0MiB)
+Downloading ruff (10.8MiB)
+Downloading sqlalchemy (3.1MiB)
+Downloading asyncpg (3.4MiB)
+Downloading mypy (11.8MiB)
+ Downloaded pydantic-core
+ Downloaded sqlalchemy
+ Downloaded asyncpg
+ Downloaded uvloop
+ Downloaded cryptography
+ Downloaded ruff
+ Downloaded mypy
+Installed 43 packages in 30ms
+============================= test session starts ==============================
+platform linux -- Python 3.12.14, pytest-8.3.5, pluggy-1.6.0
+rootdir: /home/runner/work/_temp/m1-committed-source
+configfile: pyproject.toml
+plugins: asyncio-0.25.3, anyio-4.15.1
+asyncio: mode=Mode.AUTO, asyncio_default_fixture_loop_scope=function
+collected 7 items
+
+apps/api/tests/test_postgres_m1.py .......                               [100%]
+
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/starlette/testclient.py:37
+  /home/runner/work/_temp/m1-committed-source/.venv/lib/python3.12/site-packages/starlette/testclient.py:37: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = typing.Callable[[], typing.ContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+========================= 7 passed, 1 warning in 4.33s =========================
+
+exit=0

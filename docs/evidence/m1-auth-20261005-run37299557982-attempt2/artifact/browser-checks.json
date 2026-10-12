@@ -1,0 +1,126 @@
+[
+  {
+    "check": "actual frontend document HTTP 200",
+    "passed": true
+  },
+  {
+    "check": "browser begins on actual NEX frontend",
+    "passed": true
+  },
+  {
+    "check": "real Keycloak authorization redirect and PKCE S256",
+    "passed": true
+  },
+  {
+    "check": "real callback clean redirect",
+    "passed": true
+  },
+  {
+    "check": "protected M1 identity endpoint succeeds",
+    "passed": true
+  },
+  {
+    "check": "authenticated opaque session and CSRF token",
+    "passed": true
+  },
+  {
+    "check": "secure scoped bounded HttpOnly SameSite=Lax cookie",
+    "passed": true
+  },
+  {
+    "check": "tokens encrypted in Redis, not in frontend storage",
+    "passed": true
+  },
+  {
+    "check": "actual provider refresh and rotation",
+    "passed": true
+  },
+  {
+    "check": "actual provider access JWT independently signature/issuer/audience verified",
+    "passed": true
+  },
+  {
+    "check": "local logout and provider revocation completed",
+    "passed": true
+  },
+  {
+    "check": "standards provider end-session URL contains no ID/access/refresh token",
+    "passed": true
+  },
+  {
+    "check": "provider logout returns to exact registered URI",
+    "passed": true
+  },
+  {
+    "check": "NEX session cookie securely removed",
+    "passed": true
+  },
+  {
+    "check": "terminated local session cannot access protected endpoint",
+    "passed": true
+  },
+  {
+    "check": "refresh cannot recreate logged-out NEX session",
+    "passed": true
+  },
+  {
+    "check": "unexpired provider JWT cannot bypass locally terminated NEX session",
+    "passed": true
+  },
+  {
+    "check": "real provider rejects revoked refresh token",
+    "passed": true
+  },
+  {
+    "check": "second logout fails explicitly",
+    "passed": true
+  },
+  {
+    "check": "provider SSO session ended: fresh credentials required",
+    "passed": true
+  },
+  {
+    "check": "negative case login transaction starts: USER_DISABLED",
+    "passed": true
+  },
+  {
+    "check": "genuine callback rejected: USER_DISABLED",
+    "passed": true
+  },
+  {
+    "check": "negative case login transaction starts: TENANT_DISABLED",
+    "passed": true
+  },
+  {
+    "check": "genuine callback rejected: TENANT_DISABLED",
+    "passed": true
+  },
+  {
+    "check": "negative case login transaction starts: OIDC_TOKEN_NOT_VALID",
+    "passed": true
+  },
+  {
+    "check": "genuine callback rejected: OIDC_TOKEN_NOT_VALID",
+    "passed": true
+  },
+  {
+    "check": "negative case login transaction starts: OIDC_EXCHANGE_FAILED",
+    "passed": true
+  },
+  {
+    "check": "genuine callback rejected: OIDC_EXCHANGE_FAILED",
+    "passed": true
+  },
+  {
+    "check": "invalid role is rejected by database constraint",
+    "passed": true
+  },
+  {
+    "check": "provider outage fails readiness despite cached keys",
+    "passed": true
+  },
+  {
+    "check": "provider outage login fails explicitly",
+    "passed": true
+  }
+]

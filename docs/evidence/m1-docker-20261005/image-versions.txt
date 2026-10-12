@@ -1,0 +1,10 @@
+docker run --name nex-m1-isolated-verification-clean20261005-versionprobe --network none --entrypoint python nex-m1-remediation:isolated -c <version/uid probe>
+uid/gid 10001 10001
+Python 3.12.15 (main, Oct  1 2026, 21:47:32) [GCC 14.2.0]
+fastapi 0.115.12
+uvicorn 0.34.0
+alembic 1.15.1
+asyncpg 0.30.0
+redis 5.2.1
+sqlalchemy 2.0.38
+version_probe_exit=0

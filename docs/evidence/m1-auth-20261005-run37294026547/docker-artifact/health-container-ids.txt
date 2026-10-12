@@ -1,0 +1,7 @@
++ docker compose --env-file /dev/null -p nex-m1-isolated-verification-ci37294026547a1 -f docker-compose.yml -f infra/testing/compose.m1.yml ps -aq db redis api gateway
+3034cd1c6ab3c706cee57d382d15b80074f189fc3126fda6922df1a2d3ebde5d
+0359896871a85cd04ad0f72421ebb3ae95165b75064a572459e5b233b6137f0b
+06ee6e25e9887cff15675ba1a7752227eec70f8615ded44fd1e7a802012cbd54
+15e5e438cd0ffcc406ae4f50947375b035a6c2aa1dcb20197c5143c5049c4d8e
+
+exit=0

@@ -1,0 +1,7 @@
++ git rev-parse HEAD
+2253a8c40d41018caa1f46d499a2904b777ec769
+
+exit=0
++ git archive --format=tar --output=/home/runner/work/_temp/m1-docker-evidence/source.tar HEAD
+
+exit=0

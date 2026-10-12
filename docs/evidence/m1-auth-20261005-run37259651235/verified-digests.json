@@ -1,0 +1,12 @@
+[
+  {
+    "artifact": "m1-docker-37259651235-1",
+    "digest": "sha256:734091cea9ad71309684d2a800ed27da05810fda64497b424651a6d4a3017b6f",
+    "verified": true
+  },
+  {
+    "artifact": "m1-auth-37259651235-1",
+    "digest": "sha256:64bd1e425cb3129de2c1abe0c01deed1427fbf0a22c11d3ad3c81899886b1e46",
+    "verified": true
+  }
+]

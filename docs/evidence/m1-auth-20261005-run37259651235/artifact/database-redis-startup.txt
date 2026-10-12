@@ -1,0 +1,177 @@
+ db Pulling 
+ redis Pulling 
+ 16333ee0c00f Pulling fs layer 
+ 83234986c742 Pulling fs layer 
+ 7eb50503c2b0 Pulling fs layer 
+ 1522f9c6f453 Pulling fs layer 
+ 9928009b15c8 Pulling fs layer 
+ 4f4fb700ef54 Pulling fs layer 
+ 4eb14bae0e1d Pulling fs layer 
+ 1522f9c6f453 Waiting 
+ 9928009b15c8 Waiting 
+ 4f4fb700ef54 Waiting 
+ 4eb14bae0e1d Waiting 
+ e2de96513ba9 Already exists 
+ 1b7f9cd581ee Pulling fs layer 
+ 210b280f9556 Pulling fs layer 
+ 81717818649a Pulling fs layer 
+ 3ae6141cfd99 Pulling fs layer 
+ 25b77f59fd95 Pulling fs layer 
+ 6c25da34e03f Pulling fs layer 
+ a88782f92806 Pulling fs layer 
+ d8d21be4bf02 Pulling fs layer 
+ 1b7f9cd581ee Waiting 
+ 6117bd39f23f Pulling fs layer 
+ 509688edf37b Pulling fs layer 
+ 210b280f9556 Waiting 
+ 81717818649a Waiting 
+ 3ae6141cfd99 Waiting 
+ d8d21be4bf02 Waiting 
+ 25b77f59fd95 Waiting 
+ 6c25da34e03f Waiting 
+ 6117bd39f23f Waiting 
+ 509688edf37b Waiting 
+ a88782f92806 Waiting 
+ 83234986c742 Downloading [==================================================>]     949B/949B
+ 83234986c742 Verifying Checksum 
+ 83234986c742 Download complete 
+ 7eb50503c2b0 Downloading [>                                                  ]  3.498kB/198.6kB
+ 16333ee0c00f Downloading [>                                                  ]  48.55kB/3.626MB
+ 7eb50503c2b0 Downloading [==================================================>]  198.6kB/198.6kB
+ 7eb50503c2b0 Verifying Checksum 
+ 7eb50503c2b0 Download complete 
+ 16333ee0c00f Download complete 
+ 16333ee0c00f Extracting [>                                                  ]  65.54kB/3.626MB
+ 1522f9c6f453 Downloading [>                                                  ]  130.5kB/12.42MB
+ 16333ee0c00f Extracting [==================================================>]  3.626MB/3.626MB
+ 16333ee0c00f Pull complete 
+ 83234986c742 Extracting [==================================================>]     949B/949B
+ 83234986c742 Extracting [==================================================>]     949B/949B
+ 9928009b15c8 Downloading [==================================================>]     100B/100B
+ 9928009b15c8 Verifying Checksum 
+ 9928009b15c8 Download complete 
+ 4f4fb700ef54 Downloading [==================================================>]      32B/32B
+ 1522f9c6f453 Downloading [=====>                                             ]   1.31MB/12.42MB
+ 4f4fb700ef54 Verifying Checksum 
+ 4f4fb700ef54 Download complete 
+ 83234986c742 Pull complete 
+ 7eb50503c2b0 Extracting [========>                                          ]  32.77kB/198.6kB
+ 7eb50503c2b0 Extracting [==================================================>]  198.6kB/198.6kB
+ 7eb50503c2b0 Extracting [==================================================>]  198.6kB/198.6kB
+ 4eb14bae0e1d Downloading [==================================================>]     599B/599B
+ 4eb14bae0e1d Verifying Checksum 
+ 4eb14bae0e1d Download complete 
+ 1522f9c6f453 Downloading [================================>                  ]  8.126MB/12.42MB
+ 1522f9c6f453 Verifying Checksum 
+ 1522f9c6f453 Download complete 
+ 1b7f9cd581ee Downloading [==================================================>]     969B/969B
+ 1b7f9cd581ee Verifying Checksum 
+ 1b7f9cd581ee Download complete 
+ 1b7f9cd581ee Extracting [==================================================>]     969B/969B
+ 1b7f9cd581ee Extracting [==================================================>]     969B/969B
+ 210b280f9556 Downloading [>                                                  ]  15.79kB/901.4kB
+ 7eb50503c2b0 Pull complete 
+ 1522f9c6f453 Extracting [>                                                  ]  131.1kB/12.42MB
+ 1b7f9cd581ee Pull complete 
+ 210b280f9556 Verifying Checksum 
+ 210b280f9556 Download complete 
+ 210b280f9556 Extracting [=>                                                 ]  32.77kB/901.4kB
+ 3ae6141cfd99 Downloading [==================================================>]     116B/116B
+ 3ae6141cfd99 Verifying Checksum 
+ 3ae6141cfd99 Download complete 
+ 81717818649a Downloading [==================================================>]     172B/172B
+ 81717818649a Verifying Checksum 
+ 81717818649a Download complete 
+ 210b280f9556 Extracting [==================================================>]  901.4kB/901.4kB
+ 210b280f9556 Pull complete 
+ 81717818649a Extracting [==================================================>]     172B/172B
+ 81717818649a Extracting [==================================================>]     172B/172B
+ 81717818649a Pull complete 
+ 3ae6141cfd99 Extracting [==================================================>]     116B/116B
+ 3ae6141cfd99 Extracting [==================================================>]     116B/116B
+ 1522f9c6f453 Extracting [=======>                                           ]  1.966MB/12.42MB
+ 3ae6141cfd99 Pull complete 
+ a88782f92806 Downloading [==================================================>]     128B/128B
+ a88782f92806 Verifying Checksum 
+ a88782f92806 Download complete 
+ 6c25da34e03f Downloading [==================>                                ]    3.5kB/9.669kB
+ 6c25da34e03f Downloading [==================================================>]  9.669kB/9.669kB
+ 6c25da34e03f Verifying Checksum 
+ 6c25da34e03f Download complete 
+ 1522f9c6f453 Extracting [======================================>            ]  9.568MB/12.42MB
+ 25b77f59fd95 Downloading [>                                                  ]  539.1kB/111.3MB
+ 1522f9c6f453 Extracting [==================================================>]  12.42MB/12.42MB
+ 6117bd39f23f Downloading [============================>                      ]    3.5kB/6.111kB
+ 6117bd39f23f Download complete 
+ d8d21be4bf02 Downloading [==================================================>]     169B/169B
+ d8d21be4bf02 Verifying Checksum 
+ d8d21be4bf02 Download complete 
+ 25b77f59fd95 Downloading [=====>                                             ]  11.31MB/111.3MB
+ 25b77f59fd95 Downloading [=======================>                           ]  53.32MB/111.3MB
+ 509688edf37b Downloading [==================================================>]     185B/185B
+ 509688edf37b Verifying Checksum 
+ 509688edf37b Download complete 
+ 25b77f59fd95 Downloading [=====================================>             ]  82.94MB/111.3MB
+ 25b77f59fd95 Verifying Checksum 
+ 25b77f59fd95 Download complete 
+ 1522f9c6f453 Pull complete 
+ 9928009b15c8 Extracting [==================================================>]     100B/100B
+ 9928009b15c8 Extracting [==================================================>]     100B/100B
+ 25b77f59fd95 Extracting [>                                                  ]  557.1kB/111.3MB
+ 9928009b15c8 Pull complete 
+ 4f4fb700ef54 Extracting [==================================================>]      32B/32B
+ 4f4fb700ef54 Extracting [==================================================>]      32B/32B
+ 4f4fb700ef54 Pull complete 
+ 4eb14bae0e1d Extracting [==================================================>]     599B/599B
+ 4eb14bae0e1d Extracting [==================================================>]     599B/599B
+ 4eb14bae0e1d Pull complete 
+ 25b77f59fd95 Extracting [>                                                  ]  1.114MB/111.3MB
+ redis Pulled 
+ 25b77f59fd95 Extracting [=====>                                             ]  11.14MB/111.3MB
+ 25b77f59fd95 Extracting [==========>                                        ]  22.28MB/111.3MB
+ 25b77f59fd95 Extracting [===============>                                   ]  33.42MB/111.3MB
+ 25b77f59fd95 Extracting [===================>                               ]  44.01MB/111.3MB
+ 25b77f59fd95 Extracting [========================>                          ]  54.59MB/111.3MB
+ 25b77f59fd95 Extracting [===========================>                       ]  60.72MB/111.3MB
+ 25b77f59fd95 Extracting [===============================>                   ]  69.63MB/111.3MB
+ 25b77f59fd95 Extracting [==================================>                ]  77.43MB/111.3MB
+ 25b77f59fd95 Extracting [====================================>              ]  81.33MB/111.3MB
+ 25b77f59fd95 Extracting [=====================================>             ]  83.56MB/111.3MB
+ 25b77f59fd95 Extracting [=======================================>           ]  88.01MB/111.3MB
+ 25b77f59fd95 Extracting [==========================================>        ]  94.14MB/111.3MB
+ 25b77f59fd95 Extracting [============================================>      ]  98.04MB/111.3MB
+ 25b77f59fd95 Extracting [================================================>  ]  108.1MB/111.3MB
+ 25b77f59fd95 Extracting [==================================================>]  111.3MB/111.3MB
+ 25b77f59fd95 Pull complete 
+ 6c25da34e03f Extracting [==================================================>]  9.669kB/9.669kB
+ 6c25da34e03f Extracting [==================================================>]  9.669kB/9.669kB
+ 6c25da34e03f Pull complete 
+ a88782f92806 Extracting [==================================================>]     128B/128B
+ a88782f92806 Extracting [==================================================>]     128B/128B
+ a88782f92806 Pull complete 
+ d8d21be4bf02 Extracting [==================================================>]     169B/169B
+ d8d21be4bf02 Extracting [==================================================>]     169B/169B
+ d8d21be4bf02 Pull complete 
+ 6117bd39f23f Extracting [==================================================>]  6.111kB/6.111kB
+ 6117bd39f23f Extracting [==================================================>]  6.111kB/6.111kB
+ 6117bd39f23f Pull complete 
+ 509688edf37b Extracting [==================================================>]     185B/185B
+ 509688edf37b Extracting [==================================================>]     185B/185B
+ 509688edf37b Pull complete 
+ db Pulled 
+ Volume "nex-m1-isolated-verification-authci37259651235a1_nex_postgres_data"  Creating
+ Volume "nex-m1-isolated-verification-authci37259651235a1_nex_postgres_data"  Created
+ Volume "nex-m1-isolated-verification-authci37259651235a1_nex_redis_data"  Creating
+ Volume "nex-m1-isolated-verification-authci37259651235a1_nex_redis_data"  Created
+ Container nex-m1-isolated-verification-authci37259651235a1-db-1  Creating
+ Container nex-m1-isolated-verification-authci37259651235a1-redis-1  Creating
+ Container nex-m1-isolated-verification-authci37259651235a1-redis-1  Created
+ Container nex-m1-isolated-verification-authci37259651235a1-db-1  Created
+ Container nex-m1-isolated-verification-authci37259651235a1-db-1  Starting
+ Container nex-m1-isolated-verification-authci37259651235a1-redis-1  Starting
+ Container nex-m1-isolated-verification-authci37259651235a1-redis-1  Started
+ Container nex-m1-isolated-verification-authci37259651235a1-db-1  Started
+ Container nex-m1-isolated-verification-authci37259651235a1-redis-1  Waiting
+ Container nex-m1-isolated-verification-authci37259651235a1-db-1  Waiting
+ Container nex-m1-isolated-verification-authci37259651235a1-redis-1  Healthy
+ Container nex-m1-isolated-verification-authci37259651235a1-db-1  Healthy

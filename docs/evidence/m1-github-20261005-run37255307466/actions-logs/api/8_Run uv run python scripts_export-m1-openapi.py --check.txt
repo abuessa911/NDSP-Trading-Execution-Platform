@@ -1,0 +1,13 @@
+﻿2026-10-05T02:25:25.4607204Z ##[group]Run uv run python scripts/export-m1-openapi.py --check
+2026-10-05T02:25:25.4607751Z [36;1muv run python scripts/export-m1-openapi.py --check[0m
+2026-10-05T02:25:25.4671158Z shell: /usr/bin/bash -e {0}
+2026-10-05T02:25:25.4671422Z env:
+2026-10-05T02:25:25.4671698Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:25:25.4672150Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+2026-10-05T02:25:25.4672601Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:25:25.4672996Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:25:25.4673403Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:25:25.4673813Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+2026-10-05T02:25:25.4674217Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+2026-10-05T02:25:25.4674553Z ##[endgroup]
+2026-10-05T02:25:27.6425531Z M1 runtime/static contract identical

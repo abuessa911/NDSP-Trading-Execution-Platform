@@ -1,0 +1,9 @@
+{
+  "path": "/oidc/realms/nex-m1-test/login-actions/required-action",
+  "provider_origin": true,
+  "otp_input_present": false,
+  "totp_setup_input_present": true,
+  "password_input_present": false,
+  "mfa_required_callback": false,
+  "nex_session_cookie_present": false
+}

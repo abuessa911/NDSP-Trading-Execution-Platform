@@ -1,0 +1,14 @@
+{
+  "name": "@workspace/api-server",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "cd ../.. && python scripts/run-nex-dev.py",
+    "build": "cd ../.. && uv run python -m compileall -q apps/api/nex_api",
+    "start": "cd ../.. && uv run --directory apps/api uvicorn nex_api.main:app --host 0.0.0.0 --port ${PORT:-8080} --no-access-log",
+    "typecheck": "cd ../.. && uv run mypy apps/api/nex_api"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

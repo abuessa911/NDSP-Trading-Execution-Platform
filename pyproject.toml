@@ -1,0 +1,42 @@
+[project]
+name = "nex-foundation"
+version = "0.1.0"
+description = "Portable FastAPI foundation for the NEX Trading Execution Platform"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "alembic==1.15.1",
+    "asyncpg==0.30.0",
+    "fastapi==0.115.12",
+    "httpx==0.28.1",
+    "pydantic-settings==2.8.1",
+    "pyjwt[crypto]==2.10.1",
+    "redis==5.2.1",
+    "sqlalchemy[asyncio]==2.0.38",
+    "structlog==25.2.0",
+    "uvicorn[standard]==0.34.0",
+]
+
+[dependency-groups]
+dev = [
+    "aiosqlite==0.21.0",
+    "mypy==1.15.0",
+    "pytest==8.3.5",
+    "pytest-asyncio==0.25.3",
+    "ruff==0.11.2",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["apps/api/tests"]
+pythonpath = ["apps/api"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = "apps/api"
+packages = ["nex_api"]

@@ -1,0 +1,16 @@
+﻿2026-10-05T02:25:03.4221799Z ##[group]Run actions/setup-python@v5
+2026-10-05T02:25:03.4222253Z with:
+2026-10-05T02:25:03.4222561Z   python-version: 3.12
+2026-10-05T02:25:03.4222874Z   check-latest: false
+2026-10-05T02:25:03.4225503Z   token: ***
+2026-10-05T02:25:03.4225810Z   update-environment: true
+2026-10-05T02:25:03.4226155Z   allow-prereleases: false
+2026-10-05T02:25:03.4226481Z   freethreaded: false
+2026-10-05T02:25:03.4226772Z env:
+2026-10-05T02:25:03.4227124Z   M1_PROJECT: nex-m1-isolated-verification-ci37255307466a1
+2026-10-05T02:25:03.4227550Z ##[endgroup]
+2026-10-05T02:25:03.5619884Z ##[group]Installed versions
+2026-10-05T02:25:03.5706909Z (node:2158) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-05T02:25:03.5708634Z Successfully set up CPython (3.12.14)
+2026-10-05T02:25:03.5709871Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-05T02:25:03.5735636Z ##[endgroup]

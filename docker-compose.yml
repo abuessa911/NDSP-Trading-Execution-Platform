@@ -1,0 +1,136 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: nex
+      POSTGRES_USER: ${POSTGRES_BOOTSTRAP_USER:-nex_bootstrap}
+      POSTGRES_PASSWORD: ${POSTGRES_BOOTSTRAP_PASSWORD:?Set POSTGRES_BOOTSTRAP_PASSWORD}
+      NEX_APP_DB_PASSWORD: ${NEX_APP_DB_PASSWORD:?Set NEX_APP_DB_PASSWORD}
+      NEX_MIGRATOR_DB_PASSWORD: ${NEX_MIGRATOR_DB_PASSWORD:?Set NEX_MIGRATOR_DB_PASSWORD}
+    volumes:
+      - nex_postgres_data:/var/lib/postgresql/data
+      - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d nex"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+    networks: [nex]
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Set REDIS_PASSWORD}
+    command: ["sh", "-c", "exec redis-server --appendonly yes --requirepass \"$${REDIS_PASSWORD}\""]
+    volumes:
+      - nex_redis_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$${REDIS_PASSWORD}\" ping | grep -q PONG"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+    networks: [nex]
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL using the nex_app role}
+      REDIS_URL: ${REDIS_URL:?Set REDIS_URL}
+      OIDC_ISSUER: ${OIDC_ISSUER:?Set OIDC_ISSUER}
+      OIDC_AUDIENCE: ${OIDC_AUDIENCE:?Set OIDC_AUDIENCE}
+      OIDC_JWKS_URL: ${OIDC_JWKS_URL:?Set OIDC_JWKS_URL}
+      OIDC_ALLOWED_ALGORITHM: ${OIDC_ALLOWED_ALGORITHM:-RS256}
+      OIDC_BROWSER_LOGIN_ENABLED: ${OIDC_BROWSER_LOGIN_ENABLED:-false}
+      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID:-}
+      OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET:-}
+      OIDC_REDIRECT_URI: ${OIDC_REDIRECT_URI:-}
+      OIDC_POST_LOGOUT_REDIRECT_URI: ${OIDC_POST_LOGOUT_REDIRECT_URI:-}
+      NEX_SESSION_ENCRYPTION_KEY: ${NEX_SESSION_ENCRYPTION_KEY:-}
+      NEX_SESSION_SECONDS: ${NEX_SESSION_SECONDS:-1800}
+      SECRET_PROVIDER: ${SECRET_PROVIDER:-env}
+      SECRETS_DIRECTORY: /run/secrets
+      TRADING_MODE: paper
+      LIVE_TRADING_ENABLED: "false"
+      GLOBAL_KILL_SWITCH: "true"
+      BINANCE_ALLOW_WITHDRAW: "false"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health/ready', timeout=2)",
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 15s
+    networks: [nex]
+
+  migrate:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    profiles: ["tools"]
+    command: ["python", "-m", "alembic", "-c", "apps/api/alembic.ini", "upgrade", "head"]
+    environment:
+      MIGRATION_DATABASE_URL: ${MIGRATION_DATABASE_URL:?Set MIGRATION_DATABASE_URL}
+      TRADING_MODE: paper
+      LIVE_TRADING_ENABLED: "false"
+      GLOBAL_KILL_SWITCH: "true"
+      BINANCE_ALLOW_WITHDRAW: "false"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: [nex]
+
+  bootstrap:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    profiles: ["tools"]
+    command: ["python", "-m", "nex_api.bootstrap"]
+    environment:
+      MIGRATION_DATABASE_URL: ${MIGRATION_DATABASE_URL:?Set MIGRATION_DATABASE_URL using the nex_migrator role}
+      OIDC_ISSUER: ${OIDC_ISSUER:?Set OIDC_ISSUER}
+      OIDC_AUDIENCE: ${OIDC_AUDIENCE:?Set OIDC_AUDIENCE}
+      OIDC_JWKS_URL: ${OIDC_JWKS_URL:?Set OIDC_JWKS_URL}
+      TRADING_MODE: paper
+      LIVE_TRADING_ENABLED: "false"
+      GLOBAL_KILL_SWITCH: "true"
+      BINANCE_ALLOW_WITHDRAW: "false"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: [nex]
+
+  gateway:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "${NEX_HTTP_PORT:-8080}:8080"
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      api:
+        condition: service_healthy
+    networks: [nex]
+
+volumes:
+  nex_postgres_data:
+  nex_redis_data:
+
+networks:
+  nex:
+    driver: bridge

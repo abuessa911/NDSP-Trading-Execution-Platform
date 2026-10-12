@@ -1,0 +1,32 @@
+{
+  "javascript_errors": [
+    "UNCLASSIFIED_JAVASCRIPT_ERROR"
+  ],
+  "responses": [
+    {
+      "path": "/",
+      "status": 200,
+      "content_type": "text/html"
+    },
+    {
+      "path": "/assets/index-BK8KS85p.css",
+      "status": 200,
+      "content_type": "text/css"
+    },
+    {
+      "path": "/assets/index-B4kak9qM.js",
+      "status": 200,
+      "content_type": "application/javascript"
+    },
+    {
+      "path": "/api/health/auth",
+      "status": 200,
+      "content_type": "application/json"
+    },
+    {
+      "path": "/api/v1/auth/session",
+      "status": 401,
+      "content_type": "application/json"
+    }
+  ]
+}

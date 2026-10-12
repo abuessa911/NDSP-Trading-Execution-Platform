@@ -1,0 +1,5 @@
+{
+  "provider_startup": [],
+  "api_operational_events": [],
+  "policy": "allowlisted fields only; raw logs intentionally not retained"
+}

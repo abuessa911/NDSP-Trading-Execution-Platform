@@ -1,0 +1,26 @@
+#!/bin/sh
+set -eu
+
+: "${NEX_APP_DB_PASSWORD:?NEX_APP_DB_PASSWORD is required}"
+: "${NEX_MIGRATOR_DB_PASSWORD:?NEX_MIGRATOR_DB_PASSWORD is required}"
+
+psql \
+  --set=ON_ERROR_STOP=1 \
+  --username "$POSTGRES_USER" \
+  --dbname "$POSTGRES_DB" \
+  --set=app_password="$NEX_APP_DB_PASSWORD" \
+  --set=migrator_password="$NEX_MIGRATOR_DB_PASSWORD" <<'SQL'
+CREATE ROLE nex_app
+  LOGIN PASSWORD :'app_password'
+  NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOBYPASSRLS;
+
+CREATE ROLE nex_migrator
+  LOGIN PASSWORD :'migrator_password'
+  NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOBYPASSRLS;
+
+GRANT CONNECT ON DATABASE nex TO nex_app, nex_migrator;
+GRANT USAGE ON SCHEMA public TO nex_app;
+GRANT USAGE, CREATE ON SCHEMA public TO nex_migrator;
+ALTER DEFAULT PRIVILEGES FOR ROLE nex_migrator IN SCHEMA public
+  GRANT SELECT ON TABLES TO nex_app;
+SQL

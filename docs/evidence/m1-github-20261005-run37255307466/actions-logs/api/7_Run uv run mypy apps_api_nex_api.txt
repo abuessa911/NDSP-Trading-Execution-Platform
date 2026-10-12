@@ -1,0 +1,13 @@
+﻿2026-10-05T02:25:05.5070279Z ##[group]Run uv run mypy apps/api/nex_api
+2026-10-05T02:25:05.5070652Z [36;1muv run mypy apps/api/nex_api[0m
+2026-10-05T02:25:05.5133556Z shell: /usr/bin/bash -e {0}
+2026-10-05T02:25:05.5133827Z env:
+2026-10-05T02:25:05.5134109Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:25:05.5134570Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+2026-10-05T02:25:05.5135277Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:25:05.5135735Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:25:05.5136129Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:25:05.5136519Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+2026-10-05T02:25:05.5136924Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+2026-10-05T02:25:05.5137231Z ##[endgroup]
+2026-10-05T02:25:25.4336617Z Success: no issues found in 14 source files

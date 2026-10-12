@@ -1,0 +1,234 @@
+[
+  {
+    "id": 111590976182,
+    "name": "api",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-10-05T02:24:58Z",
+    "completed_at": "2026-10-05T02:25:32Z",
+    "html_url": "https://github.com/abuessa911/nex/actions/runs/37255307466/job/111590976182",
+    "runner_name": "GitHub Actions 1000003583",
+    "runner_group_name": "GitHub Actions",
+    "labels": [
+      "ubuntu-latest"
+    ],
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-10-05T02:24:59Z",
+        "completed_at": "2026-10-05T02:25:01Z"
+      },
+      {
+        "name": "Run actions/checkout@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2,
+        "started_at": "2026-10-05T02:25:01Z",
+        "completed_at": "2026-10-05T02:25:02Z"
+      },
+      {
+        "name": "Run actions/setup-python@v5",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-10-05T02:25:02Z",
+        "completed_at": "2026-10-05T02:25:02Z"
+      },
+      {
+        "name": "Run astral-sh/setup-uv@v5",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-10-05T02:25:02Z",
+        "completed_at": "2026-10-05T02:25:04Z"
+      },
+      {
+        "name": "Run uv sync --frozen",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5,
+        "started_at": "2026-10-05T02:25:04Z",
+        "completed_at": "2026-10-05T02:25:05Z"
+      },
+      {
+        "name": "Run uv run ruff check apps/api scripts/ci-m1-compose.py scripts/verify-m1-compose.py scripts/tests",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 6,
+        "started_at": "2026-10-05T02:25:05Z",
+        "completed_at": "2026-10-05T02:25:05Z"
+      },
+      {
+        "name": "Run uv run mypy apps/api/nex_api",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-10-05T02:25:05Z",
+        "completed_at": "2026-10-05T02:25:25Z"
+      },
+      {
+        "name": "Run uv run python scripts/export-m1-openapi.py --check",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8,
+        "started_at": "2026-10-05T02:25:25Z",
+        "completed_at": "2026-10-05T02:25:27Z"
+      },
+      {
+        "name": "Run uv run pytest apps/api/tests",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-10-05T02:25:27Z",
+        "completed_at": "2026-10-05T02:25:29Z"
+      },
+      {
+        "name": "Run uv run pytest scripts/tests",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 10,
+        "started_at": "2026-10-05T02:25:29Z",
+        "completed_at": "2026-10-05T02:25:30Z"
+      },
+      {
+        "name": "Post Run astral-sh/setup-uv@v5",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 18,
+        "started_at": "2026-10-05T02:25:30Z",
+        "completed_at": "2026-10-05T02:25:30Z"
+      },
+      {
+        "name": "Post Run actions/setup-python@v5",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 19,
+        "started_at": "2026-10-05T02:25:30Z",
+        "completed_at": "2026-10-05T02:25:30Z"
+      },
+      {
+        "name": "Post Run actions/checkout@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 20,
+        "started_at": "2026-10-05T02:25:30Z",
+        "completed_at": "2026-10-05T02:25:30Z"
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 21,
+        "started_at": "2026-10-05T02:25:30Z",
+        "completed_at": "2026-10-05T02:25:31Z"
+      }
+    ]
+  },
+  {
+    "id": 111590976342,
+    "name": "M1 disposable Docker startup and readiness",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-10-05T02:24:59Z",
+    "completed_at": "2026-10-05T02:25:57Z",
+    "html_url": "https://github.com/abuessa911/nex/actions/runs/37255307466/job/111590976342",
+    "runner_name": "GitHub Actions 1000003584",
+    "runner_group_name": "GitHub Actions",
+    "labels": [
+      "ubuntu-24.04"
+    ],
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-10-05T02:25:00Z",
+        "completed_at": "2026-10-05T02:25:02Z"
+      },
+      {
+        "name": "Run actions/checkout@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2,
+        "started_at": "2026-10-05T02:25:02Z",
+        "completed_at": "2026-10-05T02:25:03Z"
+      },
+      {
+        "name": "Run actions/setup-python@v5",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-10-05T02:25:03Z",
+        "completed_at": "2026-10-05T02:25:03Z"
+      },
+      {
+        "name": "Run astral-sh/setup-uv@v5",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-10-05T02:25:03Z",
+        "completed_at": "2026-10-05T02:25:05Z"
+      },
+      {
+        "name": "Verify committed M1 source on fresh synthetic Docker resources",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5,
+        "started_at": "2026-10-05T02:25:05Z",
+        "completed_at": "2026-10-05T02:25:51Z"
+      },
+      {
+        "name": "Collect failure evidence and retry scoped cleanup",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 6,
+        "started_at": "2026-10-05T02:25:51Z",
+        "completed_at": "2026-10-05T02:25:52Z"
+      },
+      {
+        "name": "Retain M1 Docker evidence on success or failure",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-10-05T02:25:52Z",
+        "completed_at": "2026-10-05T02:25:53Z"
+      },
+      {
+        "name": "Post Run astral-sh/setup-uv@v5",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 12,
+        "started_at": "2026-10-05T02:25:53Z",
+        "completed_at": "2026-10-05T02:25:53Z"
+      },
+      {
+        "name": "Post Run actions/setup-python@v5",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 13,
+        "started_at": "2026-10-05T02:25:53Z",
+        "completed_at": "2026-10-05T02:25:54Z"
+      },
+      {
+        "name": "Post Run actions/checkout@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 14,
+        "started_at": "2026-10-05T02:25:54Z",
+        "completed_at": "2026-10-05T02:25:54Z"
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 15,
+        "started_at": "2026-10-05T02:25:54Z",
+        "completed_at": "2026-10-05T02:25:54Z"
+      }
+    ]
+  }
+]

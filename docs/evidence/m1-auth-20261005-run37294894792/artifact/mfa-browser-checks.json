@@ -1,0 +1,38 @@
+[
+  {
+    "check": "actual password-only admin login cannot create privileged NEX session",
+    "passed": true
+  },
+  {
+    "check": "real provider TOTP challenge: nex-test-admin",
+    "passed": true
+  },
+  {
+    "check": "provider rejects invalid TOTP without NEX session",
+    "passed": true
+  },
+  {
+    "check": "real provider TOTP challenge: nex-test-admin",
+    "passed": true
+  },
+  {
+    "check": "ordinary client cannot grant admin assurance despite real OTP",
+    "passed": true
+  },
+  {
+    "check": "real provider TOTP challenge: nex-test-admin",
+    "passed": true
+  },
+  {
+    "check": "real fresh password/TOTP grants bound ADMIN session",
+    "passed": true
+  },
+  {
+    "check": "actual signed administrator token binds issuer/client/subject and factors: ADMIN",
+    "passed": true
+  },
+  {
+    "check": "actual administrator bearer token cannot bypass opaque MFA session: ADMIN",
+    "passed": false
+  }
+]

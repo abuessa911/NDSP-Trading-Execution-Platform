@@ -1,0 +1,47 @@
+
+> @workspace/ndsp-console@0.0.0 build /home/runner/work/_temp/auth-committed-source/artifacts/ndsp-console
+> next build --webpack
+
+▲ Next.js 16.3.8 (webpack)
+✓ Running next.config.ts took 51ms
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+- Experiments (use with caution):
+  · cpus: 2
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 8.6s
+  Running TypeScript ...
+  Finished TypeScript in 7.3s ...
+  Collecting page data using 2 workers ...
+  Generating static pages using 2 workers (0/31) ...
+  Generating static pages using 2 workers (7/31) 
+  Generating static pages using 2 workers (15/31) 
+  Generating static pages using 2 workers (23/31) 
+✓ Generating static pages using 2 workers (31/31) in 1487ms
+  Finalizing page optimization ...
+  Collecting build traces ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├   /[section]
+│ ├ ● /trading
+│ ├ ● /strategies
+│ ├ ● /positions
+│ └ ● [+13 more paths]
+├ ○ /admin
+├   /admin/[section]
+│ ├ ● /admin/operations-center
+│ ├ ● /admin/users-tenants
+│ ├ ● /admin/subscriptions
+│ └ ● [+7 more paths]
+└ ○ /icon.svg
+
+
+○  (Static)  prerendered as static content
+●  (SSG)     prerendered as static HTML (uses generateStaticParams)
+

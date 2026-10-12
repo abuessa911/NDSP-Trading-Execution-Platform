@@ -1,0 +1,54 @@
+2026-10-05T00:07:39Z
+17abdcd9a4dd731e63a9e5740c029f86a6db73be
+?? docs/evidence/m1-docker-20261005/
+.env.example
+apps/api/nex_api/secrets.py
+apps/api/tests/test_secrets.py
+194302a7a2a5d301f188b0a59ee9b0f5669501efa1d5edfa7d61a0b728b085b7  M1_EVIDENCE_REPORT.md
+a082a7ad3c250928e0bde3affce3e796c412f46b32404157992d9d5659e494da  M1_REMEDIATION_REPORT.md
+.git
+.pythonlibs
+.venv
+__pycache__
+*.py[cod]
+.pytest_cache
+.ruff_cache
+.mypy_cache
+.env
+.env.*
+!.env.example
+node_modules
+artifacts
+attached_assets
+.local
+.conversation
+dist#!/bin/bash
+set -e
+pnpm install --frozen-lockfile
+# NEX uses explicit operator-run Alembic migrations only. Never mutate a database
+# on merge (including the inherited, unused Drizzle template).
+{
+  "name": "@workspace/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema/index.ts"
+  },
+  "scripts": {
+    "push": "node -e \"throw new Error('Disabled: NEX schema authority is explicit Alembic migrations')\"",
+    "push-force": "node -e \"throw new Error('Disabled: NEX schema authority is explicit Alembic migrations')\""
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "~5.9.3"
+  }
+}
+unix:///var/run/docker.sock
+ID=5a023435-8233-4ef3-9595-3c08471a86a8 Name=repl Version=27.5.1 Driver=overlay2 Runtime=runc
+Docker Compose version 2.36.0
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+DRIVER    VOLUME NAME
+NETWORK ID   NAME      DRIVER    SCOPE

@@ -1,0 +1,6 @@
+{
+  "verdict": "FAIL",
+  "checks": [],
+  "failed_stage": "genuine browser login, refresh, logout and negative cases",
+  "failure_class": "TimeoutError"
+}

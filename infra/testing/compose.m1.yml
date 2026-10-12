@@ -1,0 +1,16 @@
+# Explicit isolated test override. Values are synthetic, not production secrets.
+services:
+  api:
+    image: nex-m1-remediation:isolated
+    # Explicit TEST-only local JWKS fixture. No provider login/MFA claim.
+    command:
+      - sh
+      - -c
+      - "python /app/apps/api/tests/oidc_fixture.py & exec python -m uvicorn nex_api.main:app --host 0.0.0.0 --port 8000 --no-access-log"
+    environment:
+      ENVIRONMENT: test
+      PORT: "8000"
+  migrate:
+    image: nex-m1-remediation:isolated
+  bootstrap:
+    image: nex-m1-remediation:isolated

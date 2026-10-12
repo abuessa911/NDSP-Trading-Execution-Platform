@@ -1,0 +1,123 @@
++ docker compose --env-file /dev/null -p nex-m1-isolated-verification-ci37292956379a1 -f docker-compose.yml -f infra/testing/compose.m1.yml logs --no-color --timestamps
+redis-1  | 2026-10-05T09:53:40.612063847Z 1:C 05 Oct 2026 09:53:40.611 # WARNING Memory overcommit must be enabled! Without it, a background save or replication may fail under low memory condition. Being disabled, it can also cause failures without low memory condition, see https://github.com/jemalloc/jemalloc/issues/1328. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+redis-1  | 2026-10-05T09:53:40.612256698Z 1:C 05 Oct 2026 09:53:40.612 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+redis-1  | 2026-10-05T09:53:40.612302404Z 1:C 05 Oct 2026 09:53:40.612 * Redis version=7.4.11, bits=64, commit=00000000, modified=0, pid=1, just started
+redis-1  | 2026-10-05T09:53:40.612338541Z 1:C 05 Oct 2026 09:53:40.612 * Configuration loaded
+redis-1  | 2026-10-05T09:53:40.613602648Z 1:M 05 Oct 2026 09:53:40.612 * monotonic clock: POSIX clock_gettime
+redis-1  | 2026-10-05T09:53:40.613613379Z 1:M 05 Oct 2026 09:53:40.613 * Running mode=standalone, port=6379.
+redis-1  | 2026-10-05T09:53:40.613720599Z 1:M 05 Oct 2026 09:53:40.613 * Server initialized
+redis-1  | 2026-10-05T09:53:40.614385094Z 1:M 05 Oct 2026 09:53:40.614 * Creating AOF base file appendonly.aof.1.base.rdb on server start
+redis-1  | 2026-10-05T09:53:40.615040311Z 1:M 05 Oct 2026 09:53:40.614 * Creating AOF incr file appendonly.aof.1.incr.aof on server start
+redis-1  | 2026-10-05T09:53:40.615090495Z 1:M 05 Oct 2026 09:53:40.615 * Ready to accept connections tcp
+gateway-1  | 2026-10-05T09:53:54.894664451Z /docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+gateway-1  | 2026-10-05T09:53:54.895308527Z /docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+gateway-1  | 2026-10-05T09:53:54.896595473Z /docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+gateway-1  | 2026-10-05T09:53:54.899840540Z 10-listen-on-ipv6-by-default.sh: info: Getting the checksum of /etc/nginx/conf.d/default.conf
+gateway-1  | 2026-10-05T09:53:54.909006977Z 10-listen-on-ipv6-by-default.sh: info: Enabled listen on IPv6 in /etc/nginx/conf.d/default.conf
+gateway-1  | 2026-10-05T09:53:54.909220503Z /docker-entrypoint.sh: Sourcing /docker-entrypoint.d/15-local-resolvers.envsh
+gateway-1  | 2026-10-05T09:53:54.909429855Z /docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+gateway-1  | 2026-10-05T09:53:54.911832347Z /docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh
+gateway-1  | 2026-10-05T09:53:54.912902617Z /docker-entrypoint.sh: Configuration complete; ready for start up
+gateway-1  | 2026-10-05T09:53:55.452758927Z 172.18.0.1 - - [05/Oct/2026:09:53:55 +0000] "GET /api/health/live HTTP/1.1" 200 18 "-" "Python-urllib/3.12"
+gateway-1  | 2026-10-05T09:53:55.475962213Z 172.18.0.1 - - [05/Oct/2026:09:53:55 +0000] "GET /api/health/ready HTTP/1.1" 200 102 "-" "Python-urllib/3.12"
+api-1      | 2026-10-05T09:53:50.429046305Z INFO:     [library log redacted]
+api-1      | 2026-10-05T09:53:50.429090648Z INFO:     [library log redacted]
+api-1      | 2026-10-05T09:53:50.454672763Z INFO:     [library log redacted]
+api-1      | 2026-10-05T09:53:50.456885395Z INFO:     [library log redacted]
+api-1      | 2026-10-05T09:53:51.388595209Z [library log redacted]
+api-1      | 2026-10-05T09:53:54.256336748Z [library log redacted]
+api-1      | 2026-10-05T09:53:55.465663440Z [library log redacted]
+db-1       | 2026-10-05T09:53:40.666678700Z The files belonging to this database system will be owned by user "postgres".
+db-1       | 2026-10-05T09:53:40.666718815Z This user must also own the server process.
+db-1       | 2026-10-05T09:53:40.666723284Z 
+db-1       | 2026-10-05T09:53:40.666726880Z The database cluster will be initialized with locale "en_US.utf8".
+db-1       | 2026-10-05T09:53:40.666730547Z The default database encoding has accordingly been set to "UTF8".
+db-1       | 2026-10-05T09:53:40.666734244Z The default text search configuration will be set to "english".
+db-1       | 2026-10-05T09:53:40.666737670Z 
+db-1       | 2026-10-05T09:53:40.666741047Z Data page checksums are disabled.
+db-1       | 2026-10-05T09:53:40.666744523Z 
+db-1       | 2026-10-05T09:53:40.666747579Z fixing permissions on existing directory /var/lib/postgresql/data ... ok
+db-1       | 2026-10-05T09:53:40.667395442Z creating subdirectories ... ok
+db-1       | 2026-10-05T09:53:40.667607860Z selecting dynamic shared memory implementation ... posix
+db-1       | 2026-10-05T09:53:40.693693869Z selecting default max_connections ... 100
+db-1       | 2026-10-05T09:53:40.712805211Z selecting default shared_buffers ... 128MB
+db-1       | 2026-10-05T09:53:40.758025682Z selecting default time zone ... UTC
+db-1       | 2026-10-05T09:53:40.759018682Z creating configuration files ... ok
+db-1       | 2026-10-05T09:53:40.903235186Z running bootstrap script ... ok
+db-1       | 2026-10-05T09:53:41.121614365Z sh: locale: not found
+db-1       | 2026-10-05T09:53:41.121802591Z 2026-10-05 09:53:41.121 UTC [34] WARNING:  no usable system locales were found
+db-1       | 2026-10-05T09:53:41.611212579Z performing post-bootstrap initialization ... ok
+db-1       | 2026-10-05T09:53:41.681484045Z initdb: warning: enabling "trust" authentication for local connections
+db-1       | 2026-10-05T09:53:41.681503412Z initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+db-1       | 2026-10-05T09:53:41.681602698Z syncing data to disk ... ok
+db-1       | 2026-10-05T09:53:41.681611754Z 
+db-1       | 2026-10-05T09:53:41.681614970Z 
+db-1       | 2026-10-05T09:53:41.681618317Z Success. You can now start the database server using:
+db-1       | 2026-10-05T09:53:41.681622014Z 
+db-1       | 2026-10-05T09:53:41.681624989Z     pg_ctl -D /var/lib/postgresql/data -l logfile start
+db-1       | 2026-10-05T09:53:41.681628235Z 
+db-1       | 2026-10-05T09:53:41.721192170Z waiting for server to start....2026-10-05 09:53:41.721 UTC [40] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+db-1       | 2026-10-05T09:53:41.721758641Z 2026-10-05 09:53:41.721 UTC [40] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+db-1       | 2026-10-05T09:53:41.724482535Z 2026-10-05 09:53:41.724 UTC [43] LOG:  database system was shut down at 2026-10-05 09:53:41 UTC
+db-1       | 2026-10-05T09:53:41.728251510Z 2026-10-05 09:53:41.728 UTC [40] LOG:  database system is ready to accept connections
+db-1       | 2026-10-05T09:53:41.802940785Z  done
+db-1       | 2026-10-05T09:53:41.802988764Z server started
+db-1       | 2026-10-05T09:53:41.869383461Z CREATE DATABASE
+db-1       | 2026-10-05T09:53:41.870300568Z 
+db-1       | 2026-10-05T09:53:41.870581344Z 
+db-1       | 2026-10-05T09:53:41.870799322Z /usr/local/bin/docker-entrypoint.sh: sourcing /docker-entrypoint-initdb.d/001-roles.sh
+db-1       | 2026-10-05T09:53:41.890624918Z CREATE ROLE
+db-1       | 2026-10-05T09:53:41.896485168Z CREATE ROLE
+db-1       | 2026-10-05T09:53:41.897415554Z GRANT
+db-1       | 2026-10-05T09:53:41.897872540Z GRANT
+db-1       | 2026-10-05T09:53:41.898164063Z GRANT
+db-1       | 2026-10-05T09:53:41.899235449Z ALTER DEFAULT PRIVILEGES
+db-1       | 2026-10-05T09:53:41.899931562Z 
+db-1       | 2026-10-05T09:53:41.901396957Z waiting for server to shut down...2026-10-05 09:53:41.901 UTC [40] LOG:  received fast shutdown request
+db-1       | 2026-10-05T09:53:41.902122084Z .2026-10-05 09:53:41.902 UTC [40] LOG:  aborting any active transactions
+db-1       | 2026-10-05T09:53:41.907122588Z 2026-10-05 09:53:41.907 UTC [40] LOG:  background worker "logical replication launcher" (PID 46) exited with exit code 1
+db-1       | 2026-10-05T09:53:41.907450646Z 2026-10-05 09:53:41.907 UTC [41] LOG:  shutting down
+db-1       | 2026-10-05T09:53:41.910341470Z 2026-10-05 09:53:41.910 UTC [41] LOG:  checkpoint starting: shutdown immediate
+db-1       | 2026-10-05T09:53:41.927255851Z 2026-10-05 09:53:41.927 UTC [41] LOG:  checkpoint complete: wrote 938 buffers (5.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.014 s, sync=0.002 s, total=0.020 s; sync files=308, longest=0.001 s, average=0.001 s; distance=4289 kB, estimate=4289 kB; lsn=0/1927878, redo lsn=0/1927878
+db-1       | 2026-10-05T09:53:41.934953138Z 2026-10-05 09:53:41.934 UTC [40] LOG:  database system is shut down
+db-1       | 2026-10-05T09:53:42.001963289Z  done
+db-1       | 2026-10-05T09:53:42.001981423Z server stopped
+db-1       | 2026-10-05T09:53:42.003074543Z 
+db-1       | 2026-10-05T09:53:42.003086796Z PostgreSQL init process complete; ready for start up.
+db-1       | 2026-10-05T09:53:42.003090673Z 
+db-1       | 2026-10-05T09:53:42.026929946Z 2026-10-05 09:53:42.026 UTC [1] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+db-1       | 2026-10-05T09:53:42.027012331Z 2026-10-05 09:53:42.026 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+db-1       | 2026-10-05T09:53:42.027126134Z 2026-10-05 09:53:42.027 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+db-1       | 2026-10-05T09:53:42.028059161Z 2026-10-05 09:53:42.027 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+db-1       | 2026-10-05T09:53:42.031913529Z 2026-10-05 09:53:42.031 UTC [58] LOG:  database system was shut down at 2026-10-05 09:53:41 UTC
+db-1       | 2026-10-05T09:53:42.036933399Z 2026-10-05 09:53:42.036 UTC [1] LOG:  database system is ready to accept connections
+db-1       | 2026-10-05T09:53:47.998194512Z 2026-10-05 09:53:47.998 UTC [69] WARNING:  no privileges could be revoked for "public"
+db-1       | 2026-10-05T09:53:59.739226514Z 2026-10-05 09:53:59.739 UTC [87] ERROR:  permission denied for table audit_events
+db-1       | 2026-10-05T09:53:59.739258835Z 2026-10-05 09:53:59.739 UTC [87] STATEMENT:  UPDATE audit_events SET action='BAD'
+db-1       | 2026-10-05T09:53:59.740582710Z 2026-10-05 09:53:59.740 UTC [88] ERROR:  permission denied for table audit_events
+db-1       | 2026-10-05T09:53:59.740597227Z 2026-10-05 09:53:59.740 UTC [88] STATEMENT:  DELETE FROM audit_events
+db-1       | 2026-10-05T09:53:59.741885273Z 2026-10-05 09:53:59.741 UTC [87] ERROR:  permission denied for table audit_events
+db-1       | 2026-10-05T09:53:59.741897726Z 2026-10-05 09:53:59.741 UTC [87] STATEMENT:  TRUNCATE audit_events
+db-1       | 2026-10-05T09:53:59.778396177Z 2026-10-05 09:53:59.778 UTC [89] ERROR:  audit_events is append-only
+db-1       | 2026-10-05T09:53:59.778414431Z 2026-10-05 09:53:59.778 UTC [89] CONTEXT:  PL/pgSQL function reject_audit_event_mutation() line 3 at RAISE
+db-1       | 2026-10-05T09:53:59.778419450Z 2026-10-05 09:53:59.778 UTC [89] STATEMENT:  UPDATE audit_events SET action='BAD'
+db-1       | 2026-10-05T09:53:59.779622038Z 2026-10-05 09:53:59.779 UTC [89] ERROR:  audit_events is append-only
+db-1       | 2026-10-05T09:53:59.779634782Z 2026-10-05 09:53:59.779 UTC [89] CONTEXT:  PL/pgSQL function reject_audit_event_mutation() line 3 at RAISE
+db-1       | 2026-10-05T09:53:59.779639220Z 2026-10-05 09:53:59.779 UTC [89] STATEMENT:  DELETE FROM audit_events
+db-1       | 2026-10-05T09:53:59.780898619Z 2026-10-05 09:53:59.780 UTC [89] ERROR:  audit evidence cannot be truncated
+db-1       | 2026-10-05T09:53:59.780910601Z 2026-10-05 09:53:59.780 UTC [89] CONTEXT:  PL/pgSQL function reject_audit_truncate() line 2 at RAISE
+db-1       | 2026-10-05T09:53:59.780915310Z 2026-10-05 09:53:59.780 UTC [89] STATEMENT:  TRUNCATE audit_events
+db-1       | 2026-10-05T09:53:59.782411622Z 2026-10-05 09:53:59.782 UTC [89] ERROR:  audit evidence cannot be truncated
+db-1       | 2026-10-05T09:53:59.782424486Z 2026-10-05 09:53:59.782 UTC [89] CONTEXT:  PL/pgSQL function reject_audit_truncate() line 2 at RAISE
+db-1       | 2026-10-05T09:53:59.782429095Z 2026-10-05 09:53:59.782 UTC [89] STATEMENT:  TRUNCATE audit_events_legacy
+db-1       | 2026-10-05T09:53:59.784021456Z 2026-10-05 09:53:59.783 UTC [89] ERROR:  new row for relation "audit_events" violates check constraint "audit_actor_type_check"
+db-1       | 2026-10-05T09:53:59.784035402Z 2026-10-05 09:53:59.783 UTC [89] STATEMENT:  INSERT INTO audit_events(id,tenant_id,correlation_id,actor_type,outcome,action,object_type) VALUES ('a9afaa68-15df-4a78-bf31-e085ecd18438','5ba43b3c-146a-4a91-abfc-ff8b5df62af1','71d580f8-8faa-4e63-b3fb-5919698c9639','INVALID','SUCCESS','TEST','TEST')
+db-1       | 2026-10-05T09:53:59.785470790Z 2026-10-05 09:53:59.785 UTC [89] ERROR:  new row for relation "audit_events" violates check constraint "audit_outcome_check"
+db-1       | 2026-10-05T09:53:59.785484465Z 2026-10-05 09:53:59.785 UTC [89] STATEMENT:  INSERT INTO audit_events(id,tenant_id,correlation_id,actor_type,outcome,action,object_type) VALUES ('3c3ac16a-9812-4a52-8b53-83fd498c046a','5ba43b3c-146a-4a91-abfc-ff8b5df62af1','b057007a-3ec3-4968-b433-c30913b4d9be','USER','invalid','TEST','TEST')
+db-1       | 2026-10-05T09:54:00.369069067Z 2026-10-05 09:54:00.368 UTC [93] ERROR:  relation "alembic_version" does not exist at character 25
+db-1       | 2026-10-05T09:54:00.369091198Z 2026-10-05 09:54:00.368 UTC [93] STATEMENT:  SELECT version_num FROM alembic_version
+
+exit=0
++ docker compose --env-file /dev/null -p nex-m1-isolated-verification-ci37292956379a1 -f docker-compose.yml -f infra/testing/compose.m1.yml logs --no-color --timestamps
+
+exit=0

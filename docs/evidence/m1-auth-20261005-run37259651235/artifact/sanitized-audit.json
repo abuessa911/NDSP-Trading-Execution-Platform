@@ -1,0 +1,76 @@
+[
+  {
+    "action": "INITIAL_OWNER_PROVISIONED",
+    "outcome": "SUCCESS",
+    "reason_code": null,
+    "actor_type": "SYSTEM",
+    "correlation_id": "e777ca07-54c0-44e7-9139-12018e1fda39",
+    "metadata_json": {}
+  },
+  {
+    "action": "getBrowserSession",
+    "outcome": "DENIED",
+    "reason_code": "SESSION_REVOKED",
+    "actor_type": "SYSTEM",
+    "correlation_id": "4838f982-d835-4672-98c0-d0eafa50182d",
+    "metadata_json": {
+      "status_code": 401
+    }
+  },
+  {
+    "action": "LOGIN_STARTED",
+    "outcome": "SUCCESS",
+    "reason_code": null,
+    "actor_type": "SYSTEM",
+    "correlation_id": "1a4cb932-08dc-4479-ab71-bcac1702370e",
+    "metadata_json": {}
+  },
+  {
+    "action": "LOGIN_SUCCESS",
+    "outcome": "SUCCESS",
+    "reason_code": null,
+    "actor_type": "USER",
+    "correlation_id": "6d2e519b-852e-413e-8c21-f5bd6284c6d8",
+    "metadata_json": {}
+  },
+  {
+    "action": "getBrowserSession",
+    "outcome": "SUCCESS",
+    "reason_code": null,
+    "actor_type": "USER",
+    "correlation_id": "58563168-48e9-4aaa-ba07-dbcbe2835220",
+    "metadata_json": {
+      "status_code": 200
+    }
+  },
+  {
+    "action": "getMe",
+    "outcome": "SUCCESS",
+    "reason_code": null,
+    "actor_type": "USER",
+    "correlation_id": "bde714e8-61e6-467a-a71f-f28da372a9c8",
+    "metadata_json": {
+      "status_code": 200
+    }
+  },
+  {
+    "action": "getMe",
+    "outcome": "SUCCESS",
+    "reason_code": null,
+    "actor_type": "USER",
+    "correlation_id": "675180a9-59b7-477d-9284-d0d153976c74",
+    "metadata_json": {
+      "status_code": 200
+    }
+  },
+  {
+    "action": "getBrowserSession",
+    "outcome": "SUCCESS",
+    "reason_code": null,
+    "actor_type": "USER",
+    "correlation_id": "2f045c19-ffbc-4184-99fb-25925e552c51",
+    "metadata_json": {
+      "status_code": 200
+    }
+  }
+]

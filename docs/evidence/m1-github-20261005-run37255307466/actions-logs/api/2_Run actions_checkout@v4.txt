@@ -1,0 +1,73 @@
+﻿2026-10-05T02:25:01.3794058Z ##[group]Run actions/checkout@v4
+2026-10-05T02:25:01.3795990Z with:
+2026-10-05T02:25:01.3796912Z   repository: abuessa911/nex
+2026-10-05T02:25:01.3806181Z   token: ***
+2026-10-05T02:25:01.3807074Z   ssh-strict: true
+2026-10-05T02:25:01.3807978Z   ssh-user: git
+2026-10-05T02:25:01.3808901Z   persist-credentials: true
+2026-10-05T02:25:01.3809903Z   clean: true
+2026-10-05T02:25:01.3810829Z   sparse-checkout-cone-mode: true
+2026-10-05T02:25:01.3811916Z   fetch-depth: 1
+2026-10-05T02:25:01.3812811Z   fetch-tags: false
+2026-10-05T02:25:01.3813731Z   show-progress: true
+2026-10-05T02:25:01.3814670Z   lfs: false
+2026-10-05T02:25:01.3815678Z   submodules: false
+2026-10-05T02:25:01.3816617Z   set-safe-directory: true
+2026-10-05T02:25:01.3817672Z   allow-unsafe-pr-checkout: false
+2026-10-05T02:25:01.3819067Z ##[endgroup]
+2026-10-05T02:25:01.6721326Z Syncing repository: abuessa911/nex
+2026-10-05T02:25:01.6727483Z ##[group]Getting Git version info
+2026-10-05T02:25:01.6729712Z Working directory is '/home/runner/work/nex/nex'
+2026-10-05T02:25:01.6733483Z [command]/usr/bin/git version
+2026-10-05T02:25:01.6735531Z git version 2.55.0
+2026-10-05T02:25:01.6741079Z ##[endgroup]
+2026-10-05T02:25:01.6750612Z Temporarily overriding HOME='/home/runner/work/_temp/31aa2790-f3b7-4ed2-a665-2226bf3df139' before making global git config changes
+2026-10-05T02:25:01.6755687Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-05T02:25:01.6759382Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/nex/nex
+2026-10-05T02:25:01.8536753Z Deleting the contents of '/home/runner/work/nex/nex'
+2026-10-05T02:25:01.8545847Z ##[group]Initializing the repository
+2026-10-05T02:25:01.8560436Z [command]/usr/bin/git init /home/runner/work/nex/nex
+2026-10-05T02:25:02.0737937Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-05T02:25:02.0747185Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-05T02:25:02.0751256Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-05T02:25:02.0754068Z hint: call:
+2026-10-05T02:25:02.0755829Z hint:
+2026-10-05T02:25:02.0757512Z hint: 	git config --global init.defaultBranch <name>
+2026-10-05T02:25:02.0759620Z hint:
+2026-10-05T02:25:02.0761539Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-05T02:25:02.0764900Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-05T02:25:02.0767719Z hint:
+2026-10-05T02:25:02.0769110Z hint: 	git branch -m <name>
+2026-10-05T02:25:02.0770642Z hint:
+2026-10-05T02:25:02.0772696Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-05T02:25:02.0776529Z Initialized empty Git repository in /home/runner/work/nex/nex/.git/
+2026-10-05T02:25:02.0784155Z [command]/usr/bin/git remote add origin https://github.com/abuessa911/nex
+2026-10-05T02:25:02.0830805Z ##[endgroup]
+2026-10-05T02:25:02.0833595Z ##[group]Disabling automatic garbage collection
+2026-10-05T02:25:02.0836490Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-05T02:25:02.0878365Z ##[endgroup]
+2026-10-05T02:25:02.0881115Z ##[group]Setting up auth
+2026-10-05T02:25:02.0885768Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-05T02:25:02.0930379Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-05T02:25:02.1323004Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-05T02:25:02.1366567Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-05T02:25:02.1618100Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-05T02:25:02.1659560Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-05T02:25:02.1906198Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-05T02:25:02.1951760Z ##[endgroup]
+2026-10-05T02:25:02.1954701Z ##[group]Fetching the repository
+2026-10-05T02:25:02.1968266Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +ee34ce97d4f0869d327c1601b37dd8456446045f:refs/remotes/origin/m1-hosted-verification-ee34ce97d4f0
+2026-10-05T02:25:02.5406529Z From https://github.com/abuessa911/nex
+2026-10-05T02:25:02.5416948Z  * [new ref]         ee34ce97d4f0869d327c1601b37dd8456446045f -> origin/m1-hosted-verification-ee34ce97d4f0
+2026-10-05T02:25:02.5420944Z ##[endgroup]
+2026-10-05T02:25:02.5422388Z ##[group]Determining the checkout info
+2026-10-05T02:25:02.5423678Z ##[endgroup]
+2026-10-05T02:25:02.5424613Z [command]/usr/bin/git sparse-checkout disable
+2026-10-05T02:25:02.5490333Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-05T02:25:02.5528726Z ##[group]Checking out the ref
+2026-10-05T02:25:02.5534252Z [command]/usr/bin/git checkout --progress --force -B m1-hosted-verification-ee34ce97d4f0 refs/remotes/origin/m1-hosted-verification-ee34ce97d4f0
+2026-10-05T02:25:02.5806774Z Switched to a new branch 'm1-hosted-verification-ee34ce97d4f0'
+2026-10-05T02:25:02.5813009Z branch 'm1-hosted-verification-ee34ce97d4f0' set up to track 'origin/m1-hosted-verification-ee34ce97d4f0'.
+2026-10-05T02:25:02.5821217Z ##[endgroup]
+2026-10-05T02:25:02.5882141Z [command]/usr/bin/git log -1 --format=%H
+2026-10-05T02:25:02.5910762Z ee34ce97d4f0869d327c1601b37dd8456446045f

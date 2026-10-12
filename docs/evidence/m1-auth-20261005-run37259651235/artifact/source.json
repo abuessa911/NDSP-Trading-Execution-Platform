@@ -1,0 +1,8 @@
+{
+  "commit": "b19438e830f3297f812d7853c4dad4c84552abde",
+  "provider": "Keycloak 26.6.3",
+  "issuer": "https://localhost:18443/oidc/realms/nex-m1-test",
+  "configuration": "committed isolated realm + Compose override; synthetic inputs only",
+  "production": false,
+  "mfa_verified": false
+}

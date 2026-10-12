@@ -1,0 +1,19 @@
+kind = "design-system"
+previewPath = "/nawaf-design-system/"
+title = "NAWAF Design System"
+description = "Standalone source-backed NAWAF component library and review catalog. Preserves dark source styling, explicitly derived light theme, English/LTR and Arabic/RTL. No console migration or application behavior changes."
+version = "1.0.0"
+id = "artifacts/nawaf-design-system"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/nawaf-design-system/" ]
+localPort = 24943
+
+[services.development]
+run = "pnpm --filter @workspace/nawaf-design-system run dev"
+
+[services.env]
+PORT = "24943"
+BASE_PATH = "/nawaf-design-system/"

@@ -1,0 +1,86 @@
+2026-10-05T00:09:31Z
+/nex-m1-isolated-verification-clean20261005-db-1 image=sha256:81bd698b4594e751a3269e4dcd3e03a4a0ec0daf7b72e7aa1abd43cce9887542 labels={"com.docker.compose.config-hash":"ba01e9f12f3b19c3ba741be632fd04312a9f22462e5e676cf385f1b3bca693b2","com.docker.compose.container-number":"1","com.docker.compose.depends_on":"","com.docker.compose.image":"sha256:81bd698b4594e751a3269e4dcd3e03a4a0ec0daf7b72e7aa1abd43cce9887542","com.docker.compose.oneoff":"False","com.docker.compose.project":"nex-m1-isolated-verification-clean20261005","com.docker.compose.project.config_files":"/home/runner/workspace/.cache/m1-clean-20261005/docker-compose.yml,/home/runner/workspace/.cache/m1-clean-20261005/infra/testing/compose.m1.yml","com.docker.compose.project.environment_file":"/dev/null","com.docker.compose.project.working_dir":"/home/runner/workspace/.cache/m1-clean-20261005","com.docker.compose.service":"db","com.docker.compose.version":"2.36.0"} state={"Status":"running","Running":true,"Paused":false,"Restarting":false,"OOMKilled":false,"Dead":false,"Pid":8457,"ExitCode":0,"Error":"","StartedAt":"2026-10-05T00:07:48.088414506Z","FinishedAt":"0001-01-01T00:00:00Z","Health":{"Status":"unhealthy","FailingStreak":20,"Log":[{"Start":"2026-10-05T00:09:09.140908479Z","End":"2026-10-05T00:09:09.172781878Z","ExitCode":-1,"Output":"OCI runtime exec failed: exec failed: unable to start container process: error executing setns process: exit status 1: unknown"},{"Start":"2026-10-05T00:09:14.183067732Z","End":"2026-10-05T00:09:14.269817686Z","ExitCode":-1,"Output":"OCI runtime exec failed: exec failed: unable to start container process: error executing setns process: exit status 1: unknown"},{"Start":"2026-10-05T00:09:19.271011387Z","End":"2026-10-05T00:09:19.303815098Z","ExitCode":-1,"Output":"OCI runtime exec failed: exec failed: unable to start container process: error executing setns process: exit status 1: unknown"},{"Start":"2026-10-05T00:09:24.30461932Z","End":"2026-10-05T00:09:24.35185323Z","ExitCode":-1,"Output":"OCI runtime exec failed: exec failed: unable to start container process: error executing setns process: exit status 1: unknown"},{"Start":"2026-10-05T00:09:29.352729001Z","End":"2026-10-05T00:09:29.389677857Z","ExitCode":-1,"Output":"OCI runtime exec failed: exec failed: unable to start container process: error executing setns process: exit status 1: unknown"}]}} networks={"nex-m1-isolated-verification-clean20261005_nex":{"IPAMConfig":null,"Links":null,"Aliases":["nex-m1-isolated-verification-clean20261005-db-1","db"],"MacAddress":"02:42:ac:13:00:02","DriverOpts":null,"NetworkID":"e05136e6866d84c391b0b0739357336669cbec0df6739f2f1d4e92c0d16c1d07","EndpointID":"e785d298668b25fc352cc57f416fb86d46a981fccea93103bf90e69a3b41d4e4","Gateway":"172.19.0.1","IPAddress":"172.19.0.2","IPPrefixLen":16,"IPv6Gateway":"","GlobalIPv6Address":"","GlobalIPv6PrefixLen":0,"DNSNames":["nex-m1-isolated-verification-clean20261005-db-1","db","8bf662f8a805"]}} mounts=[{"Type":"volume","Name":"nex-m1-isolated-verification-clean20261005_nex_postgres_data","Source":"/var/lib/docker/volumes/nex-m1-isolated-verification-clean20261005_nex_postgres_data/_data","Destination":"/var/lib/postgresql/data","Driver":"local","Mode":"rw","RW":true,"Propagation":""},{"Type":"bind","Source":"/home/runner/workspace/.cache/m1-clean-20261005/infra/postgres/init","Destination":"/docker-entrypoint-initdb.d","Mode":"ro","RW":false,"Propagation":"rprivate"}]
+/nex-m1-isolated-verification-clean20261005-redis-1 image=sha256:f84b0c4678011602b9b98c227a4dcd5468bf8b088b02fdd4165cb7758bad8058 labels={"com.docker.compose.config-hash":"2a90be4aa6b2742ffc67de13b6ff78a10ec8267e4b563b33b687ab8a39b6f3a1","com.docker.compose.container-number":"1","com.docker.compose.depends_on":"","com.docker.compose.image":"sha256:f84b0c4678011602b9b98c227a4dcd5468bf8b088b02fdd4165cb7758bad8058","com.docker.compose.oneoff":"False","com.docker.compose.project":"nex-m1-isolated-verification-clean20261005","com.docker.compose.project.config_files":"/home/runner/workspace/.cache/m1-clean-20261005/docker-compose.yml,/home/runner/workspace/.cache/m1-clean-20261005/infra/testing/compose.m1.yml","com.docker.compose.project.environment_file":"/dev/null","com.docker.compose.project.working_dir":"/home/runner/workspace/.cache/m1-clean-20261005","com.docker.compose.service":"redis","com.docker.compose.version":"2.36.0"} state={"Status":"running","Running":true,"Paused":false,"Restarting":false,"OOMKilled":false,"Dead":false,"Pid":8458,"ExitCode":0,"Error":"","StartedAt":"2026-10-05T00:07:48.097031376Z","FinishedAt":"0001-01-01T00:00:00Z","Health":{"Status":"healthy","FailingStreak":0,"Log":[{"Start":"2026-10-05T00:09:09.627738163Z","End":"2026-10-05T00:09:09.686701918Z","ExitCode":0,"Output":"Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.\n"},{"Start":"2026-10-05T00:09:14.687522011Z","End":"2026-10-05T00:09:14.752535192Z","ExitCode":0,"Output":"Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.\n"},{"Start":"2026-10-05T00:09:19.753729061Z","End":"2026-10-05T00:09:19.831366184Z","ExitCode":0,"Output":"Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.\n"},{"Start":"2026-10-05T00:09:24.832396935Z","End":"2026-10-05T00:09:24.910760908Z","ExitCode":0,"Output":"Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.\n"},{"Start":"2026-10-05T00:09:29.911616194Z","End":"2026-10-05T00:09:29.972436789Z","ExitCode":0,"Output":"Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.\n"}]}} networks={"nex-m1-isolated-verification-clean20261005_nex":{"IPAMConfig":null,"Links":null,"Aliases":["nex-m1-isolated-verification-clean20261005-redis-1","redis"],"MacAddress":"02:42:ac:13:00:03","DriverOpts":null,"NetworkID":"e05136e6866d84c391b0b0739357336669cbec0df6739f2f1d4e92c0d16c1d07","EndpointID":"d8d7f28a03f858b3abe0907ff1fe88f7b17047cbf89b8e779cf76120d498c994","Gateway":"172.19.0.1","IPAddress":"172.19.0.3","IPPrefixLen":16,"IPv6Gateway":"","GlobalIPv6Address":"","GlobalIPv6PrefixLen":0,"DNSNames":["nex-m1-isolated-verification-clean20261005-redis-1","redis","10e94f3a0898"]}} mounts=[{"Type":"volume","Name":"nex-m1-isolated-verification-clean20261005_nex_redis_data","Source":"/var/lib/docker/volumes/nex-m1-isolated-verification-clean20261005_nex_redis_data/_data","Destination":"/data","Driver":"local","Mode":"rw","RW":true,"Propagation":""}]
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.utf8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+sh: locale: not found
+2026-10-05 00:07:49.741 UTC [36] WARNING:  no usable system locales were found
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+initdb: warning: enabling "trust" authentication for local connections
+initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+waiting for server to start....2026-10-05 00:07:52.348 UTC [42] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-05 00:07:52.349 UTC [42] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-05 00:07:52.356 UTC [45] LOG:  database system was shut down at 2026-10-05 00:07:50 UTC
+2026-10-05 00:07:52.365 UTC [42] LOG:  database system is ready to accept connections
+ done
+server started
+CREATE DATABASE
+
+
+/usr/local/bin/docker-entrypoint.sh: sourcing /docker-entrypoint-initdb.d/001-roles.sh
+CREATE ROLE
+CREATE ROLE
+GRANT
+GRANT
+GRANT
+ALTER DEFAULT PRIVILEGES
+
+waiting for server to shut down...2026-10-05 00:07:52.615 UTC [42] LOG:  received fast shutdown request
+.2026-10-05 00:07:52.617 UTC [42] LOG:  aborting any active transactions
+2026-10-05 00:07:52.618 UTC [42] LOG:  background worker "logical replication launcher" (PID 48) exited with exit code 1
+2026-10-05 00:07:52.619 UTC [43] LOG:  shutting down
+2026-10-05 00:07:52.621 UTC [43] LOG:  checkpoint starting: shutdown immediate
+2026-10-05 00:07:53.331 UTC [43] LOG:  checkpoint complete: wrote 938 buffers (5.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.031 s, sync=0.670 s, total=0.713 s; sync files=308, longest=0.119 s, average=0.003 s; distance=4289 kB, estimate=4289 kB; lsn=0/1927878, redo lsn=0/1927878
+2026-10-05 00:07:53.336 UTC [42] LOG:  database system is shut down
+ done
+server stopped
+
+PostgreSQL init process complete; ready for start up.
+
+2026-10-05 00:07:53.446 UTC [1] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-05 00:07:53.446 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-10-05 00:07:53.446 UTC [1] LOG:  could not create IPv6 socket for address "::": Address family not supported by protocol
+2026-10-05 00:07:53.450 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-05 00:07:53.455 UTC [60] LOG:  database system was shut down at 2026-10-05 00:07:53 UTC
+2026-10-05 00:07:53.461 UTC [1] LOG:  database system is ready to accept connections
+1:C 05 Oct 2026 00:07:48.462 # WARNING Memory overcommit must be enabled! Without it, a background save or replication may fail under low memory condition. Being disabled, it can also cause failures without low memory condition, see https://github.com/jemalloc/jemalloc/issues/1328. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+1:C 05 Oct 2026 00:07:48.462 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1:C 05 Oct 2026 00:07:48.462 * Redis version=7.4.11, bits=64, commit=00000000, modified=0, pid=1, just started
+1:C 05 Oct 2026 00:07:48.462 * Configuration loaded
+1:M 05 Oct 2026 00:07:48.463 * monotonic clock: POSIX clock_gettime
+1:M 05 Oct 2026 00:07:48.464 * Running mode=standalone, port=6379.
+1:M 05 Oct 2026 00:07:48.464 # Warning: Could not create server TCP listening socket ::*:6379: unable to bind socket, errno: 97
+1:M 05 Oct 2026 00:07:48.464 * Server initialized
+1:M 05 Oct 2026 00:07:48.612 * Creating AOF base file appendonly.aof.1.base.rdb on server start
+1:M 05 Oct 2026 00:07:48.622 * Creating AOF incr file appendonly.aof.1.incr.aof on server start
+1:M 05 Oct 2026 00:07:48.622 * Ready to accept connections tcp
+tag=["nex-m1-remediation:isolated"] id=sha256:05d2d650ff193bfd633fe01ac7e60a228f38fbbb6fcb0c6e0fd9edcc97fc6e6f digests=[] user=10001:10001 created=2026-10-05T00:07:43.583810696Z
+tag=["postgres:16-alpine"] id=sha256:81bd698b4594e751a3269e4dcd3e03a4a0ec0daf7b72e7aa1abd43cce9887542 digests=["postgres@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"] user= created=2026-09-17T21:31:24.32976807Z
+tag=["redis:7-alpine"] id=sha256:f84b0c4678011602b9b98c227a4dcd5468bf8b088b02fdd4165cb7758bad8058 digests=["redis@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499"] user= created=2026-09-17T21:32:46.989770417Z
+OCI runtime exec failed: exec failed: unable to start container process: error executing setns process: exit status 1: unknown
+db_exec_exit=126
+PONG
+Redis server v=7.4.11 sha=00000000:0 malloc=jemalloc-5.3.0 bits=64 build=40ff01a501d8e4b6
+redis_exec_exit=0

@@ -1,0 +1,15 @@
+{
+  "run": 37299557982,
+  "attempt": 2,
+  "tested_commit": "993305fc72f4e3e1b7726d5ef148c1cd1061a798",
+  "provider": "Keycloak 26.6.3",
+  "administrator_mfa": "PASS",
+  "core_checks": 31,
+  "mfa_checks": 48,
+  "audit_rows": 148,
+  "artifact_sha256": "731cd77cff06022d6074721c12055b454827edb3ec690ecaaf6da0c30faf4574",
+  "audit_allowlist": "PASS",
+  "sensitive_pattern_scan": "PASS (text/binary pattern scan; not a universal absence proof)",
+  "cleanup": "PASS",
+  "overall_m1": "NOT ACCEPTED"
+}

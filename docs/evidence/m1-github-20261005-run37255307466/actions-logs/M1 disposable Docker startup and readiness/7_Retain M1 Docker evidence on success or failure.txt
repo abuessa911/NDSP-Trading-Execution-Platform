@@ -1,0 +1,33 @@
+﻿2026-10-05T02:25:52.5144450Z ##[group]Run actions/upload-artifact@v4
+2026-10-05T02:25:52.5144758Z with:
+2026-10-05T02:25:52.5144966Z   name: m1-docker-37255307466-1
+2026-10-05T02:25:52.5145247Z   path: /home/runner/work/_temp/m1-docker-evidence
+2026-10-05T02:25:52.5145549Z   if-no-files-found: error
+2026-10-05T02:25:52.5145778Z   retention-days: 14
+2026-10-05T02:25:52.5146007Z   compression-level: 6
+2026-10-05T02:25:52.5146237Z   overwrite: false
+2026-10-05T02:25:52.5146450Z   include-hidden-files: false
+2026-10-05T02:25:52.5146684Z env:
+2026-10-05T02:25:52.5146948Z   M1_PROJECT: nex-m1-isolated-verification-ci37255307466a1
+2026-10-05T02:25:52.5147332Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:25:52.5147745Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+2026-10-05T02:25:52.5148153Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:25:52.5148531Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:25:52.5148900Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:25:52.5149310Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+2026-10-05T02:25:52.5149665Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+2026-10-05T02:25:52.5149964Z ##[endgroup]
+2026-10-05T02:25:52.7242384Z (node:4532) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-05T02:25:52.7245158Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-05T02:25:52.7654300Z With the provided path, there will be 21 files uploaded
+2026-10-05T02:25:52.7655619Z Artifact name is valid!
+2026-10-05T02:25:52.7656306Z Root directory input is valid!
+2026-10-05T02:25:53.1136005Z Beginning upload of artifact content to blob storage
+2026-10-05T02:25:53.1619231Z (node:4532) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-05T02:25:53.4335365Z Uploaded bytes 37285
+2026-10-05T02:25:53.4995645Z Finished uploading artifact content to blob storage!
+2026-10-05T02:25:53.4997125Z SHA256 digest of uploaded artifact zip is 16d7419d5fd98843002f402ef3c8a644e2824e2b034fc5fed0890465e308b29d
+2026-10-05T02:25:53.4998195Z Finalizing artifact upload
+2026-10-05T02:25:53.7512137Z Artifact m1-docker-37255307466-1.zip successfully finalized. Artifact ID 11321743826
+2026-10-05T02:25:53.7522127Z Artifact m1-docker-37255307466-1 has been successfully uploaded! Final size is 37285 bytes. Artifact ID is 11321743826
+2026-10-05T02:25:53.7532610Z Artifact download URL: https://github.com/abuessa911/nex/actions/runs/37255307466/artifacts/11321743826

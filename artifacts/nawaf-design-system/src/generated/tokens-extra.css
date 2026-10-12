@@ -1,0 +1,208 @@
+/* GENERATED FROM tokens.json BY scripts/build-tokens.mjs -- DO NOT EDIT. */
+@theme inline {
+  --spacing-ds-control-sm: var(--ds-sizing-control-sm);
+  --spacing-ds-control-md: var(--ds-sizing-control-md);
+  --spacing-ds-control-lg: var(--ds-sizing-control-lg);
+  --spacing-ds-icon-xs: var(--ds-sizing-icon-xs);
+  --spacing-ds-icon-sm: var(--ds-sizing-icon-sm);
+  --spacing-ds-icon-md: var(--ds-sizing-icon-md);
+  --spacing-ds-drawer-width: var(--ds-sizing-drawer-width);
+  --spacing-ds-chart-height: var(--ds-sizing-chart-height);
+  --spacing-ds-line-chart-height: var(--ds-sizing-line-chart-height);
+  --spacing-ds-bars-height: var(--ds-sizing-bars-height);
+  --spacing-ds-ring-size: var(--ds-sizing-ring-size);
+  --spacing-ds-meter-height: var(--ds-sizing-meter-height);
+  --spacing-ds-meter-min-width: var(--ds-sizing-meter-min-width);
+  --spacing-ds-kv-label-min: var(--ds-sizing-kv-label-min);
+  --spacing-ds-content-max: var(--ds-sizing-content-max);
+  --spacing-ds-nav-width: var(--ds-sizing-nav-width);
+  --spacing-ds-focus-width: var(--ds-sizing-focus-width);
+  --spacing-ds-focus-offset: var(--ds-sizing-focus-offset);
+  --spacing-ds-banner-text-basis: var(--ds-sizing-banner-text-basis);
+  --spacing-ds-error-text-basis: var(--ds-sizing-error-text-basis);
+  --spacing-ds-ring-label-size: var(--ds-sizing-ring-label-size);
+  --spacing-ds-search-min-width: var(--ds-sizing-search-min-width);
+  --spacing-ds-drawer-slide-offset: var(--ds-sizing-drawer-slide-offset);
+  --spacing-ds-textarea-min: var(--ds-sizing-textarea-min);
+  --spacing-ds-select-min: var(--ds-sizing-select-min);
+  --spacing-ds-drawer-handle: var(--ds-sizing-drawer-handle);
+  --spacing-ds-nudge-indicator: var(--ds-sizing-nudge-indicator);
+  --spacing-ds-nudge-checkbox: var(--ds-sizing-nudge-checkbox);
+  --spacing-ds-nudge-alert: var(--ds-sizing-nudge-alert);
+  --spacing-ds-switch-travel: var(--ds-sizing-switch-travel);
+  --spacing-ds-dialog-max: var(--ds-sizing-dialog-max);
+  --spacing-ds-chart-margin-top: var(--ds-sizing-chart-margin-top);
+  --spacing-ds-chart-margin-end: var(--ds-sizing-chart-margin-end);
+  --spacing-ds-chart-axis-width: var(--ds-sizing-chart-axis-width);
+  --spacing-ds-chart-tick: var(--ds-sizing-chart-tick);
+  --spacing-ds-nav-slide: var(--ds-sizing-nav-slide);
+  --spacing-ds-empty-icon: var(--ds-sizing-empty-icon);
+  --spacing-ds-error-icon: var(--ds-sizing-error-icon);
+  --spacing-ds-search-icon: var(--ds-sizing-search-icon);
+  --radius-ds-drawer: var(--ds-radius-drawer);
+  --color-status-ok-fg: hsl(var(--status-ok-fg));
+  --color-status-ok-bg: hsl(var(--status-ok-bg));
+  --color-status-ok-border: hsl(var(--status-ok-border));
+  --color-status-bad-fg: hsl(var(--status-bad-fg));
+  --color-status-bad-bg: hsl(var(--status-bad-bg));
+  --color-status-bad-border: hsl(var(--status-bad-border));
+  --color-status-warn-fg: hsl(var(--status-warn-fg));
+  --color-status-warn-bg: hsl(var(--status-warn-bg));
+  --color-status-warn-border: hsl(var(--status-warn-border));
+  --color-status-info-fg: hsl(var(--status-info-fg));
+  --color-status-info-bg: hsl(var(--status-info-bg));
+  --color-status-info-border: hsl(var(--status-info-border));
+  --color-status-mute-fg: hsl(var(--status-mute-fg));
+  --color-status-mute-bg: hsl(var(--status-mute-bg));
+  --color-status-mute-border: hsl(var(--status-mute-border));
+  --color-status-demo-fg: hsl(var(--status-demo-fg));
+  --color-status-demo-bg: hsl(var(--status-demo-bg));
+  --color-status-demo-border: hsl(var(--status-demo-border));
+  --color-surface-track: hsl(var(--surface-track));
+  --color-surface-field: hsl(var(--surface-field));
+  --color-surface-raised: hsl(var(--surface-raised));
+  --color-surface-skeleton-mid: hsl(var(--surface-skeleton-mid));
+  --color-surface-scrim: hsl(var(--surface-scrim));
+}
+
+:root {
+  --ds-sizing-control-sm: 1.75rem;
+  --ds-sizing-control-md: 2.1875rem;
+  --ds-sizing-control-lg: 2.75rem;
+  --ds-sizing-icon-xs: 0.6875rem;
+  --ds-sizing-icon-sm: 0.8125rem;
+  --ds-sizing-icon-md: 1rem;
+  --ds-sizing-drawer-width: 28.75rem;
+  --ds-sizing-chart-height: 15rem;
+  --ds-sizing-line-chart-height: 8.75rem;
+  --ds-sizing-bars-height: 6.875rem;
+  --ds-sizing-ring-size: 6rem;
+  --ds-sizing-meter-height: 0.375rem;
+  --ds-sizing-meter-min-width: 2.5rem;
+  --ds-sizing-kv-label-min: 8.125rem;
+  --ds-sizing-content-max: 64rem;
+  --ds-sizing-nav-width: 15.625rem;
+  --ds-sizing-focus-width: 0.125rem;
+  --ds-sizing-focus-offset: 0.125rem;
+  --ds-sizing-banner-text-basis: 15rem;
+  --ds-sizing-error-text-basis: 12.5rem;
+  --ds-sizing-ring-label-size: 1.125rem;
+  --ds-sizing-search-min-width: 13.75rem;
+  --ds-sizing-drawer-slide-offset: 1.875rem;
+  --ds-sizing-textarea-min: 3.75rem;
+  --ds-sizing-select-min: 8rem;
+  --ds-sizing-drawer-handle: 6.25rem;
+  --ds-sizing-nudge-indicator: 0.0625rem;
+  --ds-sizing-nudge-checkbox: 0.125rem;
+  --ds-sizing-nudge-alert: 0.1875rem;
+  --ds-sizing-switch-travel: 1rem;
+  --ds-sizing-dialog-max: 85vh;
+  --ds-sizing-chart-margin-top: 0.9375rem;
+  --ds-sizing-chart-margin-end: 0.625rem;
+  --ds-sizing-chart-axis-width: 4.25rem;
+  --ds-sizing-chart-tick: 0.625rem;
+  --ds-sizing-nav-slide: 13rem;
+  --ds-sizing-empty-icon: 1.625rem;
+  --ds-sizing-error-icon: 1.375rem;
+  --ds-sizing-search-icon: 0.875rem;
+  --ds-type-micro: 0.5625rem;
+  --ds-type-caption: 0.625rem;
+  --ds-type-small: 0.6875rem;
+  --ds-type-body-sm: 0.75rem;
+  --ds-type-body: 0.875rem;
+  --ds-type-heading: 1.0625rem;
+  --ds-type-kpi: 1.3125rem;
+  --ds-type-display: 1.875rem;
+  --ds-motion-duration-fast: 0.15s;
+  --ds-motion-duration-base: 0.2s;
+  --ds-motion-duration-shimmer: 1.4s;
+  --ds-motion-easing-out: ease-out;
+  --ds-motion-duration-sheet-open: 0.5s;
+  --ds-motion-duration-sheet-close: 0.3s;
+  --ds-motion-duration-nav-icon: 0.3s;
+  --ds-z-index-sticky: 11;
+  --ds-z-index-scrim: 40;
+  --ds-z-index-drawer: 41;
+  --ds-z-index-overlay: 50;
+  --ds-z-index-toast: 60;
+  --ds-breakpoint-sm: 740px;
+  --ds-breakpoint-md: 1050px;
+  --ds-breakpoint-wide: 1800px;
+  --ds-radius-sm: 0.1875rem;
+  --ds-radius-control: 0.25rem;
+  --ds-radius-panel: 0.4375rem;
+  --ds-radius-drawer: 0.625rem;
+  --status-ok-fg: 153 59.7% 26.3%;
+  --status-ok-bg: 147 45% 92.2%;
+  --status-ok-border: 150 36.1% 66.9%;
+  --status-bad-fg: 8 62.7% 40%;
+  --status-bad-bg: 11 73.3% 94.1%;
+  --status-bad-border: 10 56.7% 73.7%;
+  --status-warn-fg: 35 74.3% 27.5%;
+  --status-warn-bg: 39 79.5% 92.4%;
+  --status-warn-border: 38 59.2% 69.2%;
+  --status-info-fg: 219 57.5% 40.6%;
+  --status-info-bg: 220 72.4% 94.3%;
+  --status-info-border: 219 59.3% 75.9%;
+  --status-mute-fg: 208 19.2% 39.8%;
+  --status-mute-bg: 207 35.5% 93.9%;
+  --status-mute-border: 208 22.6% 79.2%;
+  --status-demo-fg: 265 53.8% 39%;
+  --status-demo-bg: 267 76.9% 94.9%;
+  --status-demo-border: 267 64.8% 72.2%;
+  --surface-track: 208 25.4% 86.9%;
+  --surface-field: 204 45.5% 97.8%;
+  --surface-raised: 207 35.5% 93.9%;
+  --surface-skeleton-mid: 206 33.3% 90.6%;
+  --surface-scrim: 213 69.2% 2.5%;
+}
+
+.dark {
+  --status-ok-fg: 154 60% 56.9%;
+  --status-ok-bg: 162 47.4% 11.2%;
+  --status-ok-border: 158 55.9% 26.7%;
+  --status-bad-fg: 8 100% 70%;
+  --status-bad-bg: 8 44.6% 12.7%;
+  --status-bad-border: 7 51.6% 31.6%;
+  --status-warn-fg: 35 82.1% 69.4%;
+  --status-warn-bg: 32 23.9% 13.9%;
+  --status-warn-border: 34 35.4% 31.6%;
+  --status-info-fg: 220 100% 73.9%;
+  --status-info-bg: 221 48.6% 13.7%;
+  --status-info-border: 220 46.3% 34.3%;
+  --status-mute-fg: 211 21.9% 66.9%;
+  --status-mute-bg: 212 34.5% 10.8%;
+  --status-mute-border: 211 27.9% 21.8%;
+  --status-demo-fg: 265 100% 91.2%;
+  --status-demo-bg: 252 35.2% 13.9%;
+  --status-demo-border: 266 100% 80.4%;
+  --surface-track: 210 31.1% 17.6%;
+  --surface-field: 212 38.8% 9.6%;
+  --surface-raised: 213 38% 13.9%;
+  --surface-skeleton-mid: 211 36.5% 16.7%;
+  --surface-scrim: 213 69.2% 2.5%;
+}
+
+/* Duration helpers (set tw-animate duration var) and reduced motion. Global so portaled content is covered
+   and so consumers importing only this file still get it. */
+.nawaf-dur-base { --tw-duration: var(--ds-motion-duration-base); }
+.nawaf-dur-sheet[data-state="open"] { --tw-duration: var(--ds-motion-duration-sheet-open); }
+.nawaf-dur-sheet[data-state="closed"] { --tw-duration: var(--ds-motion-duration-sheet-close); }
+.nawaf-dur-nav-icon { --tw-duration: var(--ds-motion-duration-nav-icon); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+/* Responsive rules interpolated from the breakpoint tokens. */
+@media (max-width: 1050px) {
+  .nawaf-split, .nawaf-chart-layout { grid-template-columns: 1fr; }
+}
+@media (max-width: 740px) {
+  .nawaf-data-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .nawaf-data-table, .nawaf-data-table tbody, .nawaf-data-table tr, .nawaf-data-table td { display: block; width: 100%; }
+  .nawaf-data-table tr { border: thin solid hsl(var(--border)); border-radius: var(--ds-radius-panel); margin-block-end: calc(var(--spacing) * 2.5); padding: calc(var(--spacing) * 1.5) calc(var(--spacing) * 2.5); background: hsl(var(--surface-field)); }
+  .nawaf-data-table td { display: flex; justify-content: space-between; gap: calc(var(--spacing) * 3); border: 0; padding-block: calc(var(--spacing) * 1.25); text-align: end; }
+  .nawaf-data-table td::before { content: attr(data-label); color: hsl(var(--muted-foreground)); font-family: var(--app-font-mono); font-size: var(--ds-type-caption); text-transform: uppercase; text-align: start; }
+  .nawaf-data-table td.nawaf-act::before { content: none; }
+  .nawaf-data-table td.nawaf-act { justify-content: flex-end; }
+}

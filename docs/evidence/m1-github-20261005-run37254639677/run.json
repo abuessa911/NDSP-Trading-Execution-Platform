@@ -1,0 +1,22 @@
+{
+  "id": 37254639677,
+  "html_url": "https://github.com/abuessa911/nex/actions/runs/37254639677",
+  "name": "NEX M1 CI",
+  "path": ".github/workflows/ci.yml",
+  "event": "push",
+  "head_sha": "98715f05cdcf3036c10d62f4754aed67cc7d9ef1",
+  "head_branch": "main",
+  "status": "completed",
+  "conclusion": "success",
+  "run_attempt": 1,
+  "created_at": "2026-10-05T02:14:53Z",
+  "updated_at": "2026-10-05T02:15:52Z",
+  "run_started_at": "2026-10-05T02:14:53Z",
+  "workflow_id": 375007391,
+  "repository": {
+    "id": 1404983861,
+    "full_name": "abuessa911/nex",
+    "html_url": "https://github.com/abuessa911/nex",
+    "private": true
+  }
+}

@@ -1,0 +1,541 @@
+{
+  "total_count": 4,
+  "jobs": [
+    {
+      "id": 111716358682,
+      "run_id": 37295727289,
+      "workflow_name": "NEX M1 CI",
+      "head_branch": "m1-keycloak-auth-20261005",
+      "run_url": "https://api.github.com/repos/abuessa911/nex/actions/runs/37295727289",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOU75aNc8AAAAaAtBaGg",
+      "head_sha": "2253a8c40d41018caa1f46d499a2904b777ec769",
+      "url": "https://api.github.com/repos/abuessa911/nex/actions/jobs/111716358682",
+      "html_url": "https://github.com/abuessa911/nex/actions/runs/37295727289/job/111716358682",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-05T10:18:22Z",
+      "started_at": "2026-10-05T10:18:24Z",
+      "completed_at": "2026-10-05T10:18:58Z",
+      "name": "api",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-05T10:18:25Z",
+          "completed_at": "2026-10-05T10:18:27Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-05T10:18:27Z",
+          "completed_at": "2026-10-05T10:18:29Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-05T10:18:29Z",
+          "completed_at": "2026-10-05T10:18:29Z"
+        },
+        {
+          "name": "Run astral-sh/setup-uv@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-05T10:18:29Z",
+          "completed_at": "2026-10-05T10:18:32Z"
+        },
+        {
+          "name": "Run uv sync --frozen",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-05T10:18:32Z",
+          "completed_at": "2026-10-05T10:18:34Z"
+        },
+        {
+          "name": "Run uv run ruff check apps/api scripts/ci-m1-compose.py scripts/verify-m1-compose.py scripts/tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-05T10:18:34Z",
+          "completed_at": "2026-10-05T10:18:35Z"
+        },
+        {
+          "name": "Run uv run mypy apps/api/nex_api",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-05T10:18:35Z",
+          "completed_at": "2026-10-05T10:18:49Z"
+        },
+        {
+          "name": "Run uv run python scripts/export-m1-openapi.py --check",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-05T10:18:49Z",
+          "completed_at": "2026-10-05T10:18:51Z"
+        },
+        {
+          "name": "Run uv run pytest apps/api/tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-05T10:18:51Z",
+          "completed_at": "2026-10-05T10:18:54Z"
+        },
+        {
+          "name": "Run uv run pytest scripts/tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-05T10:18:54Z",
+          "completed_at": "2026-10-05T10:18:55Z"
+        },
+        {
+          "name": "Post Run astral-sh/setup-uv@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-10-05T10:18:55Z",
+          "completed_at": "2026-10-05T10:18:55Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-10-05T10:18:55Z",
+          "completed_at": "2026-10-05T10:18:55Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-10-05T10:18:55Z",
+          "completed_at": "2026-10-05T10:18:55Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-10-05T10:18:55Z",
+          "completed_at": "2026-10-05T10:18:55Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/abuessa911/nex/check-runs/111716358682",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000003621,
+      "runner_name": "GitHub Actions 1000003621",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 111716358974,
+      "run_id": 37295727289,
+      "workflow_name": "NEX M1 CI",
+      "head_branch": "m1-keycloak-auth-20261005",
+      "run_url": "https://api.github.com/repos/abuessa911/nex/actions/runs/37295727289",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOU75aNc8AAAAaAtBbPg",
+      "head_sha": "2253a8c40d41018caa1f46d499a2904b777ec769",
+      "url": "https://api.github.com/repos/abuessa911/nex/actions/jobs/111716358974",
+      "html_url": "https://github.com/abuessa911/nex/actions/runs/37295727289/job/111716358974",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-05T10:18:22Z",
+      "started_at": "2026-10-05T10:18:25Z",
+      "completed_at": "2026-10-05T10:19:29Z",
+      "name": "Next.js M1 console build and route boundaries",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-05T10:18:26Z",
+          "completed_at": "2026-10-05T10:18:28Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-05T10:18:28Z",
+          "completed_at": "2026-10-05T10:18:29Z"
+        },
+        {
+          "name": "Run pnpm/action-setup@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-05T10:18:29Z",
+          "completed_at": "2026-10-05T10:18:31Z"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-05T10:18:31Z",
+          "completed_at": "2026-10-05T10:18:39Z"
+        },
+        {
+          "name": "Run pnpm install --frozen-lockfile",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-05T10:18:39Z",
+          "completed_at": "2026-10-05T10:18:43Z"
+        },
+        {
+          "name": "Run pnpm --filter @workspace/ndsp-console run build",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-05T10:18:43Z",
+          "completed_at": "2026-10-05T10:19:17Z"
+        },
+        {
+          "name": "Run pnpm --filter @workspace/ndsp-console run typecheck",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-05T10:19:17Z",
+          "completed_at": "2026-10-05T10:19:25Z"
+        },
+        {
+          "name": "Run pnpm --filter @workspace/ndsp-console run test",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-05T10:19:25Z",
+          "completed_at": "2026-10-05T10:19:25Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-05T10:19:25Z",
+          "completed_at": "2026-10-05T10:19:25Z"
+        },
+        {
+          "name": "Post Run pnpm/action-setup@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-05T10:19:25Z",
+          "completed_at": "2026-10-05T10:19:26Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-10-05T10:19:26Z",
+          "completed_at": "2026-10-05T10:19:26Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-10-05T10:19:26Z",
+          "completed_at": "2026-10-05T10:19:26Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/abuessa911/nex/check-runs/111716358974",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000003622,
+      "runner_name": "GitHub Actions 1000003622",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 111716358995,
+      "run_id": 37295727289,
+      "workflow_name": "NEX M1 CI",
+      "head_branch": "m1-keycloak-auth-20261005",
+      "run_url": "https://api.github.com/repos/abuessa911/nex/actions/runs/37295727289",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOU75aNc8AAAAaAtBbUw",
+      "head_sha": "2253a8c40d41018caa1f46d499a2904b777ec769",
+      "url": "https://api.github.com/repos/abuessa911/nex/actions/jobs/111716358995",
+      "html_url": "https://github.com/abuessa911/nex/actions/runs/37295727289/job/111716358995",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-05T10:18:22Z",
+      "started_at": "2026-10-05T10:18:24Z",
+      "completed_at": "2026-10-05T10:19:19Z",
+      "name": "M1 disposable Docker startup and readiness",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-05T10:18:25Z",
+          "completed_at": "2026-10-05T10:18:26Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-05T10:18:26Z",
+          "completed_at": "2026-10-05T10:18:27Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-05T10:18:27Z",
+          "completed_at": "2026-10-05T10:18:27Z"
+        },
+        {
+          "name": "Run astral-sh/setup-uv@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-05T10:18:27Z",
+          "completed_at": "2026-10-05T10:18:29Z"
+        },
+        {
+          "name": "Verify committed M1 source on fresh synthetic Docker resources",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-05T10:18:29Z",
+          "completed_at": "2026-10-05T10:19:15Z"
+        },
+        {
+          "name": "Collect failure evidence and retry scoped cleanup",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-05T10:19:15Z",
+          "completed_at": "2026-10-05T10:19:16Z"
+        },
+        {
+          "name": "Retain M1 Docker evidence on success or failure",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-05T10:19:16Z",
+          "completed_at": "2026-10-05T10:19:17Z"
+        },
+        {
+          "name": "Post Run astral-sh/setup-uv@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-10-05T10:19:17Z",
+          "completed_at": "2026-10-05T10:19:17Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-05T10:19:17Z",
+          "completed_at": "2026-10-05T10:19:17Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-05T10:19:17Z",
+          "completed_at": "2026-10-05T10:19:17Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-05T10:19:17Z",
+          "completed_at": "2026-10-05T10:19:17Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/abuessa911/nex/check-runs/111716358995",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000003620,
+      "runner_name": "GitHub Actions 1000003620",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 111716359015,
+      "run_id": 37295727289,
+      "workflow_name": "NEX M1 CI",
+      "head_branch": "m1-keycloak-auth-20261005",
+      "run_url": "https://api.github.com/repos/abuessa911/nex/actions/runs/37295727289",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOU75aNc8AAAAaAtBbZw",
+      "head_sha": "2253a8c40d41018caa1f46d499a2904b777ec769",
+      "url": "https://api.github.com/repos/abuessa911/nex/actions/jobs/111716359015",
+      "html_url": "https://github.com/abuessa911/nex/actions/runs/37295727289/job/111716359015",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-05T10:18:22Z",
+      "started_at": "2026-10-05T10:18:25Z",
+      "completed_at": "2026-10-05T10:25:13Z",
+      "name": "M1 genuine isolated Keycloak browser authentication",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-05T10:18:26Z",
+          "completed_at": "2026-10-05T10:18:28Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-05T10:18:28Z",
+          "completed_at": "2026-10-05T10:18:29Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-05T10:18:29Z",
+          "completed_at": "2026-10-05T10:18:30Z"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-05T10:18:30Z",
+          "completed_at": "2026-10-05T10:18:33Z"
+        },
+        {
+          "name": "Run pnpm/action-setup@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-05T10:18:33Z",
+          "completed_at": "2026-10-05T10:18:34Z"
+        },
+        {
+          "name": "Run astral-sh/setup-uv@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-05T10:18:34Z",
+          "completed_at": "2026-10-05T10:18:37Z"
+        },
+        {
+          "name": "Install isolated browser verification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-05T10:18:37Z",
+          "completed_at": "2026-10-05T10:19:09Z"
+        },
+        {
+          "name": "Verify committed source against actual disposable Keycloak",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-05T10:19:09Z",
+          "completed_at": "2026-10-05T10:25:04Z"
+        },
+        {
+          "name": "Retry owned authentication fixture cleanup",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-05T10:25:04Z",
+          "completed_at": "2026-10-05T10:25:04Z"
+        },
+        {
+          "name": "Retain sanitized genuine-provider evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-05T10:25:04Z",
+          "completed_at": "2026-10-05T10:25:06Z"
+        },
+        {
+          "name": "Post Run astral-sh/setup-uv@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-10-05T10:25:06Z",
+          "completed_at": "2026-10-05T10:25:06Z"
+        },
+        {
+          "name": "Post Run pnpm/action-setup@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-10-05T10:25:06Z",
+          "completed_at": "2026-10-05T10:25:06Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-10-05T10:25:06Z",
+          "completed_at": "2026-10-05T10:25:07Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-10-05T10:25:07Z",
+          "completed_at": "2026-10-05T10:25:07Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-10-05T10:25:07Z",
+          "completed_at": "2026-10-05T10:25:07Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-10-05T10:25:07Z",
+          "completed_at": "2026-10-05T10:25:07Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/abuessa911/nex/check-runs/111716359015",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000003619,
+      "runner_name": "GitHub Actions 1000003619",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}

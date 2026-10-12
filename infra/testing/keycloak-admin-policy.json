@@ -1,0 +1,22 @@
+{
+  "authenticationFlows": [{
+    "id": "22222222-2222-4222-8222-222222222310",
+    "alias": "nex-required-password-totp",
+    "providerId": "basic-flow",
+    "topLevel": true,
+    "builtIn": false,
+    "authenticationExecutions": [
+      {"authenticator": "auth-username-password-form", "authenticatorConfig": "nex-password-reference", "requirement": "REQUIRED", "priority": 10, "userSetupAllowed": false, "authenticatorFlow": false},
+      {"authenticator": "auth-otp-form", "authenticatorConfig": "nex-otp-reference", "requirement": "REQUIRED", "priority": 20, "userSetupAllowed": false, "authenticatorFlow": false}
+    ]
+  }],
+  "authenticatorConfig": [
+    {"alias": "nex-password-reference", "config": {"default.reference.value": "pwd", "default.reference.maxAge": "600"}},
+    {"alias": "nex-otp-reference", "config": {"default.reference.value": "otp", "default.reference.maxAge": "600"}}
+  ],
+  "otpPolicyType": "totp",
+  "otpPolicyAlgorithm": "HmacSHA1",
+  "otpPolicyDigits": 6,
+  "otpPolicyPeriod": 30,
+  "otpPolicyLookAheadWindow": 1
+}

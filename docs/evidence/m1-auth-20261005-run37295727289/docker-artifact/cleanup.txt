@@ -1,0 +1,38 @@
++ /opt/hostedtoolcache/Python/3.12.14/x64/bin/python scripts/verify-m1-compose.py --project nex-m1-isolated-verification-ci37295727289a1 --down
++ docker compose --env-file /dev/null -p nex-m1-isolated-verification-ci37295727289a1 -f docker-compose.yml -f infra/testing/compose.m1.yml down -v
+ Container nex-m1-isolated-verification-ci37295727289a1-gateway-1  Stopping
+ Container nex-m1-isolated-verification-ci37295727289a1-gateway-1  Stopped
+ Container nex-m1-isolated-verification-ci37295727289a1-gateway-1  Removing
+ Container nex-m1-isolated-verification-ci37295727289a1-gateway-1  Removed
+ Container nex-m1-isolated-verification-ci37295727289a1-api-1  Stopping
+ Container nex-m1-isolated-verification-ci37295727289a1-api-1  Stopped
+ Container nex-m1-isolated-verification-ci37295727289a1-api-1  Removing
+ Container nex-m1-isolated-verification-ci37295727289a1-api-1  Removed
+ Container nex-m1-isolated-verification-ci37295727289a1-redis-1  Stopping
+ Container nex-m1-isolated-verification-ci37295727289a1-db-1  Stopping
+ Container nex-m1-isolated-verification-ci37295727289a1-redis-1  Stopped
+ Container nex-m1-isolated-verification-ci37295727289a1-redis-1  Removing
+ Container nex-m1-isolated-verification-ci37295727289a1-redis-1  Removed
+ Container nex-m1-isolated-verification-ci37295727289a1-db-1  Stopped
+ Container nex-m1-isolated-verification-ci37295727289a1-db-1  Removing
+ Container nex-m1-isolated-verification-ci37295727289a1-db-1  Removed
+ Volume nex-m1-isolated-verification-ci37295727289a1_nex_postgres_data  Removing
+ Volume nex-m1-isolated-verification-ci37295727289a1_nex_redis_data  Removing
+ Network nex-m1-isolated-verification-ci37295727289a1_nex  Removing
+ Network nex-m1-isolated-verification-ci37295727289a1_nex  Removed
+ Volume nex-m1-isolated-verification-ci37295727289a1_nex_postgres_data  Removed
+ Volume nex-m1-isolated-verification-ci37295727289a1_nex_redis_data  Removed
+
+exit=0
++ docker rm -f nex-m1-isolated-verification-ci37295727289a1-execprobe
+Error response from daemon: No such container: nex-m1-isolated-verification-ci37295727289a1-execprobe
+
+exit=0
++ /opt/hostedtoolcache/Python/3.12.14/x64/bin/python scripts/verify-m1-compose.py --project nex-m1-isolated-verification-ci37295727289a1 --down
++ docker compose --env-file /dev/null -p nex-m1-isolated-verification-ci37295727289a1 -f docker-compose.yml -f infra/testing/compose.m1.yml down -v
+
+exit=0
++ docker rm -f nex-m1-isolated-verification-ci37295727289a1-execprobe
+Error response from daemon: No such container: nex-m1-isolated-verification-ci37295727289a1-execprobe
+
+exit=0

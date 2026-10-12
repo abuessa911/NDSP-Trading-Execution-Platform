@@ -1,0 +1,13 @@
+
+> @workspace/ndsp-console@0.0.0 build /home/runner/work/_temp/auth-committed-source/artifacts/ndsp-console
+> vite build --config vite.config.ts
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 80 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/public/index.html                   1.43 kB │ gzip:  0.55 kB
+dist/public/assets/index-BK8KS85p.css  108.35 kB │ gzip: 19.09 kB
+dist/public/assets/index-B4kak9qM.js   198.65 kB │ gzip: 63.21 kB
+✓ built in 1.61s

@@ -1,0 +1,45 @@
+{
+  "total_count": 2,
+  "artifacts": [
+    {
+      "id": 11337262988,
+      "node_id": "MDg6QXJ0aWZhY3QxMTMzNzI2Mjk4OA==",
+      "name": "m1-auth-37292956379-1",
+      "size_in_bytes": 3537,
+      "url": "https://api.github.com/repos/abuessa911/nex/actions/artifacts/11337262988",
+      "archive_download_url": "https://api.github.com/repos/abuessa911/nex/actions/artifacts/11337262988/zip",
+      "expired": false,
+      "digest": "sha256:bbab307ed768f83bf155fa4678fcac2046773ba5613f4395baed6c5593174235",
+      "created_at": "2026-10-05T09:54:33Z",
+      "updated_at": "2026-10-05T09:54:33Z",
+      "expires_at": "2026-10-19T09:54:32Z",
+      "workflow_run": {
+        "id": 37292956379,
+        "repository_id": 1404983861,
+        "head_repository_id": 1404983861,
+        "head_branch": "m1-keycloak-auth-20261005",
+        "head_sha": "a01a7063aea8eb5fd682173a3fa27b16ea719f80"
+      }
+    },
+    {
+      "id": 11337128302,
+      "node_id": "MDg6QXJ0aWZhY3QxMTMzNzEyODMwMg==",
+      "name": "m1-docker-37292956379-1",
+      "size_in_bytes": 37596,
+      "url": "https://api.github.com/repos/abuessa911/nex/actions/artifacts/11337128302",
+      "archive_download_url": "https://api.github.com/repos/abuessa911/nex/actions/artifacts/11337128302/zip",
+      "expired": false,
+      "digest": "sha256:db77dfa70b53afb61421221c94d5a7f9c61037fe6f126cc886e791a8cdb37468",
+      "created_at": "2026-10-05T09:54:06Z",
+      "updated_at": "2026-10-05T09:54:06Z",
+      "expires_at": "2026-10-19T09:54:05Z",
+      "workflow_run": {
+        "id": 37292956379,
+        "repository_id": 1404983861,
+        "head_repository_id": 1404983861,
+        "head_branch": "m1-keycloak-auth-20261005",
+        "head_sha": "a01a7063aea8eb5fd682173a3fa27b16ea719f80"
+      }
+    }
+  ]
+}

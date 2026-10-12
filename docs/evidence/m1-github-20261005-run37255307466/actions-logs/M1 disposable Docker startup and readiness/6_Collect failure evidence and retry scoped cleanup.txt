@@ -1,0 +1,32 @@
+﻿2026-10-05T02:25:51.7208769Z ##[group]Run env -i PATH="$PATH" HOME="$RUNNER_TEMP" \
+2026-10-05T02:25:51.7209189Z [36;1menv -i PATH="$PATH" HOME="$RUNNER_TEMP" \[0m
+2026-10-05T02:25:51.7209544Z [36;1m  python scripts/ci-m1-compose.py --finalize \[0m
+2026-10-05T02:25:51.7209979Z [36;1m    --project "$M1_PROJECT" --evidence "$M1_EVIDENCE" --context "$M1_CONTEXT"[0m
+2026-10-05T02:25:51.7246878Z shell: /usr/bin/bash -e {0}
+2026-10-05T02:25:51.7247157Z env:
+2026-10-05T02:25:51.7247436Z   M1_PROJECT: nex-m1-isolated-verification-ci37255307466a1
+2026-10-05T02:25:51.7247996Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:25:51.7248418Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+2026-10-05T02:25:51.7248838Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:25:51.7249225Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:25:51.7249599Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:25:51.7249972Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+2026-10-05T02:25:51.7250378Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+2026-10-05T02:25:51.7250722Z   M1_EVIDENCE: /home/runner/work/_temp/m1-docker-evidence
+2026-10-05T02:25:51.7251312Z   M1_CONTEXT: /home/runner/work/_temp/m1-committed-source
+2026-10-05T02:25:51.7251611Z ##[endgroup]
+2026-10-05T02:25:51.7864313Z + docker compose --env-file /dev/null -p nex-m1-isolated-verification-ci37255307466a1 -f docker-compose.yml -f infra/testing/compose.m1.yml ps -a --format json
+2026-10-05T02:25:51.9009859Z + docker compose --env-file /dev/null -p nex-m1-isolated-verification-ci37255307466a1 -f docker-compose.yml -f infra/testing/compose.m1.yml logs --no-color --timestamps
+2026-10-05T02:25:52.0659115Z + docker ps -aq --filter label=com.docker.compose.project=nex-m1-isolated-verification-ci37255307466a1
+2026-10-05T02:25:52.0816605Z + docker image inspect nex-m1-remediation:isolated
+2026-10-05T02:25:52.0976462Z + docker image inspect postgres:16-alpine
+2026-10-05T02:25:52.1135667Z + docker image inspect redis:7-alpine
+2026-10-05T02:25:52.1295066Z + docker image inspect nginx:1.27-alpine
+2026-10-05T02:25:52.1455935Z + /opt/hostedtoolcache/Python/3.12.14/x64/bin/python scripts/verify-m1-compose.py --project nex-m1-isolated-verification-ci37255307466a1 --down
+2026-10-05T02:25:52.3609619Z + docker rm -f nex-m1-isolated-verification-ci37255307466a1-execprobe
+2026-10-05T02:25:52.3782354Z + docker ps -aq --filter label=com.docker.compose.project=nex-m1-isolated-verification-ci37255307466a1
+2026-10-05T02:25:52.3942334Z + docker ps -aq --filter name=^/nex-m1-isolated-verification-ci37255307466a1-
+2026-10-05T02:25:52.4146136Z + docker volume ls -q --filter label=com.docker.compose.project=nex-m1-isolated-verification-ci37255307466a1
+2026-10-05T02:25:52.4479867Z + docker volume ls -q --filter name=^nex-m1-isolated-verification-ci37255307466a1_
+2026-10-05T02:25:52.4642640Z + docker network ls -q --filter label=com.docker.compose.project=nex-m1-isolated-verification-ci37255307466a1
+2026-10-05T02:25:52.4807614Z + docker network ls -q --filter name=^nex-m1-isolated-verification-ci37255307466a1_

@@ -1,0 +1,146 @@
+[
+  {
+    "check": "actual password-only admin login cannot create privileged NEX session",
+    "passed": true
+  },
+  {
+    "check": "real provider TOTP challenge: nex-test-admin",
+    "passed": true
+  },
+  {
+    "check": "provider rejects invalid TOTP without NEX session",
+    "passed": true
+  },
+  {
+    "check": "real provider TOTP challenge: nex-test-admin",
+    "passed": true
+  },
+  {
+    "check": "ordinary client cannot grant admin assurance despite real OTP",
+    "passed": true
+  },
+  {
+    "check": "real provider TOTP challenge: nex-test-admin",
+    "passed": true
+  },
+  {
+    "check": "real fresh password/TOTP grants bound ADMIN session",
+    "passed": true
+  },
+  {
+    "check": "actual signed administrator token binds issuer/client/subject and factors: ADMIN",
+    "passed": true
+  },
+  {
+    "check": "actual administrator bearer token cannot bypass opaque MFA session: ADMIN",
+    "passed": true
+  },
+  {
+    "check": "privileged health allowed and audit response remains RLS-scoped: ADMIN",
+    "passed": true
+  },
+  {
+    "check": "cross-tenant privileged audit denied: ADMIN",
+    "passed": true
+  },
+  {
+    "check": "disabled ADMIN identity denied despite valid MFA",
+    "passed": true
+  },
+  {
+    "check": "disabled tenant denied despite real ADMIN MFA",
+    "passed": true
+  },
+  {
+    "check": "actual disabled Keycloak ADMIN identity denied server-side",
+    "passed": true
+  },
+  {
+    "check": "real provider TOTP challenge: nex-test-admin",
+    "passed": true
+  },
+  {
+    "check": "administrator refresh preserves verified authentication lifetime",
+    "passed": true
+  },
+  {
+    "check": "actual provider revocation immediately denies privileged administrator access",
+    "passed": true
+  },
+  {
+    "check": "provider-revoked local administrator session deleted",
+    "passed": true
+  },
+  {
+    "check": "refresh cannot restore revoked privileged session",
+    "passed": true
+  },
+  {
+    "check": "real provider TOTP challenge: nex-test-super-admin",
+    "passed": true
+  },
+  {
+    "check": "real fresh password/TOTP grants bound SUPER_ADMIN session",
+    "passed": true
+  },
+  {
+    "check": "actual signed administrator token binds issuer/client/subject and factors: SUPER_ADMIN",
+    "passed": true
+  },
+  {
+    "check": "actual administrator bearer token cannot bypass opaque MFA session: SUPER_ADMIN",
+    "passed": true
+  },
+  {
+    "check": "privileged health allowed and audit response remains RLS-scoped: SUPER_ADMIN",
+    "passed": true
+  },
+  {
+    "check": "cross-tenant privileged audit denied: SUPER_ADMIN",
+    "passed": true
+  },
+  {
+    "check": "disabled SUPER_ADMIN identity denied despite valid MFA",
+    "passed": true
+  },
+  {
+    "check": "disabled tenant denied despite real SUPER_ADMIN MFA",
+    "passed": true
+  },
+  {
+    "check": "actual disabled Keycloak SUPER_ADMIN identity denied server-side",
+    "passed": true
+  },
+  {
+    "check": "real provider TOTP challenge: nex-test-super-admin",
+    "passed": true
+  },
+  {
+    "check": "actual bounded administrator MFA expires while access JWT remains unexpired",
+    "passed": true
+  },
+  {
+    "check": "refresh cannot extend expired administrator MFA assurance",
+    "passed": true
+  },
+  {
+    "check": "real provider TOTP challenge: nex-test-admin",
+    "passed": true
+  },
+  {
+    "check": "actual MFA administrator logout revokes provider and opaque local session",
+    "passed": true
+  },
+  {
+    "check": "real provider TOTP challenge: nex-test-admin",
+    "passed": true
+  },
+  {
+    "check": "no-session privileged route fails closed",
+    "passed": true
+  },
+  {
+    "check": "provider outage denies an otherwise fresh real administrator MFA session",
+    "passed": true
+  }
+]

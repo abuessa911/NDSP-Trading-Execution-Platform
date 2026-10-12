@@ -1,0 +1,63 @@
+{
+  "provider": "Keycloak 26.6.3",
+  "environment": "isolated, disposable, non-production",
+  "policy": "keycloak-password-totp-v1",
+  "identities": [
+    {
+      "provider_subject": "22222222-2222-4222-8222-222222222201",
+      "nex_subject": "22222222-2222-4222-8222-222222222201",
+      "tenant_id": "b194281c-f8ba-4121-9da9-ad2f87390e03",
+      "role": "USER",
+      "database_status": "active",
+      "provider_username": "nex-test-user",
+      "provider_enabled": true,
+      "mfa_enrollment": "not enrolled",
+      "assurance_evidence": "No administrator MFA assurance is claimed."
+    },
+    {
+      "provider_subject": "22222222-2222-4222-8222-222222222202",
+      "nex_subject": "22222222-2222-4222-8222-222222222202",
+      "tenant_id": "5a0c3045-78c4-4686-be28-0b442bcf2e71",
+      "role": "ADMIN",
+      "database_status": "active",
+      "provider_username": "nex-test-admin",
+      "provider_enabled": true,
+      "mfa_enrollment": "TOTP enrolled",
+      "assurance_evidence": "Signed provider pwd+otp AMR, fresh auth_time, dedicated client and live provider introspection were independently verified."
+    },
+    {
+      "provider_subject": "22222222-2222-4222-8222-222222222203",
+      "nex_subject": "22222222-2222-4222-8222-222222222203",
+      "tenant_id": "e5fa2caa-e545-4456-8882-3f1ad6e80002",
+      "role": "SUPER_ADMIN",
+      "database_status": "active",
+      "provider_username": "nex-test-super-admin",
+      "provider_enabled": true,
+      "mfa_enrollment": "TOTP enrolled",
+      "assurance_evidence": "Signed provider pwd+otp AMR, fresh auth_time, dedicated client and live provider introspection were independently verified."
+    },
+    {
+      "provider_subject": "22222222-2222-4222-8222-222222222204",
+      "nex_subject": "22222222-2222-4222-8222-222222222204",
+      "tenant_id": "e4dd8fec-2bfc-4cbb-bb3a-d432db730762",
+      "role": "ADMIN",
+      "database_status": "active",
+      "provider_username": "nex-test-no-mfa-admin",
+      "provider_enabled": true,
+      "mfa_enrollment": "not enrolled",
+      "assurance_evidence": "No administrator MFA assurance is claimed."
+    },
+    {
+      "provider_subject": "22222222-2222-4222-8222-222222222205",
+      "nex_subject": "22222222-2222-4222-8222-222222222205",
+      "tenant_id": "15aab6c5-93c3-4de7-8053-3785e785e611",
+      "role": "OPERATOR",
+      "database_status": "active",
+      "provider_username": "nex-test-operator",
+      "provider_enabled": true,
+      "mfa_enrollment": "not enrolled",
+      "assurance_evidence": "No administrator MFA assurance is claimed."
+    }
+  ],
+  "secrets_or_otp_values_retained": false
+}

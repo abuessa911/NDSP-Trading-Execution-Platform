@@ -1,0 +1,42 @@
+[
+  {
+    "check": "actual frontend document HTTP 200",
+    "passed": true
+  },
+  {
+    "check": "browser begins on actual NEX frontend",
+    "passed": true
+  },
+  {
+    "check": "real Keycloak authorization redirect and PKCE S256",
+    "passed": true
+  },
+  {
+    "check": "real callback clean redirect",
+    "passed": true
+  },
+  {
+    "check": "protected M1 identity endpoint succeeds",
+    "passed": true
+  },
+  {
+    "check": "authenticated opaque session and CSRF token",
+    "passed": true
+  },
+  {
+    "check": "secure scoped bounded HttpOnly SameSite=Lax cookie",
+    "passed": true
+  },
+  {
+    "check": "tokens encrypted in Redis, not in frontend storage",
+    "passed": true
+  },
+  {
+    "check": "actual provider refresh and rotation",
+    "passed": true
+  },
+  {
+    "check": "actual provider access JWT independently signature/issuer/audience verified",
+    "passed": true
+  }
+]

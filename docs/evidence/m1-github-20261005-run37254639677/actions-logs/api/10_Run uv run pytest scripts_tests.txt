@@ -1,0 +1,23 @@
+﻿2026-10-05T02:15:26.8202759Z ##[group]Run uv run pytest scripts/tests
+2026-10-05T02:15:26.8203058Z [36;1muv run pytest scripts/tests[0m
+2026-10-05T02:15:26.8259970Z shell: /usr/bin/bash -e {0}
+2026-10-05T02:15:26.8260217Z env:
+2026-10-05T02:15:26.8260449Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:15:26.8260808Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+2026-10-05T02:15:26.8261144Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:15:26.8261443Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:15:26.8261748Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:15:26.8262042Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+2026-10-05T02:15:26.8262337Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+2026-10-05T02:15:26.8262579Z ##[endgroup]
+2026-10-05T02:15:27.0835897Z ============================= test session starts ==============================
+2026-10-05T02:15:27.0836802Z platform linux -- Python 3.12.14, pytest-8.3.5, pluggy-1.6.0
+2026-10-05T02:15:27.0837646Z rootdir: /home/runner/work/nex/nex
+2026-10-05T02:15:27.0838249Z configfile: pyproject.toml
+2026-10-05T02:15:27.0838762Z plugins: asyncio-0.25.3, anyio-4.15.1
+2026-10-05T02:15:27.0839402Z asyncio: mode=Mode.AUTO, asyncio_default_fixture_loop_scope=function
+2026-10-05T02:15:27.0840042Z collected 20 items
+2026-10-05T02:15:27.0840383Z 
+2026-10-05T02:15:27.1214885Z scripts/tests/test_m1_ci.py ....................                         [100%]
+2026-10-05T02:15:27.1215518Z 
+2026-10-05T02:15:27.1220861Z ============================== 20 passed in 0.08s ==============================

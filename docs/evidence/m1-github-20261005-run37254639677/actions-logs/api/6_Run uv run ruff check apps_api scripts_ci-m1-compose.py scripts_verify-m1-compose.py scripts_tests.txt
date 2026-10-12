@@ -1,0 +1,13 @@
+﻿2026-10-05T02:15:04.6329151Z ##[group]Run uv run ruff check apps/api scripts/ci-m1-compose.py scripts/verify-m1-compose.py scripts/tests
+2026-10-05T02:15:04.6329790Z [36;1muv run ruff check apps/api scripts/ci-m1-compose.py scripts/verify-m1-compose.py scripts/tests[0m
+2026-10-05T02:15:04.6387247Z shell: /usr/bin/bash -e {0}
+2026-10-05T02:15:04.6387459Z env:
+2026-10-05T02:15:04.6387683Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:15:04.6388028Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+2026-10-05T02:15:04.6388363Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:15:04.6388664Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:15:04.6388965Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-05T02:15:04.6389267Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+2026-10-05T02:15:04.6389566Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+2026-10-05T02:15:04.6389808Z ##[endgroup]
+2026-10-05T02:15:04.6645282Z All checks passed!

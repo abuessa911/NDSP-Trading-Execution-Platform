@@ -1,0 +1,10 @@
+[
+  {
+    "action": "INITIAL_OWNER_PROVISIONED",
+    "outcome": "SUCCESS",
+    "reason_code": null,
+    "actor_type": "SYSTEM",
+    "correlation_id": "bd5f3883-ea74-4163-b245-48acc4868f79",
+    "metadata_json": {}
+  }
+]

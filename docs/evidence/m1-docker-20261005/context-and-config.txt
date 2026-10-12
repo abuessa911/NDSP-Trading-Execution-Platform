@@ -1,0 +1,12 @@
+Clean git archive: all 245 tracked file contents match HEAD
+api safety {"TRADING_MODE": "paper", "LIVE_TRADING_ENABLED": "false", "GLOBAL_KILL_SWITCH": "true", "BINANCE_ALLOW_WITHDRAW": "false"}
+Corrected config inspection: include tools profile (initial inspection omitted it and raised KeyError: migrate).
+Command: docker compose --env-file /dev/null -p nex-m1-isolated-verification-clean20261005 -f docker-compose.yml -f infra/testing/compose.m1.yml --profile tools config --format json
+api safety {"TRADING_MODE": "paper", "LIVE_TRADING_ENABLED": "false", "GLOBAL_KILL_SWITCH": "true", "BINANCE_ALLOW_WITHDRAW": "false"}
+migrate safety {"TRADING_MODE": "paper", "LIVE_TRADING_ENABLED": "false", "GLOBAL_KILL_SWITCH": "true", "BINANCE_ALLOW_WITHDRAW": "false"}
+bootstrap safety {"TRADING_MODE": "paper", "LIVE_TRADING_ENABLED": "false", "GLOBAL_KILL_SWITCH": "true", "BINANCE_ALLOW_WITHDRAW": "false"}
+api image: nex-m1-remediation:isolated
+API startup command: ["sh", "-c", "python /app/apps/api/tests/oidc_fixture.py & exec python -m uvicorn nex_api.main:app --host 0.0.0.0 --port 8000 --no-access-log"]
+Migration command: ["python", "-m", "alembic", "-c", "apps/api/alembic.ini", "upgrade", "head"]
+Build context: /home/runner/workspace/.cache/m1-clean-20261005
+Environment: cleared before invocation; only PATH/HOME/local socket and verifier synthetic ENV supplied

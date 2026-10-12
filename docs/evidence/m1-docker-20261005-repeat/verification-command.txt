@@ -1,0 +1,89 @@
+import hashlib
+import json
+import os
+import pathlib
+import runpy
+import subprocess
+import datetime
+
+root = pathlib.Path.cwd()
+context = root / ".cache/m1-clean-repeat20261005"
+project = "nex-m1-isolated-verification-repeat20261005"
+env = {"PATH": os.environ["PATH"], "HOME": os.environ["HOME"],
+       "DOCKER_HOST": "unix:///var/run/docker.sock"}
+
+def run(args, cwd=root, environment=env):
+    print("\nCOMMAND:", json.dumps(args), "CWD:", str(cwd), flush=True)
+    result = subprocess.run(args, cwd=cwd, env=environment,
+                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+    print(result.stdout, end="", flush=True)
+    print("EXIT:", result.returncode, flush=True)
+    return result
+
+print("START UTC:", datetime.datetime.now(datetime.timezone.utc).isoformat(), flush=True)
+run(["git", "rev-parse", "HEAD"])
+run(["git", "status", "--porcelain"])
+run(["sha256sum", "M1_EVIDENCE_REPORT.md", "M1_REMEDIATION_REPORT.md"])
+run(["docker", "version"])
+run(["docker", "compose", "version"])
+run(["docker", "info", "--format",
+     "ID={{.ID}} Name={{.Name}} Driver={{.Driver}} Runtime={{.DefaultRuntime}}"])
+for resource in ("ps", "volume", "network"):
+    command = ["docker", resource]
+    command += ["-aq"] if resource == "ps" else ["ls", "-q"]
+    result = run(command + ["--filter", f"label=com.docker.compose.project={project}"])
+    assert result.returncode == 0 and not result.stdout.strip(), "Fresh project is not empty"
+assert not context.exists(), "Refuse context reuse"
+context.mkdir(parents=True)
+print("COMMAND: git archive HEAD | tar -x -C", context, flush=True)
+archive = subprocess.check_output(["git", "archive", "HEAD"], env=env)
+subprocess.run(["tar", "-x", "-C", str(context)], input=archive, check=True, env=env)
+entries = subprocess.check_output(["git", "ls-tree", "-r", "HEAD"], env=env, text=True)
+count = 0
+for entry in entries.splitlines():
+    metadata, name = entry.split("\t", 1)
+    mode, kind, expected = metadata.split()
+    if kind != "blob":
+        continue
+    content = (context / name).read_bytes()
+    assert hashlib.sha1(b"blob " + str(len(content)).encode() + b"\0" + content).hexdigest() == expected, name
+    count += 1
+print("Clean archive:", count, "tracked file contents match HEAD", flush=True)
+fixture = runpy.run_path(str(context / "scripts/verify-m1-compose.py"))
+synthetic_env = env | fixture["ENV"]
+compose = ["docker", "compose", "--env-file", "/dev/null", "-p", project,
+           "-f", "docker-compose.yml", "-f", "infra/testing/compose.m1.yml"]
+resolved = subprocess.check_output(compose + ["--profile", "tools", "config", "--format", "json"],
+                                   cwd=context, env=synthetic_env, text=True)
+for service in ("api", "migrate", "bootstrap"):
+    config = json.loads(resolved)["services"][service]
+    print("SAFETY", service, {k: config["environment"][k] for k in
+          ("TRADING_MODE", "LIVE_TRADING_ENABLED", "GLOBAL_KILL_SWITCH", "BINANCE_ALLOW_WITHDRAW")}, flush=True)
+run(["cat", "scripts/post-merge.sh", "lib/db/package.json", "apps/api/Dockerfile"], context)
+try:
+    result = run(["python", "scripts/verify-m1-compose.py", "--project", project], context)
+    print("CLEAN COMPOSE RESULT:", result.returncode, flush=True)
+    for service in ("db", "redis"):
+        name = f"{project}-{service}-1"
+        run(["docker", "inspect", name, "--format",
+             "{{.Name}} image={{.Image}} state={{json .State}} networks={{json .NetworkSettings.Networks}}"])
+        run(["docker", "logs", name])
+    run(["docker", "exec", f"{project}-db-1", "pg_isready", "-U", "nex_test_bootstrap", "-d", "nex"])
+    run(["docker", "exec", f"{project}-redis-1", "sh", "-c",
+         'REDISCLI_AUTH="$REDIS_PASSWORD" redis-cli ping; redis-server --version'])
+    run(["docker", "image", "inspect", "nex-m1-remediation:isolated", "postgres:16-alpine", "redis:7-alpine",
+         "--format", "tags={{json .RepoTags}} id={{.Id}} digests={{json .RepoDigests}} user={{.Config.User}}"])
+    run(["docker", "run", "--name", project + "-versionprobe", "--network", "none",
+         "--entrypoint", "python", "nex-m1-remediation:isolated", "-c",
+         'import os,sys,importlib.metadata as m; print("uid/gid",os.getuid(),os.getgid()); print(sys.version); [print(p,m.version(p)) for p in ("fastapi","uvicorn","alembic","asyncpg","redis","sqlalchemy")]'])
+finally:
+    run(["python", "scripts/verify-m1-compose.py", "--project", project, "--down"], context)
+    run(["docker", "rm", project + "-versionprobe"])
+    for resource in ("ps", "volume", "network"):
+        command = ["docker", resource]
+        command += ["-aq"] if resource == "ps" else ["ls", "-q"]
+        result = run(command + ["--filter", f"label=com.docker.compose.project={project}"])
+        assert result.returncode == 0 and not result.stdout.strip(), "Cleanup left project resources"
+    run(["docker", "ps", "-a", "--format", "{{.Names}} {{.Status}}"])
+    run(["docker", "volume", "ls", "--format", "{{.Name}}"])
+print("END UTC:", datetime.datetime.now(datetime.timezone.utc).isoformat(), flush=True)

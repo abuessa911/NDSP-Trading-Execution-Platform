@@ -1,0 +1,174 @@
+ gateway Pulling 
+ keycloak Pulling 
+ f18232174bc9 Pulling fs layer 
+ 61ca4f733c80 Pulling fs layer 
+ b464cfdf2a63 Pulling fs layer 
+ d7e507024086 Pulling fs layer 
+ 81bd8ed7ec67 Pulling fs layer 
+ 197eb75867ef Pulling fs layer 
+ 34a64644b756 Pulling fs layer 
+ 39c2ddfd6010 Pulling fs layer 
+ 81bd8ed7ec67 Waiting 
+ 197eb75867ef Waiting 
+ 34a64644b756 Waiting 
+ 39c2ddfd6010 Waiting 
+ d7e507024086 Waiting 
+ b464cfdf2a63 Downloading [==================================================>]     629B/629B
+ b464cfdf2a63 Download complete 
+ 61ca4f733c80 Downloading [>                                                  ]   32.1kB/1.791MB
+ f18232174bc9 Downloading [>                                                  ]  48.51kB/3.642MB
+ 61ca4f733c80 Downloading [==================================================>]  1.791MB/1.791MB
+ 61ca4f733c80 Verifying Checksum 
+ 61ca4f733c80 Download complete 
+ f18232174bc9 Verifying Checksum 
+ f18232174bc9 Download complete 
+ f18232174bc9 Extracting [>                                                  ]  65.54kB/3.642MB
+ be96eca5f4bf Pulling fs layer 
+ 363052f097c1 Pulling fs layer 
+ a45484ead291 Pulling fs layer 
+ a1f743c4865f Pulling fs layer 
+ be96eca5f4bf Waiting 
+ 363052f097c1 Waiting 
+ a45484ead291 Waiting 
+ a1f743c4865f Waiting 
+ f18232174bc9 Extracting [============================================>      ]  3.277MB/3.642MB
+ f18232174bc9 Extracting [==================================================>]  3.642MB/3.642MB
+ f18232174bc9 Extracting [==================================================>]  3.642MB/3.642MB
+ f18232174bc9 Pull complete 
+ 61ca4f733c80 Extracting [>                                                  ]  32.77kB/1.791MB
+ 61ca4f733c80 Extracting [==================================================>]  1.791MB/1.791MB
+ 61ca4f733c80 Extracting [==================================================>]  1.791MB/1.791MB
+ d7e507024086 Downloading [==================================================>]     955B/955B
+ d7e507024086 Verifying Checksum 
+ d7e507024086 Download complete 
+ 197eb75867ef Downloading [==================================================>]  1.209kB/1.209kB
+ 197eb75867ef Verifying Checksum 
+ 197eb75867ef Download complete 
+ 81bd8ed7ec67 Downloading [==================================================>]     402B/402B
+ 81bd8ed7ec67 Verifying Checksum 
+ 81bd8ed7ec67 Download complete 
+ 61ca4f733c80 Pull complete 
+ b464cfdf2a63 Extracting [==================================================>]     629B/629B
+ b464cfdf2a63 Extracting [==================================================>]     629B/629B
+ b464cfdf2a63 Pull complete 
+ d7e507024086 Extracting [==================================================>]     955B/955B
+ d7e507024086 Extracting [==================================================>]     955B/955B
+ d7e507024086 Pull complete 
+ 81bd8ed7ec67 Extracting [==================================================>]     402B/402B
+ 81bd8ed7ec67 Extracting [==================================================>]     402B/402B
+ 81bd8ed7ec67 Pull complete 
+ 197eb75867ef Extracting [==================================================>]  1.209kB/1.209kB
+ 197eb75867ef Extracting [==================================================>]  1.209kB/1.209kB
+ 197eb75867ef Pull complete 
+ 34a64644b756 Downloading [==================================================>]  1.397kB/1.397kB
+ 34a64644b756 Verifying Checksum 
+ 34a64644b756 Download complete 
+ 34a64644b756 Extracting [==================================================>]  1.397kB/1.397kB
+ 34a64644b756 Extracting [==================================================>]  1.397kB/1.397kB
+ 34a64644b756 Pull complete 
+ 39c2ddfd6010 Downloading [>                                                  ]  163.2kB/15.52MB
+ 39c2ddfd6010 Verifying Checksum 
+ 39c2ddfd6010 Download complete 
+ 39c2ddfd6010 Extracting [>                                                  ]  163.8kB/15.52MB
+ 39c2ddfd6010 Extracting [=====>                                             ]  1.638MB/15.52MB
+ be96eca5f4bf Downloading [>                                                  ]  75.24kB/7.258MB
+ be96eca5f4bf Verifying Checksum 
+ be96eca5f4bf Download complete 
+ be96eca5f4bf Extracting [>                                                  ]   98.3kB/7.258MB
+ 363052f097c1 Downloading [>                                                  ]  540.4kB/84.36MB
+ 39c2ddfd6010 Extracting [==============>                                    ]  4.588MB/15.52MB
+ be96eca5f4bf Extracting [========>                                          ]  1.278MB/7.258MB
+ a45484ead291 Downloading [>                                                  ]  540.6kB/173.9MB
+ 363052f097c1 Downloading [==========>                                        ]  17.48MB/84.36MB
+ 39c2ddfd6010 Extracting [====================>                              ]  6.226MB/15.52MB
+ a45484ead291 Downloading [>                                                  ]  2.662MB/173.9MB
+ 363052f097c1 Downloading [=====================>                             ]  36.54MB/84.36MB
+ be96eca5f4bf Extracting [==============>                                    ]  2.064MB/7.258MB
+ 39c2ddfd6010 Extracting [======================>                            ]  7.045MB/15.52MB
+ a1f743c4865f Downloading [==================================================>]     553B/553B
+ a1f743c4865f Verifying Checksum 
+ a1f743c4865f Download complete 
+ 363052f097c1 Downloading [===================================>               ]  59.83MB/84.36MB
+ be96eca5f4bf Extracting [====================>                              ]  2.949MB/7.258MB
+ a45484ead291 Downloading [=>                                                 ]  5.838MB/173.9MB
+ 39c2ddfd6010 Extracting [===========================>                       ]  8.684MB/15.52MB
+ a45484ead291 Downloading [====>                                              ]  14.84MB/173.9MB
+ 363052f097c1 Downloading [==============================================>    ]  78.36MB/84.36MB
+ be96eca5f4bf Extracting [==============================>                    ]  4.424MB/7.258MB
+ 363052f097c1 Verifying Checksum 
+ 363052f097c1 Download complete 
+ 39c2ddfd6010 Extracting [=================================>                 ]  10.32MB/15.52MB
+ a45484ead291 Downloading [========>                                          ]  30.72MB/173.9MB
+ be96eca5f4bf Extracting [========================================>          ]  5.898MB/7.258MB
+ 39c2ddfd6010 Extracting [=====================================>             ]  11.63MB/15.52MB
+ a45484ead291 Downloading [===============>                                   ]  52.95MB/173.9MB
+ be96eca5f4bf Extracting [=============================================>     ]  6.586MB/7.258MB
+ be96eca5f4bf Extracting [==================================================>]  7.258MB/7.258MB
+ 39c2ddfd6010 Extracting [============================================>      ]  13.76MB/15.52MB
+ be96eca5f4bf Pull complete 
+ a45484ead291 Downloading [===================>                               ]  69.36MB/173.9MB
+ 363052f097c1 Extracting [>                                                  ]  557.1kB/84.36MB
+ a45484ead291 Downloading [=========================>                         ]  87.89MB/173.9MB
+ 39c2ddfd6010 Extracting [=================================================> ]   15.4MB/15.52MB
+ 39c2ddfd6010 Extracting [==================================================>]  15.52MB/15.52MB
+ a45484ead291 Downloading [=============================>                     ]  102.7MB/173.9MB
+ 363052f097c1 Extracting [>                                                  ]  1.114MB/84.36MB
+ a45484ead291 Downloading [=================================>                 ]  114.9MB/173.9MB
+ a45484ead291 Downloading [======================================>            ]  133.9MB/173.9MB
+ 39c2ddfd6010 Pull complete 
+ a45484ead291 Downloading [=======================================>           ]  136.6MB/173.9MB
+ a45484ead291 Downloading [========================================>          ]  139.8MB/173.9MB
+ a45484ead291 Downloading [========================================>          ]  140.8MB/173.9MB
+ 363052f097c1 Extracting [>                                                  ]  1.671MB/84.36MB
+ a45484ead291 Downloading [==========================================>        ]  146.7MB/173.9MB
+ gateway Pulled 
+ a45484ead291 Downloading [===========================================>       ]  151.4MB/173.9MB
+ a45484ead291 Downloading [================================================>  ]  169.4MB/173.9MB
+ 363052f097c1 Extracting [=>                                                 ]  2.228MB/84.36MB
+ a45484ead291 Verifying Checksum 
+ a45484ead291 Download complete 
+ 363052f097c1 Extracting [==>                                                ]  5.014MB/84.36MB
+ 363052f097c1 Extracting [======>                                            ]  10.58MB/84.36MB
+ 363052f097c1 Extracting [=========>                                         ]  16.71MB/84.36MB
+ 363052f097c1 Extracting [=============>                                     ]   23.4MB/84.36MB
+ 363052f097c1 Extracting [=================>                                 ]  29.52MB/84.36MB
+ 363052f097c1 Extracting [=====================>                             ]  36.21MB/84.36MB
+ 363052f097c1 Extracting [========================>                          ]  41.22MB/84.36MB
+ 363052f097c1 Extracting [===========================>                       ]  46.79MB/84.36MB
+ 363052f097c1 Extracting [===============================>                   ]  52.36MB/84.36MB
+ 363052f097c1 Extracting [==================================>                ]  57.93MB/84.36MB
+ 363052f097c1 Extracting [=====================================>             ]   63.5MB/84.36MB
+ 363052f097c1 Extracting [=========================================>         ]  69.63MB/84.36MB
+ 363052f097c1 Extracting [============================================>      ]   75.2MB/84.36MB
+ 363052f097c1 Extracting [=============================================>     ]  77.43MB/84.36MB
+ 363052f097c1 Extracting [===============================================>   ]  80.77MB/84.36MB
+ 363052f097c1 Extracting [================================================>  ]  82.44MB/84.36MB
+ 363052f097c1 Extracting [==================================================>]  84.36MB/84.36MB
+ 363052f097c1 Pull complete 
+ a45484ead291 Extracting [>                                                  ]  557.1kB/173.9MB
+ a45484ead291 Extracting [====>                                              ]  14.48MB/173.9MB
+ a45484ead291 Extracting [=======>                                           ]  25.07MB/173.9MB
+ a45484ead291 Extracting [==========>                                        ]  36.77MB/173.9MB
+ a45484ead291 Extracting [==============>                                    ]  51.81MB/173.9MB
+ a45484ead291 Extracting [=================>                                 ]  62.39MB/173.9MB
+ a45484ead291 Extracting [=====================>                             ]  75.76MB/173.9MB
+ a45484ead291 Extracting [=========================>                         ]  89.69MB/173.9MB
+ a45484ead291 Extracting [=============================>                     ]  103.6MB/173.9MB
+ a45484ead291 Extracting [=================================>                 ]  118.1MB/173.9MB
+ a45484ead291 Extracting [======================================>            ]  133.7MB/173.9MB
+ a45484ead291 Extracting [==========================================>        ]  148.7MB/173.9MB
+ a45484ead291 Extracting [===============================================>   ]    166MB/173.9MB
+ a45484ead291 Extracting [==================================================>]  173.9MB/173.9MB
+ a45484ead291 Pull complete 
+ a1f743c4865f Extracting [==================================================>]     553B/553B
+ a1f743c4865f Extracting [==================================================>]     553B/553B
+ a1f743c4865f Pull complete 
+ keycloak Pulled 
+ Container nex-m1-isolated-verification-authci37299557982a2-gateway-1  Creating
+ Container nex-m1-isolated-verification-authci37299557982a2-keycloak-1  Creating
+ Container nex-m1-isolated-verification-authci37299557982a2-keycloak-1  Created
+ Container nex-m1-isolated-verification-authci37299557982a2-gateway-1  Created
+ Container nex-m1-isolated-verification-authci37299557982a2-gateway-1  Starting
+ Container nex-m1-isolated-verification-authci37299557982a2-keycloak-1  Starting
+ Container nex-m1-isolated-verification-authci37299557982a2-keycloak-1  Started
+ Container nex-m1-isolated-verification-authci37299557982a2-gateway-1  Started

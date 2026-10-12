@@ -1,0 +1,102 @@
+.nex-command-center {
+  --bg: #0b1119;
+  --panel: #131d29;
+  --panel-raised: #182432;
+  --line: #283747;
+  --text: #e6eef6;
+  --muted: #98aabd;
+  --accent: #72d7c6;
+  --amber: #f1bc71;
+  --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.nex-command-center * { box-sizing: border-box; }
+.nex-command-center a { color: var(--accent); text-decoration: none; }
+.nex-command-center a:hover { text-decoration: underline; }
+.nex-command-center button { font: inherit; color: var(--text); cursor: pointer; }
+.nex-command-center button:focus-visible,
+.nex-command-center a:focus-visible,
+.nex-command-center summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.nex-command-center h1,
+.nex-command-center h2,
+.nex-command-center h3,
+.nex-command-center p { margin-top: 0; }
+.nex-command-center h1 { font-size: clamp(28px, 3vw, 38px); line-height: 1.2; letter-spacing: -.035em; font-weight: 600; margin-bottom: 12px; }
+.nex-command-center h2 { font-size: 17px; line-height: 1.4; font-weight: 600; letter-spacing: -.015em; margin-bottom: 14px; }
+.nex-command-center p { margin-bottom: 14px; }
+.nex-command-center svg { flex-shrink: 0; }
+.nex-command-center .console-shell { display: flex; min-height: 100vh; }
+.nex-command-center .console-nav { width: 250px; flex-shrink: 0; background: #0e1722; border-right: 1px solid var(--line); padding: 25px 16px 18px; height: 100vh; position: sticky; top: 0; overflow-y: auto; scrollbar-width: thin; }
+.nex-command-center .brand { display: flex; gap: 13px; align-items: center; padding: 0 10px 25px; color: var(--text); }
+.nex-command-center .brand:hover { text-decoration: none; }
+.nex-command-center .brand strong { letter-spacing: .19em; font-size: 24px; line-height: 1.15; display: block; }
+.nex-command-center .brand small { font: 9px var(--mono); color: var(--muted); letter-spacing: .13em; display: block; margin-top: 5px; }
+.nex-command-center .brand-mark { background: var(--accent); color: #0a2d2c; width: 35px; height: 38px; display: grid; place-items: center; font-size: 23px; font-weight: 700; border-radius: 4px; }
+.nex-command-center .nav-scope { display: flex; align-items: center; gap: 8px; font: 10px var(--mono); letter-spacing: .07em; color: var(--accent); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 14px 9px; }
+.nex-command-center .nav-scope .mono { margin-left: auto; color: var(--muted); }
+.nex-command-center .scope-dot,
+.nex-command-center .acceptance-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; background: var(--accent); flex-shrink: 0; }
+.nex-command-center .nav-label { margin: 23px 10px 10px; font: 10px var(--mono); color: #708397; letter-spacing: .1em; }
+.nex-command-center .nav-link { display: flex; align-items: center; justify-content: space-between; gap: 5px; font-size: 12px; color: #aebccc; min-height: 34px; padding: 7px 10px; border-radius: 4px; margin: 1px 0; transition: color .15s, background .15s; }
+.nex-command-center .nav-link:hover { background: #1a2938; color: var(--text); text-decoration: none; }
+.nex-command-center .nav-link.active { background: #1a3538; color: #9ce7da; box-shadow: inset 2px 0 var(--accent); }
+.nex-command-center .nav-hint { font: 8px var(--mono); color: #778b9d; letter-spacing: .06em; }
+.nex-command-center .admin-navigation { margin-top: 22px; border-top: 1px solid var(--line); padding-top: 16px; }
+.nex-command-center .admin-navigation summary { display: flex; align-items: center; gap: 8px; cursor: pointer; font: 10px var(--mono); color: var(--amber); letter-spacing: .06em; padding: 6px 10px; }
+.nex-command-center .nav-footer { display: flex; align-items: center; gap: 9px; margin: 24px 10px 0; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 10px; line-height: 1.5; }
+.nex-command-center .nav-footer p { margin: 0; }
+.nex-command-center .console-workspace { flex: 1; min-width: 0; }
+.nex-command-center .console-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px 35px; border-bottom: 1px solid var(--line); background: #0d1620; }
+.nex-command-center .top-label { display: flex; gap: 9px; align-items: center; font: 10px var(--mono); letter-spacing: .1em; color: var(--muted); }
+.nex-command-center .acceptance-label { display: inline-flex; align-items: center; gap: 8px; font: 10px var(--mono); color: var(--amber); padding: 5px 9px; border: 1px solid #5b4732; background: #2c241b; border-radius: 3px; white-space: nowrap; }
+.nex-command-center .acceptance-dot { background: var(--amber); }
+.nex-command-center .console-main { padding: 28px 35px; max-width: 1450px; margin: auto; }
+.nex-command-center .page-heading { padding: 28px 0 14px; max-width: 900px; }
+.nex-command-center .eyebrow { font: 10px var(--mono); color: var(--accent); letter-spacing: .13em; margin-bottom: 11px; }
+.nex-command-center .page-content { display: grid; gap: 18px; }
+.nex-command-center .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 7px; padding: 23px; min-width: 0; }
+.nex-command-center .panel > :last-child { margin-bottom: 0; }
+.nex-command-center .panel-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; align-items: start; }
+.nex-command-center .row { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.nex-command-center .row h2 { margin-bottom: 8px; }
+.nex-command-center .row > .row { justify-content: flex-start; }
+.nex-command-center .muted { color: var(--muted); font-size: 12px; line-height: 1.7; }
+.nex-command-center .notice { border-left: 2px solid var(--amber); background: #2b2823; color: #e9c696; padding: 12px 15px; font-size: 12px; line-height: 1.7; border-radius: 0 4px 4px 0; }
+.nex-command-center .button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 35px; color: var(--text); background: #1d2c3b; border: 1px solid #3c5064; border-radius: 4px; padding: 7px 12px; font-size: 11px; line-height: 1.5; text-align: center; transition: background .15s, border-color .15s; }
+.nex-command-center .button:hover { border-color: var(--accent); background: #243a48; text-decoration: none; }
+.nex-command-center .mono { font-family: var(--mono); font-size: 11px; overflow-wrap: anywhere; }
+.nex-command-center .kv-list { margin: 10px 0 18px; }
+.nex-command-center .kv-row { display: grid; grid-template-columns: minmax(130px, 1fr) minmax(0, 1.4fr); gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 12px; }
+.nex-command-center .kv-row dt { color: var(--muted); }
+.nex-command-center .kv-row dd { margin: 0; text-align: right; overflow-wrap: anywhere; }
+.nex-command-center .console-footer { margin-top: 35px; padding-top: 16px; border-top: 1px solid var(--line); font: 10px var(--mono); color: #8195a8; line-height: 1.8; }
+.nex-command-center .nav-toggle { display: none; padding: 5px; min-height: 28px; }
+.nex-command-center .skip-link { position: fixed; left: 10px; top: -80px; z-index: 20; background: var(--accent); color: #0b1119; padding: 10px; }
+.nex-command-center .skip-link:focus { top: 10px; }
+
+@media (max-width: 1050px) {
+  .nex-command-center .console-nav { width: 225px; }
+  .nex-command-center .console-top { padding: 18px 23px; }
+  .nex-command-center .console-main { padding: 23px; }
+  .nex-command-center .panel-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 740px) {
+  .nex-command-center .console-nav { position: fixed; inset: 62px auto 0 0; height: calc(100dvh - 62px); display: none; z-index: 10; width: min(310px, 85vw); box-shadow: 15px 0 30px #0006; }
+  .nex-command-center .nav-toggle { display: inline-flex; }
+  .nex-command-center .console-top { min-height: 62px; padding: 12px 16px; position: sticky; top: 0; z-index: 11; }
+  .nex-command-center .top-label { font-size: 8px; letter-spacing: .04em; }
+  .nex-command-center .acceptance-label { font-size: 8px; padding: 5px 6px; }
+  .nex-command-center .console-main { padding: 18px 16px; }
+  .nex-command-center .panel { padding: 18px; }
+  .nex-command-center .kv-row { grid-template-columns: 1fr 1.2fr; gap: 8px; }
+  .nex-command-center .page-heading { padding-top: 23px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nex-command-center * { transition: none !important; scroll-behavior: auto !important; }
+}

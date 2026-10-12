@@ -1,0 +1,16 @@
+export type Side = "LONG" | "SHORT";
+export type Market = { id: string; symbol: string; price: number; change24h: number; volume: string; volatility: number; bot: "Trading" | "Watching" | "Idle"; strategy: string; timeframe: string; signal: "Buy" | "Sell" | "Neutral"; position: "Open" | "None"; spark: number[] };
+export type Position = { id: string; symbol: string; side: Side; size: number; entry: number; mark: number; leverage: number; margin: number; pnl: number; stop: number; target: number; strategy: string; timeframe: string; opened: string; status: "Protected" | "Unprotected" | "Closing" };
+export type OrderStatus = "Open" | "Filled" | "Cancelled" | "Rejected";
+export type Order = { id: string; symbol: string; side: "BUY" | "SELL"; type: string; qty: number; price: number; filled: number; status: OrderStatus; strategy: string; created: string; updated: string; note: string };
+export type Trade = { id: string; symbol: string; direction: Side; entry: number; exit: number; qty: number; pnl: number; fees: number; strategy: string; timeframe: string; opened: string; closed: string; duration: string; result: "Win" | "Loss" };
+export type Strategy = { id: string; name: string; state: "Active" | "Paused" | "Disabled"; markets: string[]; timeframe: string; risk: number; lastSignal: string; trades: number; winRate: number; pnl: number; updated: string; note: string };
+export type SignalStage = "Detected" | "Validating" | "Approved" | "Blocked" | "Executed" | "Completed" | "Expired";
+export type Signal = { id: string; time: string; symbol: string; timeframe: string; strategy: string; direction: "Buy" | "Sell"; price: number; stage: SignalStage; evidence: string[]; action: string };
+export type Severity = "Information" | "Warning" | "Critical";
+export type Alert = { id: string; time: string; severity: Severity; category: string; title: string; message: string; subject: string };
+export type HealthNode = { id: string; name: string; status: "Operational" | "Degraded" | "Down"; metric: string; detail: string };
+export type AccountSummary = { balance: number; available: number; margin: number; unrealized: number; realized: number; daily: number; weekly: number };
+export type RiskStatus = { exposure: number; dailyLoss: number; maxDailyLoss: number; utilization: number; openPositions: number; maxPositions: number; warnings: string[]; blocked: string[]; bySymbol: { symbol: string; pct: number }[]; byStrategy: { name: string; pct: number }[] };
+export type AuditEvent = { id: string; time: string; event: string; category: string; severity: Severity; actor: string };
+export type SessionRow = { id: string; device: string; location: string; seen: string; current: boolean };

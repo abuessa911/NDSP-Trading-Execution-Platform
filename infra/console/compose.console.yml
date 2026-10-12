@@ -1,0 +1,9 @@
+# Opt-in console packaging, not a production deployment or acceptance claim.
+# Use alongside docker-compose.yml with the existing NEX-only configuration.
+services:
+  gateway:
+    image: nex-m1-console-gateway:local
+    build:
+      context: .
+      dockerfile: infra/console/Dockerfile
+    volumes: !override []

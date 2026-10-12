@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/abuessa911/nex",
+  "tested_hosted_commit": "7b3190f7031f851de52fcc3abbac02a158906981",
+  "matching_local_source_commit": "f155853a38def2e9d5be164c0aa2b2d35edaffc5",
+  "verified_git_tree": "0ff6f6c3b329b3a0b0651d43e5a73641e042c8b8",
+  "historical_report_and_20261005_local_evidence": "unchanged versus pre-publication snapshot",
+  "delivered_verifier_and_compose_files": "unchanged versus pre-publication snapshot"
+}

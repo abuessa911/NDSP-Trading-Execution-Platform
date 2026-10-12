@@ -1,0 +1,135 @@
+{
+  "disposition": "PASS: hosted M1 Docker startup/readiness only",
+  "run_url": "https://github.com/abuessa911/nex/actions/runs/37254230540",
+  "tested_commit": "7b3190f7031f851de52fcc3abbac02a158906981",
+  "run_attempt": 1,
+  "project": "nex-m1-isolated-verification-ci37254230540a1",
+  "docker_job_id": 111587817741,
+  "runner_name": "GitHub Actions 1000003541",
+  "runner_labels": [
+    "ubuntu-24.04"
+  ],
+  "artifact_name": "m1-docker-37254230540-1",
+  "artifact_digest": "sha256:8b9f7b6bfab4b8be488ccb43c00c5918dc8adca073a5e2ccd0ea34d01e9d222b",
+  "safety": {
+    "TRADING_MODE": "paper",
+    "LIVE_TRADING_ENABLED": "false",
+    "GLOBAL_KILL_SWITCH": "true",
+    "BINANCE_ALLOW_WITHDRAW": "false"
+  },
+  "services": [
+    {
+      "service": "api",
+      "image_id": "sha256:7ae2142e4659507af3a202d9c5c2ee1d5e758afc5986daf2260d4af50a98d49d",
+      "configured_user": "10001:10001",
+      "health": {
+        "Status": "healthy",
+        "FailingStreak": 0,
+        "Log": [
+          {
+            "Start": "2026-10-05T02:10:14.255831126Z",
+            "End": "2026-10-05T02:10:14.557022653Z",
+            "ExitCode": 0,
+            "Output": ""
+          }
+        ]
+      },
+      "restart_count": 0
+    },
+    {
+      "service": "db",
+      "image_id": "sha256:81bd698b4594e751a3269e4dcd3e03a4a0ec0daf7b72e7aa1abd43cce9887542",
+      "configured_user": "",
+      "health": {
+        "Status": "healthy",
+        "FailingStreak": 0,
+        "Log": [
+          {
+            "Start": "2026-10-05T02:10:05.974335153Z",
+            "End": "2026-10-05T02:10:06.052915879Z",
+            "ExitCode": 0,
+            "Output": "/var/run/postgresql:5432 - accepting connections\n"
+          },
+          {
+            "Start": "2026-10-05T02:10:11.053584343Z",
+            "End": "2026-10-05T02:10:11.111844474Z",
+            "ExitCode": 0,
+            "Output": "/var/run/postgresql:5432 - accepting connections\n"
+          }
+        ]
+      },
+      "restart_count": 0
+    },
+    {
+      "service": "gateway",
+      "image_id": "sha256:6769dc3a703c719c1d2756bda113659be28ae16cf0da58dd5fd823d6b9a050ea",
+      "configured_user": "",
+      "health": null,
+      "restart_count": 0
+    },
+    {
+      "service": "redis",
+      "image_id": "sha256:f84b0c4678011602b9b98c227a4dcd5468bf8b088b02fdd4165cb7758bad8058",
+      "configured_user": "",
+      "health": {
+        "Status": "healthy",
+        "FailingStreak": 0,
+        "Log": [
+          {
+            "Start": "2026-10-05T02:10:05.991912722Z",
+            "End": "2026-10-05T02:10:06.04579672Z",
+            "ExitCode": 0,
+            "Output": "Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.\n"
+          },
+          {
+            "Start": "2026-10-05T02:10:11.046747398Z",
+            "End": "2026-10-05T02:10:11.097855608Z",
+            "ExitCode": 0,
+            "Output": "Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.\n"
+          }
+        ]
+      },
+      "restart_count": 0
+    }
+  ],
+  "images": [
+    {
+      "tags": [
+        "nex-m1-remediation:isolated"
+      ],
+      "id": "sha256:7ae2142e4659507af3a202d9c5c2ee1d5e758afc5986daf2260d4af50a98d49d",
+      "repo_digests": []
+    },
+    {
+      "tags": [
+        "postgres:16-alpine"
+      ],
+      "id": "sha256:81bd698b4594e751a3269e4dcd3e03a4a0ec0daf7b72e7aa1abd43cce9887542",
+      "repo_digests": [
+        "postgres@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+      ]
+    },
+    {
+      "tags": [
+        "redis:7-alpine"
+      ],
+      "id": "sha256:f84b0c4678011602b9b98c227a4dcd5468bf8b088b02fdd4165cb7758bad8058",
+      "repo_digests": [
+        "redis@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499"
+      ]
+    },
+    {
+      "tags": [
+        "nginx:1.27-alpine"
+      ],
+      "id": "sha256:6769dc3a703c719c1d2756bda113659be28ae16cf0da58dd5fd823d6b9a050ea",
+      "repo_digests": [
+        "nginx@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10"
+      ]
+    }
+  ],
+  "postgres_tests_passed": 7,
+  "cleanup": "all scoped inventories empty",
+  "migration_head_evidence": "0002_m1_remediation: upgrade transcript plus successful readiness validates alembic_version via delivered database_is_available",
+  "full_m1_acceptance": false
+}

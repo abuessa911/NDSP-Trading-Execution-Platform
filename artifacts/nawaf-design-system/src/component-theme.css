@@ -1,0 +1,133 @@
+/* Shared styling for source ports (ndsp-console globals.css + ndsp/ui.tsx).
+ * Every value derives from generated token variables (src/generated/tokens-extra.css
+ * and src/index.css). Logical properties only, so RTL needs no overrides. */
+.nawaf-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.gain { color: hsl(var(--status-ok-fg)); }
+.loss { color: hsl(var(--status-bad-fg)); }
+.warn { color: hsl(var(--status-warn-fg)); }
+.nawaf-mono { font-family: var(--app-font-mono); font-size: var(--ds-type-small); overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+
+/* Financial */
+.nawaf-kpi { display: flex; flex-direction: column; gap: calc(var(--spacing) * 0.75); padding: calc(var(--spacing) * 3) calc(var(--spacing) * 3.5); border-inline-start: var(--ds-sizing-focus-width) solid hsl(var(--border)); background: hsl(var(--surface-field)); }
+.nawaf-kpi.gain { border-inline-start-color: hsl(var(--status-ok-fg)); color: inherit; }
+.nawaf-kpi.loss { border-inline-start-color: hsl(var(--status-bad-fg)); color: inherit; }
+.nawaf-kpi.warn { border-inline-start-color: hsl(var(--status-warn-fg)); color: inherit; }
+.nawaf-kpi-label { font-family: var(--app-font-mono); font-size: var(--ds-type-caption); letter-spacing: 0.08em; color: hsl(var(--muted-foreground)); text-transform: uppercase; }
+.nawaf-kpi-value { font-family: var(--app-font-mono); font-size: var(--ds-type-kpi); font-weight: 600; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; unicode-bidi: isolate; }
+.nawaf-kpi-sub { font-size: var(--ds-type-small); color: hsl(var(--muted-foreground)); }
+.nawaf-pnl { display: inline-flex; align-items: center; gap: calc(var(--spacing) * 0.5); font-family: var(--app-font-mono); font-variant-numeric: tabular-nums; unicode-bidi: isolate; }
+.nawaf-pnl svg { width: var(--ds-sizing-icon-xs); height: var(--ds-sizing-icon-xs); }
+
+/* Chip (source .chip-*) */
+.nawaf-chip { display: inline-flex; align-items: center; gap: var(--spacing); font-family: var(--app-font-mono); font-size: var(--ds-type-caption); padding: calc(var(--spacing) * 0.5) calc(var(--spacing) * 1.75); border: thin solid; border-radius: var(--ds-radius-sm); white-space: nowrap; }
+.nawaf-chip svg { width: var(--ds-sizing-icon-xs); height: var(--ds-sizing-icon-xs); }
+.nawaf-chip-ok { color: hsl(var(--status-ok-fg)); border-color: hsl(var(--status-ok-border)); background: hsl(var(--status-ok-bg)); }
+.nawaf-chip-bad { color: hsl(var(--status-bad-fg)); border-color: hsl(var(--status-bad-border)); background: hsl(var(--status-bad-bg)); }
+.nawaf-chip-warn { color: hsl(var(--status-warn-fg)); border-color: hsl(var(--status-warn-border)); background: hsl(var(--status-warn-bg)); }
+.nawaf-chip-info { color: hsl(var(--status-info-fg)); border-color: hsl(var(--status-info-border)); background: hsl(var(--status-info-bg)); }
+.nawaf-chip-mute { color: hsl(var(--status-mute-fg)); border-color: hsl(var(--status-mute-border)); background: hsl(var(--status-mute-bg)); }
+
+/* Section / panel */
+.nawaf-panel { background: hsl(var(--card)); border: thin solid hsl(var(--border)); border-radius: var(--ds-radius-panel); padding: calc(var(--spacing) * 5.75); min-width: 0; }
+.nawaf-panel > :last-child { margin-block-end: 0; }
+.nawaf-row { display: flex; gap: calc(var(--spacing) * 2.5); align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.nawaf-row h2 { font-size: var(--ds-type-heading); font-weight: 600; margin: 0 0 calc(var(--spacing) * 2); }
+
+/* Key / value */
+.nawaf-kv-list { margin: calc(var(--spacing) * 2.5) 0 calc(var(--spacing) * 4.5); }
+.nawaf-kv-row { display: grid; grid-template-columns: minmax(var(--ds-sizing-kv-label-min), 1fr) minmax(0, 1.4fr); gap: calc(var(--spacing) * 3.5); padding-block: calc(var(--spacing) * 2.5); border-block-end: thin solid hsl(var(--border)); font-size: var(--ds-type-body-sm); }
+.nawaf-kv-row dt { color: hsl(var(--muted-foreground)); }
+.nawaf-kv-row dd { margin: 0; text-align: end; overflow-wrap: anywhere; }
+
+/* Notice / banner */
+.nawaf-notice { border-inline-start: var(--ds-sizing-focus-width) solid hsl(var(--status-warn-fg)); background: hsl(var(--status-warn-bg)); color: hsl(var(--status-warn-fg)); padding: calc(var(--spacing) * 3) calc(var(--spacing) * 3.75); font-size: var(--ds-type-body-sm); line-height: 1.7; border-start-end-radius: var(--ds-radius-control); border-end-end-radius: var(--ds-radius-control); }
+.nawaf-demo-banner { display: flex; flex-wrap: wrap; gap: calc(var(--spacing) * 2); align-items: center; border: thin dashed hsl(var(--status-demo-border)); background: hsl(var(--status-demo-bg)); padding: calc(var(--spacing) * 2.25) calc(var(--spacing) * 3); border-radius: var(--ds-radius-control); }
+.nawaf-demo-tag { font-family: var(--app-font-mono); font-size: var(--ds-type-micro); letter-spacing: 0.08em; color: hsl(var(--status-demo-fg)); border: thin solid hsl(var(--status-demo-border)); padding: calc(var(--spacing) * 0.5) calc(var(--spacing) * 1.5); border-radius: var(--ds-radius-sm); }
+.nawaf-demo-text { font-size: var(--ds-type-small); color: hsl(var(--status-demo-fg)); flex: 1 1 var(--ds-sizing-banner-text-basis); }
+
+/* States */
+.nawaf-skeleton-stack { display: grid; gap: calc(var(--spacing) * 2.5); }
+.nawaf-skeleton { background: linear-gradient(90deg, hsl(var(--card)), hsl(var(--surface-skeleton-mid)), hsl(var(--card))); background-size: 200% 100%; animation: nawaf-shimmer var(--ds-motion-duration-shimmer) linear infinite; border-radius: var(--ds-radius-panel); }
+@keyframes nawaf-shimmer { to { background-position: -200% 0; } }
+.nawaf-empty-state { display: grid; justify-items: center; gap: var(--spacing); text-align: center; padding: calc(var(--spacing) * 8.5) calc(var(--spacing) * 4); color: hsl(var(--muted-foreground)); border: thin dashed hsl(var(--border)); border-radius: var(--ds-radius-panel); }
+.nawaf-empty-state strong { color: hsl(var(--foreground)); }
+.nawaf-empty-state p { margin: 0; font-size: var(--ds-type-body-sm); }
+.nawaf-error-state { display: flex; gap: calc(var(--spacing) * 3.5); align-items: center; flex-wrap: wrap; border: thin solid hsl(var(--status-bad-border)); background: hsl(var(--status-bad-bg)); color: hsl(var(--status-bad-fg)); padding: calc(var(--spacing) * 3.5) calc(var(--spacing) * 4); border-radius: var(--ds-radius-panel); }
+.nawaf-error-state p { margin: 0; font-size: var(--ds-type-body-sm); }
+.nawaf-error-state > div { flex: 1 1 var(--ds-sizing-error-text-basis); }
+
+/* Gauges */
+.nawaf-ring { margin: 0; text-align: center; }
+.nawaf-ring .track { fill: none; stroke: hsl(var(--surface-track)); stroke-width: 9; }
+.nawaf-ring .arc { fill: none; stroke-width: 9; stroke-linecap: butt; }
+.nawaf-ring-ok .arc { stroke: hsl(var(--status-ok-fg)); }
+.nawaf-ring-warn .arc { stroke: hsl(var(--status-warn-fg)); }
+.nawaf-ring-bad .arc { stroke: hsl(var(--status-bad-fg)); }
+.nawaf-ring text { fill: hsl(var(--foreground)); font: 600 var(--ds-sizing-ring-label-size) var(--app-font-mono); }
+.nawaf-ring figcaption { font-size: var(--ds-type-small); color: hsl(var(--muted-foreground)); }
+.nawaf-meter { height: var(--ds-sizing-meter-height); background: hsl(var(--surface-track)); border-radius: var(--ds-radius-sm); overflow: hidden; min-width: var(--ds-sizing-meter-min-width); }
+.nawaf-meter span { display: block; height: 100%; background: hsl(var(--primary)); transform-origin: left; }
+[dir="rtl"] .nawaf-meter span { transform-origin: right; }
+
+/* Charts */
+.nawaf-line-chart { width: 100%; display: block; }
+.nawaf-line-chart .grid { stroke: hsl(var(--surface-track)); }
+.nawaf-line-chart .stroke { stroke-width: 1.6; }
+.nawaf-line-chart.up .stroke { stroke: hsl(var(--status-ok-fg)); }
+.nawaf-line-chart.up .fill { fill: hsl(var(--status-ok-fg) / 0.11); }
+.nawaf-line-chart.down .stroke { stroke: hsl(var(--status-bad-fg)); }
+.nawaf-line-chart.down .fill { fill: hsl(var(--status-bad-fg) / 0.11); }
+.nawaf-bars { display: flex; align-items: flex-end; gap: calc(var(--spacing)); height: var(--ds-sizing-bars-height); direction: ltr; }
+.nawaf-bars span { flex: 1; border-start-start-radius: var(--ds-radius-sm); border-start-end-radius: var(--ds-radius-sm); }
+.nawaf-bars .pos { background: hsl(var(--status-ok-fg)); }
+.nawaf-bars .neg { background: hsl(var(--status-bad-fg)); opacity: 0.85; }
+.nawaf-chart-layout { display: block; min-width: 0; margin: 0; direction: ltr; }
+.nawaf-chart-layout figcaption { display: flex; justify-content: space-between; flex-wrap: wrap; gap: calc(var(--spacing) * 2); margin-block-end: calc(var(--spacing) * 2.5); }
+.nawaf-chart-layout details { margin-block-start: calc(var(--spacing) * 2); color: hsl(var(--muted-foreground)); font-size: var(--ds-type-small); overflow-wrap: anywhere; }
+.nawaf-chart-layout summary { cursor: pointer; }
+.nawaf-chart-table { border-collapse: collapse; margin-block-start: calc(var(--spacing) * 2); font-family: var(--app-font-mono); font-variant-numeric: tabular-nums; }
+.nawaf-chart-table th, .nawaf-chart-table td { padding: calc(var(--spacing) * 0.5) calc(var(--spacing) * 3); border-block-end: thin solid hsl(var(--border)); text-align: end; }
+
+/* DataGrid */
+.nawaf-grid-wrap { min-width: 0; }
+.nawaf-filter-bar { display: flex; flex-wrap: wrap; gap: calc(var(--spacing) * 3); align-items: center; margin-block: var(--spacing) calc(var(--spacing) * 3.5); }
+.nawaf-search-field { display: flex; align-items: center; gap: calc(var(--spacing) * 2); border: thin solid hsl(var(--input)); background: hsl(var(--surface-field)); padding-inline: calc(var(--spacing) * 2.5); border-radius: var(--ds-radius-control); min-width: min(var(--ds-sizing-search-min-width), 100%); }
+.nawaf-search-field:focus-within { outline: var(--ds-sizing-focus-width) solid hsl(var(--ring)); outline-offset: var(--ds-sizing-focus-offset); }
+.nawaf-search-field input { border: 0; background: transparent; padding-block: calc(var(--spacing) * 2); flex: 1; outline: none; color: inherit; font: inherit; min-width: 0; }
+.nawaf-field-inline { display: inline-flex; align-items: center; gap: calc(var(--spacing) * 1.75); font-size: var(--ds-type-small); color: hsl(var(--muted-foreground)); }
+.nawaf-field-inline select { background: hsl(var(--surface-field)); color: hsl(var(--foreground)); border: thin solid hsl(var(--input)); border-radius: var(--ds-radius-control); padding: calc(var(--spacing) * 1.5) calc(var(--spacing) * 2); font: inherit; }
+.nawaf-count { margin-inline-start: auto; color: hsl(var(--muted-foreground)); font-family: var(--app-font-mono); font-size: var(--ds-type-small); }
+.nawaf-table-wrap { overflow-x: auto; }
+.nawaf-data-table { border-collapse: collapse; width: 100%; font-size: var(--ds-type-body-sm); }
+.nawaf-data-table th, .nawaf-data-table td { padding: calc(var(--spacing) * 2.5); border-block-end: thin solid hsl(var(--border)); text-align: start; }
+.nawaf-data-table th { font-family: var(--app-font-mono); font-size: var(--ds-type-caption); letter-spacing: 0.06em; text-transform: uppercase; color: hsl(var(--muted-foreground)); white-space: nowrap; }
+.nawaf-data-table .num { text-align: end; font-family: var(--app-font-mono); font-variant-numeric: tabular-nums; }
+.nawaf-data-table tbody tr:hover { background: hsl(var(--surface-raised)); }
+.nawaf-th-btn { background: none; border: 0; font: inherit; color: inherit; letter-spacing: inherit; padding-block: calc(var(--spacing) * 0.5); display: inline-flex; gap: var(--spacing); align-items: center; cursor: pointer; text-transform: inherit; }
+.nawaf-th-btn svg { width: var(--ds-sizing-icon-xs); height: var(--ds-sizing-icon-xs); }
+
+/* Detail drawer (source Drawer) */
+.nawaf-drawer-scrim { position: fixed; inset: 0; background: hsl(var(--surface-scrim) / 0.63); z-index: var(--ds-z-index-scrim); display: flex; justify-content: flex-end; }
+.nawaf-drawer { width: min(var(--ds-sizing-drawer-width), 100%); height: 100%; overflow-y: auto; background: hsl(var(--sidebar)); color: hsl(var(--foreground)); border-inline-start: thin solid hsl(var(--border)); padding: calc(var(--spacing) * 5); animation: nawaf-slide-in var(--ds-motion-duration-base) var(--ds-motion-easing-out); }
+[dir="rtl"] .nawaf-drawer { animation-name: nawaf-slide-in-rtl; }
+.nawaf-drawer header { display: flex; justify-content: space-between; align-items: center; gap: calc(var(--spacing) * 2.5); }
+.nawaf-drawer h2 { font-size: var(--ds-type-heading); font-weight: 600; margin: 0; }
+.nawaf-drawer-body { display: grid; gap: calc(var(--spacing) * 2); }
+@keyframes nawaf-slide-in { from { transform: translateX(var(--ds-sizing-drawer-slide-offset)); opacity: 0; } }
+@keyframes nawaf-slide-in-rtl { from { transform: translateX(calc(var(--ds-sizing-drawer-slide-offset) * -1)); opacity: 0; } }
+
+/* Shared focus-visible and reduced motion */
+:where(button, a, select, summary, input, textarea, [role="tab"], [role="switch"], [role="checkbox"], [role="radio"], [tabindex]):focus-visible { outline: var(--ds-sizing-focus-width) solid hsl(var(--ring)); outline-offset: var(--ds-sizing-focus-offset); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+/* Print: the Usage Guide prints as a plain document (shell chrome hidden). */
+@media print {
+  .ds-no-print { display: none !important; }
+  .ds-print-root { display: block !important; }
+  .ds-guide-code { white-space: pre-wrap; overflow: visible; }
+  .ds-guide-chapter { break-inside: auto; }
+  .ds-guide-chapter h2 { break-after: avoid; }
+  .ds-guide-table-wrap { overflow: visible !important; }
+}

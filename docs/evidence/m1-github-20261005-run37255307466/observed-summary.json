@@ -1,0 +1,105 @@
+{
+  "containers": [
+    {
+      "service": "api",
+      "project": "nex-m1-isolated-verification-ci37255307466a1",
+      "container_id": "6da85f9c880476d7bb3d275a052b67bef9b57d4e4bce4b5e4814d2b329ed361c",
+      "image_id": "sha256:9eec4d62defed350d350e8688abc34a339bef6fdf1f996ab91df7d13b5a2e018",
+      "user": "10001:10001",
+      "running": true,
+      "health_status": "healthy",
+      "latest_health_exit": 0,
+      "safety": {
+        "TRADING_MODE": "paper",
+        "LIVE_TRADING_ENABLED": "false",
+        "GLOBAL_KILL_SWITCH": "true",
+        "BINANCE_ALLOW_WITHDRAW": "false"
+      }
+    },
+    {
+      "service": "db",
+      "project": "nex-m1-isolated-verification-ci37255307466a1",
+      "container_id": "a79e7535138db2f02303f6d8553313f6af34e25f1bbf1dda096536112d7ccfca",
+      "image_id": "sha256:81bd698b4594e751a3269e4dcd3e03a4a0ec0daf7b72e7aa1abd43cce9887542",
+      "user": "",
+      "running": true,
+      "health_status": "healthy",
+      "latest_health_exit": 0,
+      "safety": {}
+    },
+    {
+      "service": "gateway",
+      "project": "nex-m1-isolated-verification-ci37255307466a1",
+      "container_id": "8b4c90e920eb75008cfdc0b196bc722da5dc5bc0ee12aa12bdd2209ff8c3736c",
+      "image_id": "sha256:6769dc3a703c719c1d2756bda113659be28ae16cf0da58dd5fd823d6b9a050ea",
+      "user": "",
+      "running": true,
+      "health_status": null,
+      "latest_health_exit": null,
+      "safety": {}
+    },
+    {
+      "service": "redis",
+      "project": "nex-m1-isolated-verification-ci37255307466a1",
+      "container_id": "b4d5d1baa7debc3fdb9fb335e43ba3701a9d05043bffa7063f8d0cff09a265b1",
+      "image_id": "sha256:f84b0c4678011602b9b98c227a4dcd5468bf8b088b02fdd4165cb7758bad8058",
+      "user": "",
+      "running": true,
+      "health_status": "healthy",
+      "latest_health_exit": 0,
+      "safety": {}
+    }
+  ],
+  "images": [
+    {
+      "requested_tag": "nex-m1-remediation:isolated",
+      "id": "sha256:9eec4d62defed350d350e8688abc34a339bef6fdf1f996ab91df7d13b5a2e018",
+      "repo_digests": [],
+      "architecture": "amd64",
+      "os": "linux"
+    },
+    {
+      "requested_tag": "postgres:16-alpine",
+      "id": "sha256:81bd698b4594e751a3269e4dcd3e03a4a0ec0daf7b72e7aa1abd43cce9887542",
+      "repo_digests": [
+        "postgres@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+      ],
+      "architecture": "amd64",
+      "os": "linux"
+    },
+    {
+      "requested_tag": "redis:7-alpine",
+      "id": "sha256:f84b0c4678011602b9b98c227a4dcd5468bf8b088b02fdd4165cb7758bad8058",
+      "repo_digests": [
+        "redis@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499"
+      ],
+      "architecture": "amd64",
+      "os": "linux"
+    },
+    {
+      "requested_tag": "nginx:1.27-alpine",
+      "id": "sha256:6769dc3a703c719c1d2756bda113659be28ae16cf0da58dd5fd823d6b9a050ea",
+      "repo_digests": [
+        "nginx@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10"
+      ],
+      "architecture": "amd64",
+      "os": "linux"
+    }
+  ],
+  "before_startup": {
+    "containers": [],
+    "volumes": [],
+    "networks": []
+  },
+  "after_cleanup": {
+    "containers": [],
+    "volumes": [],
+    "networks": []
+  },
+  "verification": {
+    "status": "passed"
+  },
+  "cleanup": {
+    "status": "clean"
+  }
+}

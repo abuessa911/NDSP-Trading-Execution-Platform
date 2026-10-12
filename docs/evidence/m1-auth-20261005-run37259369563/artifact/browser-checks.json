@@ -1,0 +1,6 @@
+[
+  {
+    "check": "actual frontend document HTTP 200",
+    "passed": true
+  }
+]

@@ -1,0 +1,18 @@
++ docker ps -aq --filter label=com.docker.compose.project=nex-m1-isolated-verification-ci37255307466a1
+
+exit=0
++ docker ps -aq --filter name=^/nex-m1-isolated-verification-ci37255307466a1-
+
+exit=0
++ docker volume ls -q --filter label=com.docker.compose.project=nex-m1-isolated-verification-ci37255307466a1
+
+exit=0
++ docker volume ls -q --filter name=^nex-m1-isolated-verification-ci37255307466a1_
+
+exit=0
++ docker network ls -q --filter label=com.docker.compose.project=nex-m1-isolated-verification-ci37255307466a1
+
+exit=0
++ docker network ls -q --filter name=^nex-m1-isolated-verification-ci37255307466a1_
+
+exit=0

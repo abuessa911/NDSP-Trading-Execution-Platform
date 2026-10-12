@@ -1,0 +1,1109 @@
++ docker inspect 26853dfe7b36bfa7967938892c3f82d22a60ea16f889262871ee1d3ea002c0ed c1a3a3133f3e84fcdc53ac2722a7462a4df9aef30720ad129220bc5d636c5bd9 79eac81094720a3805c93eedbc065a75969b56991e79852da2d94f724654f126 5aa061eeaeecc06971db7215bff0af0b6bc48ba3f6e659e0f0907d8846deb5a7
+[
+    {
+        "Id": "26853dfe7b36bfa7967938892c3f82d22a60ea16f889262871ee1d3ea002c0ed",
+        "Created": "2026-10-05T10:18:59.404355559Z",
+        "Path": "sh",
+        "Args": [
+            "-c",
+            "python /app/apps/api/tests/oidc_fixture.py & exec python -m uvicorn nex_api.main:app --host 0.0.0.0 --port 8000 --no-access-log"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 3387,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-10-05T10:18:59.932883219Z",
+            "FinishedAt": "0001-01-01T00:00:00Z",
+            "Health": {
+                "Status": "healthy",
+                "FailingStreak": 0,
+                "Log": [
+                    {
+                        "Start": "2026-10-05T10:19:05.05680422Z",
+                        "End": "2026-10-05T10:19:05.372577555Z",
+                        "ExitCode": 0,
+                        "Output": ""
+                    }
+                ]
+            }
+        },
+        "Image": "sha256:331dc71eb0f634fed62a515213cb7381ff112507a881b8672c83d6e03f9874dd",
+        "ResolvConfPath": "/var/lib/docker/containers/26853dfe7b36bfa7967938892c3f82d22a60ea16f889262871ee1d3ea002c0ed/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/26853dfe7b36bfa7967938892c3f82d22a60ea16f889262871ee1d3ea002c0ed/hostname",
+        "HostsPath": "/var/lib/docker/containers/26853dfe7b36bfa7967938892c3f82d22a60ea16f889262871ee1d3ea002c0ed/hosts",
+        "LogPath": "/var/lib/docker/containers/26853dfe7b36bfa7967938892c3f82d22a60ea16f889262871ee1d3ea002c0ed/26853dfe7b36bfa7967938892c3f82d22a60ea16f889262871ee1d3ea002c0ed-json.log",
+        "Name": "/nex-m1-isolated-verification-ci37295727289a1-api-1",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "docker-default",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": null,
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "nex-m1-isolated-verification-ci37295727289a1_nex",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "unless-stopped",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": null,
+            "DnsOptions": null,
+            "DnsSearch": null,
+            "ExtraHosts": [],
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": null,
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/asound",
+                "/proc/acpi",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/sys/firmware",
+                "/sys/devices/virtual/powercap"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "GraphDriver": {
+            "Data": {
+                "ID": "26853dfe7b36bfa7967938892c3f82d22a60ea16f889262871ee1d3ea002c0ed",
+                "LowerDir": "/var/lib/docker/overlay2/824e6065e09d818534264936dd9a9e2be84bccfdc3367e0c40eb67fcd3a010dd-init/diff:/var/lib/docker/overlay2/rkou5qhb0a1inn978ey744o4j/diff:/var/lib/docker/overlay2/q01l5ku1c7xindjifo6w1k2x0/diff:/var/lib/docker/overlay2/p8nbuwjwd7tq4r4j9ucbw9ox2/diff:/var/lib/docker/overlay2/jqvpuh0ejopx5wk22tp99ord2/diff:/var/lib/docker/overlay2/p8o0tz9zaewh4y3n9239l7fw8/diff:/var/lib/docker/overlay2/jn0cck9se7p3hjftfcr0fncl2/diff:/var/lib/docker/overlay2/68c55ecb36259abd928135945358e22f8291ed3523fa781ac87a74bfa31ac7ff/diff:/var/lib/docker/overlay2/378a0712dc1aa4ce3bf2afa0c5907341479f99d2998d5b25f273eabcc48819cb/diff:/var/lib/docker/overlay2/d88ac7e6c26a7e26613a20ead0e5860c744bb6b023d1be1dd1df6c926039a679/diff:/var/lib/docker/overlay2/20fd72a85fa21e28ff2432a9547627c6c7eca76b7cfefab31bac46b98c09c377/diff",
+                "MergedDir": "/var/lib/docker/overlay2/824e6065e09d818534264936dd9a9e2be84bccfdc3367e0c40eb67fcd3a010dd/merged",
+                "UpperDir": "/var/lib/docker/overlay2/824e6065e09d818534264936dd9a9e2be84bccfdc3367e0c40eb67fcd3a010dd/diff",
+                "WorkDir": "/var/lib/docker/overlay2/824e6065e09d818534264936dd9a9e2be84bccfdc3367e0c40eb67fcd3a010dd/work"
+            },
+            "Name": "overlay2"
+        },
+        "Mounts": [],
+        "Config": {
+            "Hostname": "26853dfe7b36",
+            "Domainname": "",
+            "User": "10001:10001",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "ExposedPorts": {
+                "8000/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "NEX_SESSION_SECONDS=1800",
+                "OIDC_CLIENT_ID=",
+                "OIDC_ISSUER=http://localhost:9090",
+                "OIDC_REDIRECT_URI=",
+                "ENVIRONMENT=test",
+                "DATABASE_URL=postgresql+asyncpg://nex_app:synthetic-runtime-only@db:5432/nex",
+                "SECRET_PROVIDER=env",
+                "OIDC_AUDIENCE=nex-m1-test",
+                "PORT=8000",
+                "OIDC_ALLOWED_ALGORITHM=RS256",
+                "NEX_SESSION_ENCRYPTION_KEY=",
+                "TRADING_MODE=paper",
+                "OIDC_POST_LOGOUT_REDIRECT_URI=",
+                "OIDC_BROWSER_LOGIN_ENABLED=false",
+                "OIDC_CLIENT_SECRET=",
+                "SECRETS_DIRECTORY=/run/secrets",
+                "REDIS_URL=redis://:synthetic-redis-only@redis:6379/0",
+                "LIVE_TRADING_ENABLED=false",
+                "GLOBAL_KILL_SWITCH=true",
+                "BINANCE_ALLOW_WITHDRAW=false",
+                "OIDC_JWKS_URL=http://localhost:9090/jwks",
+                "PATH=/app/.venv/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "LANG=C.UTF-8",
+                "GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305",
+                "PYTHON_VERSION=3.12.15",
+                "PYTHON_SHA256=c2c4321961fab0fb999d66e0cecf521c2ab3994c7992873ea99e306c1094fd5a",
+                "PYTHONDONTWRITEBYTECODE=1",
+                "PYTHONUNBUFFERED=1",
+                "UV_COMPILE_BYTECODE=1",
+                "UV_LINK_MODE=copy",
+                "UV_CACHE_DIR=/tmp/uv-cache",
+                "PYTHONPATH=/app/apps/api"
+            ],
+            "Cmd": [
+                "sh",
+                "-c",
+                "python /app/apps/api/tests/oidc_fixture.py & exec python -m uvicorn nex_api.main:app --host 0.0.0.0 --port 8000 --no-access-log"
+            ],
+            "Healthcheck": {
+                "Test": [
+                    "CMD",
+                    "python",
+                    "-c",
+                    "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health/ready', timeout=2)"
+                ],
+                "Interval": 10000000000,
+                "Timeout": 3000000000,
+                "StartPeriod": 15000000000,
+                "Retries": 5
+            },
+            "Image": "nex-m1-remediation:isolated",
+            "Volumes": null,
+            "WorkingDir": "/app",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": {
+                "com.docker.compose.config-hash": "b83ee231e0737c7aabf262259d4a0986b4a373e41c0141266fde489d7159205d",
+                "com.docker.compose.container-number": "1",
+                "com.docker.compose.depends_on": "redis:service_healthy:false,db:service_healthy:false",
+                "com.docker.compose.image": "sha256:331dc71eb0f634fed62a515213cb7381ff112507a881b8672c83d6e03f9874dd",
+                "com.docker.compose.oneoff": "False",
+                "com.docker.compose.project": "nex-m1-isolated-verification-ci37295727289a1",
+                "com.docker.compose.project.config_files": "/home/runner/work/_temp/m1-committed-source/docker-compose.yml,/home/runner/work/_temp/m1-committed-source/infra/testing/compose.m1.yml",
+                "com.docker.compose.project.environment_file": "/dev/null",
+                "com.docker.compose.project.working_dir": "/home/runner/work/_temp/m1-committed-source",
+                "com.docker.compose.service": "api",
+                "com.docker.compose.version": "2.38.2"
+            }
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "86a6afc1994caf7f924de2a98c7f374499d76573a883b8c23bf52db8e5f2466f",
+            "SandboxKey": "/var/run/docker/netns/86a6afc1994c",
+            "Ports": {
+                "8000/tcp": null
+            },
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "",
+            "Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+            "MacAddress": "",
+            "Networks": {
+                "nex-m1-isolated-verification-ci37295727289a1_nex": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "nex-m1-isolated-verification-ci37295727289a1-api-1",
+                        "api"
+                    ],
+                    "MacAddress": "1e:f1:ae:d7:fb:ec",
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "10a8615d875a429874787ea62df173990fc2f3aa3e1b3969a70cc592b38b5cea",
+                    "EndpointID": "710fc4573947df87adea6ee3dc672cac8bfaea71a588f8f490dd8d6b32f26ccd",
+                    "Gateway": "172.18.0.1",
+                    "IPAddress": "172.18.0.4",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "nex-m1-isolated-verification-ci37295727289a1-api-1",
+                        "api",
+                        "26853dfe7b36"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "Id": "c1a3a3133f3e84fcdc53ac2722a7462a4df9aef30720ad129220bc5d636c5bd9",
+        "Created": "2026-10-05T10:18:51.516409039Z",
+        "Path": "docker-entrypoint.sh",
+        "Args": [
+            "postgres"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 3024,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-10-05T10:18:51.540059854Z",
+            "FinishedAt": "0001-01-01T00:00:00Z",
+            "Health": {
+                "Status": "healthy",
+                "FailingStreak": 0,
+                "Log": [
+                    {
+                        "Start": "2026-10-05T10:18:56.752263013Z",
+                        "End": "2026-10-05T10:18:56.819777295Z",
+                        "ExitCode": 0,
+                        "Output": "/var/run/postgresql:5432 - accepting connections\n"
+                    },
+                    {
+                        "Start": "2026-10-05T10:19:01.820707732Z",
+                        "End": "2026-10-05T10:19:01.886689043Z",
+                        "ExitCode": 0,
+                        "Output": "/var/run/postgresql:5432 - accepting connections\n"
+                    }
+                ]
+            }
+        },
+        "Image": "sha256:81bd698b4594e751a3269e4dcd3e03a4a0ec0daf7b72e7aa1abd43cce9887542",
+        "ResolvConfPath": "/var/lib/docker/containers/c1a3a3133f3e84fcdc53ac2722a7462a4df9aef30720ad129220bc5d636c5bd9/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/c1a3a3133f3e84fcdc53ac2722a7462a4df9aef30720ad129220bc5d636c5bd9/hostname",
+        "HostsPath": "/var/lib/docker/containers/c1a3a3133f3e84fcdc53ac2722a7462a4df9aef30720ad129220bc5d636c5bd9/hosts",
+        "LogPath": "/var/lib/docker/containers/c1a3a3133f3e84fcdc53ac2722a7462a4df9aef30720ad129220bc5d636c5bd9/c1a3a3133f3e84fcdc53ac2722a7462a4df9aef30720ad129220bc5d636c5bd9-json.log",
+        "Name": "/nex-m1-isolated-verification-ci37295727289a1-db-1",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "docker-default",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "nex-m1-isolated-verification-ci37295727289a1_nex_postgres_data:/var/lib/postgresql/data:rw",
+                "/home/runner/work/_temp/m1-committed-source/infra/postgres/init:/docker-entrypoint-initdb.d:ro"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "nex-m1-isolated-verification-ci37295727289a1_nex",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "unless-stopped",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": null,
+            "DnsOptions": null,
+            "DnsSearch": null,
+            "ExtraHosts": [],
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": null,
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/asound",
+                "/proc/acpi",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/sys/firmware",
+                "/sys/devices/virtual/powercap"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "GraphDriver": {
+            "Data": {
+                "ID": "c1a3a3133f3e84fcdc53ac2722a7462a4df9aef30720ad129220bc5d636c5bd9",
+                "LowerDir": "/var/lib/docker/overlay2/b9c042d44dafd2932e348d29cc3a78d14be5d4cf49bea838cbd32fe84cf6ad9c-init/diff:/var/lib/docker/overlay2/849a00a715caafe221b701becdee70039bcd57e12fd554cb00bc32f546628de9/diff:/var/lib/docker/overlay2/b6e6069e00d13ec8a96ca596f67ae708d2111f782d4b5ac507340d47e06d760e/diff:/var/lib/docker/overlay2/637a0ecc3438d143f7638f840f3eeba936c7913a2f00f7ec829750d173c9bb63/diff:/var/lib/docker/overlay2/64d789b128f0452c1cdc0d91e74f07499b41b0d5ac10b46a36104fc9246fc701/diff:/var/lib/docker/overlay2/f667172894e15afd73d8ed0a762c62dcafbd1ff8e7752c6491362a17abe9fd27/diff:/var/lib/docker/overlay2/c392c438c55002b9e8e7ad93322afe081e4cf137ebca2a6ee26254574d8dfe26/diff:/var/lib/docker/overlay2/bad3e206a7f82df6db9bac3e19d71da32ec3f2f1ff2323987601a86cbe5817d9/diff:/var/lib/docker/overlay2/65aabb023e2539c709e8f6e351b9b362c01f35acdbf2f50d1ef30329c07942e1/diff:/var/lib/docker/overlay2/48cdd55775640cd7d3ada2b8bafb84210b2eb739fe121ac0b129c0b1ad1ee5d7/diff:/var/lib/docker/overlay2/f1466f02ce1949de344bdc0325a85007e419e3ce50bc706cefd8b49f117c9ee2/diff:/var/lib/docker/overlay2/2ae0b48eecfe9a6e2756191da34c38096ffcefcfe60a3735da2ca81df409a0ef/diff",
+                "MergedDir": "/var/lib/docker/overlay2/b9c042d44dafd2932e348d29cc3a78d14be5d4cf49bea838cbd32fe84cf6ad9c/merged",
+                "UpperDir": "/var/lib/docker/overlay2/b9c042d44dafd2932e348d29cc3a78d14be5d4cf49bea838cbd32fe84cf6ad9c/diff",
+                "WorkDir": "/var/lib/docker/overlay2/b9c042d44dafd2932e348d29cc3a78d14be5d4cf49bea838cbd32fe84cf6ad9c/work"
+            },
+            "Name": "overlay2"
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/home/runner/work/_temp/m1-committed-source/infra/postgres/init",
+                "Destination": "/docker-entrypoint-initdb.d",
+                "Mode": "ro",
+                "RW": false,
+                "Propagation": "rprivate"
+            },
+            {
+                "Type": "volume",
+                "Name": "nex-m1-isolated-verification-ci37295727289a1_nex_postgres_data",
+                "Source": "/var/lib/docker/volumes/nex-m1-isolated-verification-ci37295727289a1_nex_postgres_data/_data",
+                "Destination": "/var/lib/postgresql/data",
+                "Driver": "local",
+                "Mode": "rw",
+                "RW": true,
+                "Propagation": ""
+            }
+        ],
+        "Config": {
+            "Hostname": "c1a3a3133f3e",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "ExposedPorts": {
+                "5432/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "POSTGRES_DB=nex",
+                "POSTGRES_USER=nex_test_bootstrap",
+                "POSTGRES_PASSWORD=synthetic-bootstrap-only",
+                "NEX_APP_DB_PASSWORD=synthetic-runtime-only",
+                "NEX_MIGRATOR_DB_PASSWORD=synthetic-migrator-only",
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "GOSU_VERSION=1.19",
+                "LANG=en_US.utf8",
+                "PG_MAJOR=16",
+                "PG_VERSION=16.15",
+                "PG_SHA256=c1575341fa7bd40f5274ea465b34390f4dc64cdd0770af327005caaeb9f6b7ed",
+                "DOCKER_PG_LLVM_DEPS=llvm21-dev \t\tclang21",
+                "PGDATA=/var/lib/postgresql/data"
+            ],
+            "Cmd": [
+                "postgres"
+            ],
+            "Healthcheck": {
+                "Test": [
+                    "CMD-SHELL",
+                    "pg_isready -U \"${POSTGRES_USER}\" -d nex"
+                ],
+                "Interval": 5000000000,
+                "Timeout": 3000000000,
+                "Retries": 15
+            },
+            "Image": "postgres:16-alpine",
+            "Volumes": {
+                "/var/lib/postgresql/data": {}
+            },
+            "WorkingDir": "/",
+            "Entrypoint": [
+                "docker-entrypoint.sh"
+            ],
+            "OnBuild": null,
+            "Labels": {
+                "com.docker.compose.config-hash": "2f2519233309e4e0f34bc7a61ff6fe3cd0a6137235014bc8ce53b5bceae55b7f",
+                "com.docker.compose.container-number": "1",
+                "com.docker.compose.depends_on": "",
+                "com.docker.compose.image": "sha256:81bd698b4594e751a3269e4dcd3e03a4a0ec0daf7b72e7aa1abd43cce9887542",
+                "com.docker.compose.oneoff": "False",
+                "com.docker.compose.project": "nex-m1-isolated-verification-ci37295727289a1",
+                "com.docker.compose.project.config_files": "/home/runner/work/_temp/m1-committed-source/docker-compose.yml,/home/runner/work/_temp/m1-committed-source/infra/testing/compose.m1.yml",
+                "com.docker.compose.project.environment_file": "/dev/null",
+                "com.docker.compose.project.working_dir": "/home/runner/work/_temp/m1-committed-source",
+                "com.docker.compose.service": "db",
+                "com.docker.compose.version": "2.38.2"
+            },
+            "StopSignal": "SIGINT"
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "d388e960d0b927307953ecf95f6dc29b22f3dcd81ca250fccb688fcded2a9755",
+            "SandboxKey": "/var/run/docker/netns/d388e960d0b9",
+            "Ports": {
+                "5432/tcp": null
+            },
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "",
+            "Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+            "MacAddress": "",
+            "Networks": {
+                "nex-m1-isolated-verification-ci37295727289a1_nex": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "nex-m1-isolated-verification-ci37295727289a1-db-1",
+                        "db"
+                    ],
+                    "MacAddress": "b6:42:c7:11:64:41",
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "10a8615d875a429874787ea62df173990fc2f3aa3e1b3969a70cc592b38b5cea",
+                    "EndpointID": "586c4c9ba0f1aa2b6f675d14d67378d936e5babe9cbf39728532d03f1c001dc3",
+                    "Gateway": "172.18.0.1",
+                    "IPAddress": "172.18.0.2",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "nex-m1-isolated-verification-ci37295727289a1-db-1",
+                        "db",
+                        "c1a3a3133f3e"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "Id": "79eac81094720a3805c93eedbc065a75969b56991e79852da2d94f724654f126",
+        "Created": "2026-10-05T10:19:03.983162982Z",
+        "Path": "/docker-entrypoint.sh",
+        "Args": [
+            "nginx",
+            "-g",
+            "daemon off;"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 3630,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-10-05T10:19:05.509036085Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:6769dc3a703c719c1d2756bda113659be28ae16cf0da58dd5fd823d6b9a050ea",
+        "ResolvConfPath": "/var/lib/docker/containers/79eac81094720a3805c93eedbc065a75969b56991e79852da2d94f724654f126/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/79eac81094720a3805c93eedbc065a75969b56991e79852da2d94f724654f126/hostname",
+        "HostsPath": "/var/lib/docker/containers/79eac81094720a3805c93eedbc065a75969b56991e79852da2d94f724654f126/hosts",
+        "LogPath": "/var/lib/docker/containers/79eac81094720a3805c93eedbc065a75969b56991e79852da2d94f724654f126/79eac81094720a3805c93eedbc065a75969b56991e79852da2d94f724654f126-json.log",
+        "Name": "/nex-m1-isolated-verification-ci37295727289a1-gateway-1",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "docker-default",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "/home/runner/work/_temp/m1-committed-source/infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "nex-m1-isolated-verification-ci37295727289a1_nex",
+            "PortBindings": {
+                "8080/tcp": [
+                    {
+                        "HostIp": "127.0.0.1",
+                        "HostPort": "18081"
+                    }
+                ]
+            },
+            "RestartPolicy": {
+                "Name": "unless-stopped",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": null,
+            "DnsOptions": null,
+            "DnsSearch": null,
+            "ExtraHosts": [],
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": null,
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/asound",
+                "/proc/acpi",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/sys/firmware",
+                "/sys/devices/virtual/powercap"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "GraphDriver": {
+            "Data": {
+                "ID": "79eac81094720a3805c93eedbc065a75969b56991e79852da2d94f724654f126",
+                "LowerDir": "/var/lib/docker/overlay2/b467fb9c64fea511f1e828e69168311c90c718cc55ca0390e0119d36b1071746-init/diff:/var/lib/docker/overlay2/76d81f941a5bcf35a84ad4bbe6c5b498be17105712b554d8b464e2c2ec9b123e/diff:/var/lib/docker/overlay2/3164c60e97ba7baf55fca7ef42b08ee582d0371d3ef5a61aaa44f316ec024383/diff:/var/lib/docker/overlay2/ecc54c9beb3c872e8bf8ccb1e6e340ac614b63e882147c908b3b12f20f70b934/diff:/var/lib/docker/overlay2/fb7b1003135da15f7c2f3aa6ce44fce35ddb8025d5ea52d2b2444d207102305c/diff:/var/lib/docker/overlay2/d6a60d5776e323d5bb942fa4b1eccdc62bfaebe6b7e56e2560010431264f2d96/diff:/var/lib/docker/overlay2/ba4a7b3c19b83ee64faf0402fe47eae44ed594ec8135921a63b0e8b294f7b856/diff:/var/lib/docker/overlay2/8816eaa7a287a46dae7454b63710ee4a93cfa60f9611c76ad784dd18d97384de/diff:/var/lib/docker/overlay2/b33fe8d4ed5505c83364b42ce3fd8a07f056d73cde4ef76d3bae1d41a7254828/diff",
+                "MergedDir": "/var/lib/docker/overlay2/b467fb9c64fea511f1e828e69168311c90c718cc55ca0390e0119d36b1071746/merged",
+                "UpperDir": "/var/lib/docker/overlay2/b467fb9c64fea511f1e828e69168311c90c718cc55ca0390e0119d36b1071746/diff",
+                "WorkDir": "/var/lib/docker/overlay2/b467fb9c64fea511f1e828e69168311c90c718cc55ca0390e0119d36b1071746/work"
+            },
+            "Name": "overlay2"
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/home/runner/work/_temp/m1-committed-source/infra/nginx/nginx.conf",
+                "Destination": "/etc/nginx/nginx.conf",
+                "Mode": "ro",
+                "RW": false,
+                "Propagation": "rprivate"
+            }
+        ],
+        "Config": {
+            "Hostname": "79eac8109472",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "ExposedPorts": {
+                "80/tcp": {},
+                "8080/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "NGINX_VERSION=1.27.5",
+                "PKG_RELEASE=1",
+                "DYNPKG_RELEASE=1",
+                "NJS_VERSION=0.8.10",
+                "NJS_RELEASE=1"
+            ],
+            "Cmd": [
+                "nginx",
+                "-g",
+                "daemon off;"
+            ],
+            "Image": "nginx:1.27-alpine",
+            "Volumes": null,
+            "WorkingDir": "/",
+            "Entrypoint": [
+                "/docker-entrypoint.sh"
+            ],
+            "OnBuild": null,
+            "Labels": {
+                "com.docker.compose.config-hash": "e0f1998c9ff66a2e87003bd2006cfc14504ec7120957197b9f632a6f68a6be4c",
+                "com.docker.compose.container-number": "1",
+                "com.docker.compose.depends_on": "api:service_healthy:false",
+                "com.docker.compose.image": "sha256:6769dc3a703c719c1d2756bda113659be28ae16cf0da58dd5fd823d6b9a050ea",
+                "com.docker.compose.oneoff": "False",
+                "com.docker.compose.project": "nex-m1-isolated-verification-ci37295727289a1",
+                "com.docker.compose.project.config_files": "/home/runner/work/_temp/m1-committed-source/docker-compose.yml,/home/runner/work/_temp/m1-committed-source/infra/testing/compose.m1.yml",
+                "com.docker.compose.project.environment_file": "/dev/null",
+                "com.docker.compose.project.working_dir": "/home/runner/work/_temp/m1-committed-source",
+                "com.docker.compose.service": "gateway",
+                "com.docker.compose.version": "2.38.2",
+                "maintainer": "NGINX Docker Maintainers <docker-maint@nginx.com>"
+            },
+            "StopSignal": "SIGQUIT"
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "518d11e8aaeddc0c65691fb10550190ef572b240494bc96560de883b66083501",
+            "SandboxKey": "/var/run/docker/netns/518d11e8aaed",
+            "Ports": {
+                "80/tcp": null,
+                "8080/tcp": [
+                    {
+                        "HostIp": "127.0.0.1",
+                        "HostPort": "18081"
+                    }
+                ]
+            },
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "",
+            "Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+            "MacAddress": "",
+            "Networks": {
+                "nex-m1-isolated-verification-ci37295727289a1_nex": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "nex-m1-isolated-verification-ci37295727289a1-gateway-1",
+                        "gateway"
+                    ],
+                    "MacAddress": "4e:1b:49:82:e9:6b",
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "10a8615d875a429874787ea62df173990fc2f3aa3e1b3969a70cc592b38b5cea",
+                    "EndpointID": "544bb6855fc53ebae6bf881a4ac5f3eb6afc2922059544d6e320fb25788822d3",
+                    "Gateway": "172.18.0.1",
+                    "IPAddress": "172.18.0.5",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "nex-m1-isolated-verification-ci37295727289a1-gateway-1",
+                        "gateway",
+                        "79eac8109472"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "Id": "5aa061eeaeecc06971db7215bff0af0b6bc48ba3f6e659e0f0907d8846deb5a7",
+        "Created": "2026-10-05T10:18:51.516386129Z",
+        "Path": "docker-entrypoint.sh",
+        "Args": [
+            "sh",
+            "-c",
+            "exec redis-server --appendonly yes --requirepass \"${REDIS_PASSWORD}\""
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 3025,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-10-05T10:18:51.539695345Z",
+            "FinishedAt": "0001-01-01T00:00:00Z",
+            "Health": {
+                "Status": "healthy",
+                "FailingStreak": 0,
+                "Log": [
+                    {
+                        "Start": "2026-10-05T10:18:56.772541164Z",
+                        "End": "2026-10-05T10:18:56.828296564Z",
+                        "ExitCode": 0,
+                        "Output": "Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.\n"
+                    },
+                    {
+                        "Start": "2026-10-05T10:19:01.829785771Z",
+                        "End": "2026-10-05T10:19:01.891249605Z",
+                        "ExitCode": 0,
+                        "Output": "Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.\n"
+                    }
+                ]
+            }
+        },
+        "Image": "sha256:f84b0c4678011602b9b98c227a4dcd5468bf8b088b02fdd4165cb7758bad8058",
+        "ResolvConfPath": "/var/lib/docker/containers/5aa061eeaeecc06971db7215bff0af0b6bc48ba3f6e659e0f0907d8846deb5a7/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/5aa061eeaeecc06971db7215bff0af0b6bc48ba3f6e659e0f0907d8846deb5a7/hostname",
+        "HostsPath": "/var/lib/docker/containers/5aa061eeaeecc06971db7215bff0af0b6bc48ba3f6e659e0f0907d8846deb5a7/hosts",
+        "LogPath": "/var/lib/docker/containers/5aa061eeaeecc06971db7215bff0af0b6bc48ba3f6e659e0f0907d8846deb5a7/5aa061eeaeecc06971db7215bff0af0b6bc48ba3f6e659e0f0907d8846deb5a7-json.log",
+        "Name": "/nex-m1-isolated-verification-ci37295727289a1-redis-1",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "docker-default",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "nex-m1-isolated-verification-ci37295727289a1_nex_redis_data:/data:rw"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "nex-m1-isolated-verification-ci37295727289a1_nex",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "unless-stopped",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": null,
+            "DnsOptions": null,
+            "DnsSearch": null,
+            "ExtraHosts": [],
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": null,
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/asound",
+                "/proc/acpi",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/sys/firmware",
+                "/sys/devices/virtual/powercap"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "GraphDriver": {
+            "Data": {
+                "ID": "5aa061eeaeecc06971db7215bff0af0b6bc48ba3f6e659e0f0907d8846deb5a7",
+                "LowerDir": "/var/lib/docker/overlay2/01c1403ce3c281d3eba79e9c0e39821399a9297251335b4d93912503b48a2411-init/diff:/var/lib/docker/overlay2/3be9287fed36e4a4cc55b6b2ff3c05c1bfbd7f106433db93d90606ca9521e7f7/diff:/var/lib/docker/overlay2/fe72448de24635a96521eb0d573b8d342b349409ca43a9a427636afe68d4089e/diff:/var/lib/docker/overlay2/24755badbf288cb311c961a3793df9e314f30eabbeb02a5bcd8921249feee76a/diff:/var/lib/docker/overlay2/2cd63d7cb507068dfbb717c5849825bb98c37429bac20655280ec746092a7e5c/diff:/var/lib/docker/overlay2/ab092f39edf81f85045bf65802ac2d17be8b3cf9f333900d2e4507fb5dac0db5/diff:/var/lib/docker/overlay2/f59c0f88119370cb6ad0cfa0ca598f09a8058e2e7b8ca47f2721f75f93ecfbb1/diff:/var/lib/docker/overlay2/baae3b6ec50315f4af3f85ce51653477c300110cb1622d3d7209cc3970c92101/diff",
+                "MergedDir": "/var/lib/docker/overlay2/01c1403ce3c281d3eba79e9c0e39821399a9297251335b4d93912503b48a2411/merged",
+                "UpperDir": "/var/lib/docker/overlay2/01c1403ce3c281d3eba79e9c0e39821399a9297251335b4d93912503b48a2411/diff",
+                "WorkDir": "/var/lib/docker/overlay2/01c1403ce3c281d3eba79e9c0e39821399a9297251335b4d93912503b48a2411/work"
+            },
+            "Name": "overlay2"
+        },
+        "Mounts": [
+            {
+                "Type": "volume",
+                "Name": "nex-m1-isolated-verification-ci37295727289a1_nex_redis_data",
+                "Source": "/var/lib/docker/volumes/nex-m1-isolated-verification-ci37295727289a1_nex_redis_data/_data",
+                "Destination": "/data",
+                "Driver": "local",
+                "Mode": "rw",
+                "RW": true,
+                "Propagation": ""
+            }
+        ],
+        "Config": {
+            "Hostname": "5aa061eeaeec",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "ExposedPorts": {
+                "6379/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "REDIS_PASSWORD=synthetic-redis-only",
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "REDIS_VERSION=7.4.11"
+            ],
+            "Cmd": [
+                "sh",
+                "-c",
+                "exec redis-server --appendonly yes --requirepass \"${REDIS_PASSWORD}\""
+            ],
+            "Healthcheck": {
+                "Test": [
+                    "CMD-SHELL",
+                    "redis-cli -a \"${REDIS_PASSWORD}\" ping | grep -q PONG"
+                ],
+                "Interval": 5000000000,
+                "Timeout": 3000000000,
+                "Retries": 15
+            },
+            "Image": "redis:7-alpine",
+            "Volumes": {
+                "/data": {}
+            },
+            "WorkingDir": "/data",
+            "Entrypoint": [
+                "docker-entrypoint.sh"
+            ],
+            "OnBuild": null,
+            "Labels": {
+                "com.docker.compose.config-hash": "2a90be4aa6b2742ffc67de13b6ff78a10ec8267e4b563b33b687ab8a39b6f3a1",
+                "com.docker.compose.container-number": "1",
+                "com.docker.compose.depends_on": "",
+                "com.docker.compose.image": "sha256:f84b0c4678011602b9b98c227a4dcd5468bf8b088b02fdd4165cb7758bad8058",
+                "com.docker.compose.oneoff": "False",
+                "com.docker.compose.project": "nex-m1-isolated-verification-ci37295727289a1",
+                "com.docker.compose.project.config_files": "/home/runner/work/_temp/m1-committed-source/docker-compose.yml,/home/runner/work/_temp/m1-committed-source/infra/testing/compose.m1.yml",
+                "com.docker.compose.project.environment_file": "/dev/null",
+                "com.docker.compose.project.working_dir": "/home/runner/work/_temp/m1-committed-source",
+                "com.docker.compose.service": "redis",
+                "com.docker.compose.version": "2.38.2"
+            }
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "e3f29d99c3cd8d43f41909228856470055ab032cdfff9aad573cdb7e56cdddd6",
+            "SandboxKey": "/var/run/docker/netns/e3f29d99c3cd",
+            "Ports": {
+                "6379/tcp": null
+            },
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "",
+            "Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+            "MacAddress": "",
+            "Networks": {
+                "nex-m1-isolated-verification-ci37295727289a1_nex": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "nex-m1-isolated-verification-ci37295727289a1-redis-1",
+                        "redis"
+                    ],
+                    "MacAddress": "56:85:58:9b:fb:96",
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "10a8615d875a429874787ea62df173990fc2f3aa3e1b3969a70cc592b38b5cea",
+                    "EndpointID": "19e3eeb67bebe58623b42bf7bd39151cb9112af9578cfe6e63317a20e18e3293",
+                    "Gateway": "172.18.0.1",
+                    "IPAddress": "172.18.0.3",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "nex-m1-isolated-verification-ci37295727289a1-redis-1",
+                        "redis",
+                        "5aa061eeaeec"
+                    ]
+                }
+            }
+        }
+    }
+]
+
+exit=0
