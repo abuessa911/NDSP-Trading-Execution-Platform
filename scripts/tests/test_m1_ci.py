@@ -27,7 +27,7 @@ def test_workflow_runner_paths_are_step_scoped():
     assert "M1_PROJECT: nex-m1-isolated-verification-ci" in job_settings
     # GitHub rejects runner expressions in jobs.<job_id>.env before starting a VM.
     assert "${{ runner." not in job_settings
-    assert steps.count("M1_EVIDENCE: ${{ runner.temp }}/nex-m1-evidence") == 2
+    assert steps.count("M1_EVIDENCE: ${{ runner.temp }}/nex-m1-evidence") == 3
     assert steps.count("M1_CONTEXT: ${{ runner.temp }}/nex-m1-source") == 2
     assert "path: ${{ runner.temp }}/nex-m1-evidence/verification-result.json" in steps
 

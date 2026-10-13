@@ -193,7 +193,8 @@ def test_administrator_audit_rls_is_readable_and_tenant_scoped(target, identitie
                 rows = (await session.execute(select(AuditEvent).where(
                     AuditEvent.correlation_id == correlation
                 ))).scalars().all()
-                assert len(rows) == (0 if role == "USER" else 1), role
+                expected = 0 if role == "USER" else 1
+                assert len(rows) == expected, f"{role} expected={expected} observed={len(rows)}"
                 await session.execute(text(
                     "SELECT set_config('app.tenant_id',:tenant,true)"
                 ), {"tenant": str(other)})

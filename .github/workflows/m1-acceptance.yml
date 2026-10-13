@@ -97,6 +97,20 @@ jobs:
                   name = case.attrib.get("name", "")
                   if re.fullmatch(r"test_[a-zA-Z0-9_]{1,110}", name):
                       print("POSTGRES_FAILED_TEST=" + name)
+                  failure = case.find("failure")
+                  if failure is None:
+                      failure = case.find("error")
+                  if failure is not None:
+                      kind = failure.attrib.get("type", "")
+                      if re.fullmatch(r"[A-Za-z0-9_.]{1,90}", kind):
+                          print("POSTGRES_FAILED_CLASS=" + kind)
+                      excerpt = (failure.text or "")[-10000:]
+                      lines = re.findall(r"test_postgres_m1.py:(\d{1,4}):", excerpt)
+                      if lines:
+                          print("POSTGRES_FAILED_LINE=" + lines[-1])
+                      role = re.search(r"(USER|OPERATOR|ADMIN|SUPER_ADMIN) expected=([01]) observed=(\d{1,6})", excerpt)
+                      if role:
+                          print("POSTGRES_RLS_ROLE_COUNTS=" + role.group(0))
           PY
       - name: Retain only non-sensitive M1 acceptance verdict
         if: always()
