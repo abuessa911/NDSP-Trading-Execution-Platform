@@ -102,6 +102,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     # Native admin API paths are forwarded separately from static /admin UI
     # routes. Registration changes routing only, never authorization.
+    # Browser sessions are deliberately scoped to /api (HttpOnly Secure cookie).
+    # Reuse the SAME server-authoritative administrator dependency on a cookie-safe
+    # browser route; retain canonical /admin/v1 contracts unchanged.
+    @app.get("/api/v1/admin/system/health", include_in_schema=False)
     @app.get("/admin/v1/system/health", response_model=ReadyResponse,
              operation_id="getAdminHealth", responses={503: {"model": ReadyResponse}})
     async def admin_health(
@@ -109,6 +113,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     ) -> dict[str, object]:
         return await readiness(request, response)
 
+    @app.get("/api/v1/admin/audit", include_in_schema=False)
     @app.get("/admin/v1/audit", response_model=list[AuditEventView],
              operation_id="getAdminAudit")
     async def admin_audit(

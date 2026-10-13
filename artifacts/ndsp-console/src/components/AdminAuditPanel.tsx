@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { getAdminAudit, type AuditEventView } from "@workspace/api-client-react";
+import { getBrowserAdminAudit, type AuditEventView } from "@workspace/api-client-react";
 import { browserRequest, useAuth } from "./AuthProvider";
 import AdminAccessGate, { useHasAdministratorAccess } from "./AdminAccessGate";
 
@@ -40,7 +40,7 @@ function AuditContent() {
     setLoading(true);
     setError(null);
     try {
-      const result = await getAdminAudit({ ...browserRequest, signal: controller.signal });
+      const result = await getBrowserAdminAudit({ ...browserRequest, signal: controller.signal });
       if (!controller.signal.aborted && alive.current) setEvents(result);
     } catch (cause) {
       if (controller.signal.aborted || !alive.current) return;

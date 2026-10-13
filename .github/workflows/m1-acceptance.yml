@@ -78,6 +78,26 @@ jobs:
           env -i PATH="$PATH" HOME="$RUNNER_TEMP" \
             python scripts/ci-m1-compose.py --finalize --project "$M1_PROJECT" \
               --evidence "$M1_EVIDENCE" --context "$M1_CONTEXT"
+      - name: Summarize PostgreSQL failing test names only
+        if: failure()
+        env:
+          M1_EVIDENCE: ${{ runner.temp }}/nex-m1-evidence
+        run: |
+          python - <<'PY'
+          import os, pathlib, re, xml.etree.ElementTree as ET
+          report = pathlib.Path(os.environ["M1_EVIDENCE"]) / "postgres-tests.xml"
+          if not report.is_file():
+              print("POSTGRES_JUNIT=NOT_AVAILABLE_BEFORE_PYTEST")
+          else:
+              root = ET.parse(report).getroot()
+              failures = [case for case in root.iter("testcase")
+                          if case.find("failure") is not None or case.find("error") is not None]
+              print("POSTGRES_FAILURE_COUNT=" + str(len(failures)))
+              for case in failures[:8]:
+                  name = case.attrib.get("name", "")
+                  if re.fullmatch(r"test_[a-zA-Z0-9_]{1,110}", name):
+                      print("POSTGRES_FAILED_TEST=" + name)
+          PY
       - name: Retain only non-sensitive M1 acceptance verdict
         if: always()
         uses: actions/upload-artifact@v4

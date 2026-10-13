@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getAdminHealth, type ReadyResponse } from "@workspace/api-client-react";
+import { getBrowserAdminHealth, type ReadyResponse } from "@workspace/api-client-react";
 import { browserRequest, useAuth } from "./AuthProvider";
 import AdminAccessGate, { useHasAdministratorAccess } from "./AdminAccessGate";
 
@@ -48,7 +48,7 @@ function HealthContent() {
     setLoading(true);
     setError(null);
     try {
-      const result = await getAdminHealth({ ...browserRequest, signal: controller.signal });
+      const result = await getBrowserAdminHealth({ ...browserRequest, signal: controller.signal });
       if (!controller.signal.aborted && alive.current) setHealth(result);
     } catch (cause) {
       if (controller.signal.aborted || !alive.current) return;

@@ -209,7 +209,7 @@ def exercise(fixture, http):
             # browser cookie. No mock data, role override or bearer shortcut.
             with page.expect_response(
                 lambda response: response.url.split("?", 1)[0]
-                == ORIGIN + "/admin/v1/system/health",
+                == ORIGIN + "/api/v1/admin/system/health",
                 timeout=30000,
             ) as ui_health_response:
                 page.goto(ORIGIN + "/admin/operations-center/", wait_until="domcontentloaded")
@@ -221,7 +221,7 @@ def exercise(fixture, http):
 
             with page.expect_response(
                 lambda response: response.url.split("?", 1)[0]
-                == ORIGIN + "/admin/v1/audit",
+                == ORIGIN + "/api/v1/admin/audit",
                 timeout=30000,
             ) as ui_audit_response:
                 page.goto(ORIGIN + "/admin/audit/", wait_until="domcontentloaded")
