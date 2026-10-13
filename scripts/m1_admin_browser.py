@@ -205,6 +205,40 @@ def exercise(fixture, http):
             check("privileged health allowed and audit response remains RLS-scoped: " + role,
                   health.status_code == 200 and audit.status_code == 200
                   and all(row["tenant_id"] == me.json()["tenant_id"] for row in audit.json()))
+            # Verify real Next.js administrator pages with the genuine MFA
+            # browser cookie. No mock data, role override or bearer shortcut.
+            with page.expect_response(
+                lambda response: response.url.split("?", 1)[0]
+                == ORIGIN + "/admin/v1/system/health",
+                timeout=30000,
+            ) as ui_health_response:
+                page.goto(ORIGIN + "/admin/operations-center/", wait_until="domcontentloaded")
+            page.locator(".admin-health .admin-status.is-ready").wait_for(timeout=30000)
+            check("real MFA administrator browser renders live service health: " + role,
+                  ui_health_response.value.status == 200
+                  and page.get_by_role("heading", name="Service readiness").is_visible()
+                  and page.locator(".admin-health .admin-status.is-ready").is_visible())
+
+            with page.expect_response(
+                lambda response: response.url.split("?", 1)[0]
+                == ORIGIN + "/admin/v1/audit",
+                timeout=30000,
+            ) as ui_audit_response:
+                page.goto(ORIGIN + "/admin/audit/", wait_until="domcontentloaded")
+            ui_audit = ui_audit_response.value
+            ui_rows = ui_audit.json() if ui_audit.status == 200 else []
+            page.get_by_role("heading", name="Recent audit events").wait_for(timeout=30000)
+            page.wait_for_function(
+                """expected => Array.from(document.querySelectorAll('.admin-audit [role="status"]'))
+                   .some(node => node.textContent.includes('loaded records')) &&
+                   document.querySelector('.admin-audit-summary strong')?.textContent === String(expected)""",
+                arg=len(ui_rows), timeout=30000,
+            )
+            check("real MFA administrator browser renders tenant audit response: " + role,
+                  ui_audit.status == 200
+                  and isinstance(ui_rows, list)
+                  and all(row.get("tenant_id") == me.json()["tenant_id"] for row in ui_rows)
+                  and page.locator(".admin-audit [role=alert]").count() == 0)
             other = "00000000-0000-4000-8000-000000000099"
             isolated = http.get(ORIGIN + "/api/v1/tenants/" + other + "/audit-events", headers=headers)
             check("cross-tenant privileged audit denied: " + role, isolated.status_code == 404)
@@ -320,6 +354,15 @@ def exercise(fixture, http):
               and user_refresh.status_code == 200
               and user_session_after_refresh.status_code == 200
               and user_session_after_refresh.json()["administrator_mfa_verified"] is False)
+        # Browser UI must not request privileged endpoints for ordinary USER.
+        user_admin_requests = []
+        page.on("request", lambda request: user_admin_requests.append(request.url)
+                if request.url.startswith(ORIGIN + "/admin/v1/") else None)
+        page.goto(ORIGIN + "/admin/operations-center/", wait_until="domcontentloaded")
+        page.get_by_role("heading", name="Administrator access required").wait_for(timeout=20000)
+        page.get_by_role("button", name="Sign out", exact=True).wait_for(timeout=20000)
+        check("real USER browser health is gated without privileged fetch",
+              not user_admin_requests)
         context.close()
 
         # An OPERATOR is a separate, explicitly lower-scope role in the
@@ -351,6 +394,14 @@ def exercise(fixture, http):
               and operator_health.json()["reason_code"] == "ROLE_NOT_ALLOWED"
               and operator_audit.status_code == 403
               and operator_audit.json()["reason_code"] == "ROLE_NOT_ALLOWED")
+        operator_admin_requests = []
+        page.on("request", lambda request: operator_admin_requests.append(request.url)
+                if request.url.startswith(ORIGIN + "/admin/v1/") else None)
+        page.goto(ORIGIN + "/admin/audit/", wait_until="domcontentloaded")
+        page.get_by_role("heading", name="Administrator access required").wait_for(timeout=20000)
+        page.get_by_role("button", name="Sign out", exact=True).wait_for(timeout=20000)
+        check("real OPERATOR browser audit is gated without privileged fetch",
+              not operator_admin_requests)
         context.close()
 
         # Capture only synthetic subject/tenant/role/status and credential-type
