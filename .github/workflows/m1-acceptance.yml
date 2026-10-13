@@ -118,6 +118,37 @@ jobs:
           env -i PATH="$PATH" HOME="$RUNNER_TEMP" PLAYWRIGHT_BROWSERS_PATH="$PLAYWRIGHT_BROWSERS_PATH" \
             uv run --frozen --with playwright==1.63.0 python scripts/verify-m1-auth.py \
               --project "$AUTH_PROJECT" --context "$AUTH_CONTEXT" --evidence "$AUTH_EVIDENCE"
+      - name: Summarize bounded MFA checks without exposing provider evidence
+        if: always()
+        env:
+          AUTH_EVIDENCE: ${{ runner.temp }}/nex-auth-evidence
+        run: |
+          python - <<'PY'
+          import json, os, pathlib, re
+          root = pathlib.Path(os.environ["AUTH_EVIDENCE"])
+          checks_file = root / "mfa-browser-checks.json"
+          result_file = root / "result.json"
+          try:
+              checks = json.loads(checks_file.read_text()) if checks_file.is_file() else []
+          except (ValueError, OSError):
+              checks = []
+          if not isinstance(checks, list):
+              checks = []
+          safe = [x for x in checks if isinstance(x, dict) and type(x.get("passed")) is bool]
+          good = sum(1 for x in safe if x["passed"])
+          last = safe[-1].get("check", "") if safe else ""
+          label = last if isinstance(last, str) and re.fullmatch(r"[a-zA-Z0-9 /:;,+_.()-]{1,170}", last) else "NONE_OR_REDACTED"
+          try:
+              result = json.loads(result_file.read_text()) if result_file.is_file() else {}
+          except (ValueError, OSError):
+              result = {}
+          stage = result.get("failed_stage", "NONE") if isinstance(result, dict) else "NONE"
+          stage = stage if isinstance(stage, str) and re.fullmatch(r"[a-zA-Z0-9 _/:;,+_.()-]{1,100}", stage) else "REDACTED"
+          print("MFA_RECORDED_CHECKS=" + str(len(safe)))
+          print("MFA_PASSED_CHECKS=" + str(good))
+          print("MFA_LAST_CHECK_LABEL=" + label)
+          print("MFA_FAILED_STAGE=" + stage)
+          PY
       - name: Cleanup only this test project
         if: always()
         env:
