@@ -1,7 +1,7 @@
 from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import asynccontextmanager
 from typing import Annotated
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import structlog
 from fastapi import Depends, FastAPI, HTTPException, Request, Response
@@ -16,7 +16,7 @@ from nex_api.config import Settings, get_settings
 from nex_api.database import create_session_factory
 from nex_api.dependencies import get_administrator, get_provisioned_user, get_session
 from nex_api.logging import configure_logging
-from nex_api.models import SECURITY_TENANT_ID, User
+from nex_api.models import SECURITY_TENANT_ID, Tenant, User
 from nex_api.oidc import OIDCVerifier
 from nex_api.routes.health import ReadyResponse, readiness, router as health_router
 from nex_api.routes.tenants import AuditEventView, router as tenants_router
@@ -32,6 +32,21 @@ class ErrorResponse(BaseModel):
     reason_code: str
     message: str
     correlation_id: str
+
+
+class AdminDirectoryUser(BaseModel):
+    id: UUID
+    email: str
+    role: str
+    status: str
+
+
+class AdminDirectoryView(BaseModel):
+    tenant_id: UUID
+    tenant_name: str
+    tenant_status: str
+    users: list[AdminDirectoryUser]
+    truncated: bool
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -124,6 +139,34 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             AuditEvent.tenant_id == user.tenant_id
         ).order_by(AuditEvent.created_at.desc()).limit(100))).scalars().all()
         return [AuditEventView.model_validate(event) for event in events]
+
+    # Internal, browser-only, read-only directory. Same server-side administrator
+    # MFA dependency as other control endpoints; RLS adds tenant-scoped SELECT.
+    # Not part of the public M1 OpenAPI contract.
+    @app.get("/api/v1/admin/directory",
+             response_model=AdminDirectoryView, include_in_schema=False)
+    async def admin_directory(
+        user: Annotated[User, Depends(get_administrator)],
+        session: Annotated[AsyncSession, Depends(get_session)],
+    ) -> AdminDirectoryView:
+        tenant = await session.get(Tenant, user.tenant_id)
+        if tenant is None or tenant.status != "active":
+            raise HTTPException(
+                status_code=403,
+                detail={"reason_code": "TENANT_DISABLED", "message": "Tenant unavailable."},
+            )
+        rows = (await session.execute(
+            select(User).where(User.tenant_id == user.tenant_id)
+            .order_by(User.created_at.desc(), User.id).limit(101)
+        )).scalars().all()
+        return AdminDirectoryView(
+            tenant_id=tenant.id, tenant_name=tenant.name,
+            tenant_status=tenant.status,
+            users=[AdminDirectoryUser(
+                id=entry.id, email=entry.email, role=entry.role, status=entry.status
+            ) for entry in rows[:100]],
+            truncated=len(rows) > 100,
+        )
 
     @app.middleware("http")
     async def request_context(

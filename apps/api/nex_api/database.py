@@ -46,7 +46,7 @@ async def database_is_available(
             version = (await session.execute(text(
                 "SELECT version_num FROM alembic_version"
             ))).scalar()
-            if version != "0003_m1_admin_audit_rls":
+            if version != "0004_m1_admin_directory_rls":
                 return False
             from nex_api.models import Base
             for name, table in Base.metadata.tables.items():
@@ -90,6 +90,14 @@ async def database_is_available(
             # The policy must keep the tenant context and exact approved roles.
             if not policy or not all(fragment in policy for fragment in (
                 "app.tenant_id", "app.role", "OPERATOR", "ADMIN", "SUPER_ADMIN"
+            )):
+                return False
+            directory_policy = (await session.execute(text(
+                "SELECT pg_get_expr(polqual,polrelid) FROM pg_policy "
+                "WHERE polname='admin_tenant_user_list' AND polrelid='users'::regclass"
+            ))).scalar()
+            if not directory_policy or not all(fragment in directory_policy for fragment in (
+                "app.tenant_id", "app.role", "tenant_id", "ADMIN", "SUPER_ADMIN"
             )):
                 return False
             triggers = set((await session.execute(text(
