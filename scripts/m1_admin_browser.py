@@ -237,6 +237,7 @@ def exercise(fixture, http):
             check("real MFA administrator browser renders tenant audit response: " + role,
                   ui_audit.status == 200
                   and isinstance(ui_rows, list)
+                  and len(ui_rows) > 0  # A filtered 200/[] is not a functional admin view.
                   and all(row.get("tenant_id") == me.json()["tenant_id"] for row in ui_rows)
                   and page.locator(".admin-audit [role=alert]").count() == 0)
             other = "00000000-0000-4000-8000-000000000099"
