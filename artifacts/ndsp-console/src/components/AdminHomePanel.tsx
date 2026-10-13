@@ -56,7 +56,8 @@ export default function AdminHomePanel() {
         <h2>Remaining administrator surfaces</h2>
         <p className="muted">
           User and tenant changes, trading controls and operational workflows remain unavailable.
-          Status pages report absent connectors and data sources explicitly without inventing health.
+          Navigation does not grant access. Status pages report absent connectors and data sources
+          explicitly without inventing health.
         </p>
       </section>
     </>
