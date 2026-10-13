@@ -78,6 +78,14 @@ jobs:
           env -i PATH="$PATH" HOME="$RUNNER_TEMP" \
             python scripts/ci-m1-compose.py --finalize --project "$M1_PROJECT" \
               --evidence "$M1_EVIDENCE" --context "$M1_CONTEXT"
+      - name: Retain only non-sensitive M1 acceptance verdict
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m1-db-verdict-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/nex-m1-evidence/verification-result.json
+          if-no-files-found: warn
+          retention-days: 14
   keycloak-mfa:
     runs-on: ubuntu-24.04
     timeout-minutes: 45
