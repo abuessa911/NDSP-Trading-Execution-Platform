@@ -181,7 +181,7 @@ def test_administrator_audit_rls_is_readable_and_tenant_scoped(target, identitie
         correlation = uuid4()
         await persist_audit(
             factory, tenant_id=tenant, correlation_id=correlation,
-            actor_type="ADMIN", action="SYNTHETIC_ADMIN_RLS_TEST",
+            actor_type="ADMIN", actor_id=None, action="SYNTHETIC_ADMIN_RLS_TEST",
             object_type="TEST", outcome="SUCCESS",
         )
         async with factory() as session:
