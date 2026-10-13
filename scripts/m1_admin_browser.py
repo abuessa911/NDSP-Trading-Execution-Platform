@@ -258,6 +258,18 @@ def exercise(fixture, http):
                   and page.locator(".admin-directory tbody tr").count() == len(users)
                   and all(entry.get("id") and entry.get("role") in
                           {"USER", "OPERATOR", "ADMIN", "SUPER_ADMIN"} for entry in users))
+            operations = http.get(ORIGIN + "/api/v1/admin/operations", headers=headers)
+            operational = operations.json() if operations.status_code == 200 else {}
+            check("real MFA administrator reads honest operational boundaries: " + role,
+                  operations.status_code == 200
+                  and operational.get("tenant_id") == me.json()["tenant_id"]
+                  and operational.get("trading_safety") == {
+                      "trading_mode": "paper", "live_trading_enabled": False,
+                      "global_kill_switch": True, "binance_allow_withdraw": False,
+                  }
+                  and operational.get("exchange", {}).get("status") == "NOT_CONFIGURED"
+                  and operational.get("ndsp_connector", {}).get("status") == "NOT_CONFIGURED"
+                  and operational.get("worker_queues", {}).get("status") == "NOT_IMPLEMENTED")
 
             other = "00000000-0000-4000-8000-000000000099"
             isolated = http.get(ORIGIN + "/api/v1/tenants/" + other + "/audit-events", headers=headers)
@@ -360,6 +372,8 @@ def exercise(fixture, http):
         denied = http.get(ORIGIN + "/admin/v1/system/health", headers=user_headers)
         user_directory_denied = http.get(ORIGIN + "/api/v1/admin/directory",
                                         headers=user_headers)
+        user_operations_denied = http.get(ORIGIN + "/api/v1/admin/operations",
+                                         headers=user_headers)
         user_refresh = http.post(ORIGIN + "/api/v1/auth/refresh", headers={
             **user_headers, "Origin": ORIGIN,
             "X-NEX-CSRF": user_session.json().get("csrf_token", ""),
@@ -375,6 +389,8 @@ def exercise(fixture, http):
               and denied.json()["reason_code"] == "ROLE_NOT_ALLOWED"
               and user_directory_denied.status_code == 403
               and user_directory_denied.json()["reason_code"] == "ROLE_NOT_ALLOWED"
+              and user_operations_denied.status_code == 403
+              and user_operations_denied.json()["reason_code"] == "ROLE_NOT_ALLOWED"
               and user_refresh.status_code == 200
               and user_session_after_refresh.status_code == 200
               and user_session_after_refresh.json()["administrator_mfa_verified"] is False)
@@ -411,6 +427,8 @@ def exercise(fixture, http):
         operator_audit = http.get(ORIGIN + "/admin/v1/audit", headers=operator_headers)
         operator_directory = http.get(ORIGIN + "/api/v1/admin/directory",
                                       headers=operator_headers)
+        operator_operations = http.get(ORIGIN + "/api/v1/admin/operations",
+                                       headers=operator_headers)
         check("password-only OPERATOR is denied administrator routes and assurance",
               operator_me.status_code == 200
               and operator_me.json()["role"] == "OPERATOR"
@@ -421,7 +439,9 @@ def exercise(fixture, http):
               and operator_audit.status_code == 403
               and operator_audit.json()["reason_code"] == "ROLE_NOT_ALLOWED"
               and operator_directory.status_code == 403
-              and operator_directory.json()["reason_code"] == "ROLE_NOT_ALLOWED")
+              and operator_directory.json()["reason_code"] == "ROLE_NOT_ALLOWED"
+              and operator_operations.status_code == 403
+              and operator_operations.json()["reason_code"] == "ROLE_NOT_ALLOWED")
         operator_admin_requests = []
         page.on("request", lambda request: operator_admin_requests.append(request.url)
                 if request.url.startswith((ORIGIN + "/admin/v1/", ORIGIN + "/api/v1/admin/")) else None)

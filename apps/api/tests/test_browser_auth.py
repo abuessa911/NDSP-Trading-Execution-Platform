@@ -261,6 +261,15 @@ def test_expired_session_denied(browser):
     assert browser.client.get("/api/v1/me").status_code == 401
 
 
+@pytest.mark.parametrize("role", ["USER", "OPERATOR"])
+def test_non_administrator_browser_session_cannot_read_operations(browser, role):
+    signed_in(browser)
+    browser.user.role = role
+    response = browser.client.get("/api/v1/admin/operations")
+    assert response.status_code == 403
+    assert response.json()["reason_code"] == "ROLE_NOT_ALLOWED"
+
+
 @pytest.mark.parametrize("case", ["wrong_nonce", "missing_nonce", "issuer", "audience",
                                  "expired", "nbf", "signature", "azp"])
 def test_browser_id_token_rejections(case, monkeypatch):

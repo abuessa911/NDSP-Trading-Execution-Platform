@@ -1,6 +1,6 @@
 from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import asynccontextmanager
-from typing import Annotated
+from typing import Annotated, Literal
 from uuid import UUID, uuid4
 
 import structlog
@@ -47,6 +47,23 @@ class AdminDirectoryView(BaseModel):
     tenant_status: str
     users: list[AdminDirectoryUser]
     truncated: bool
+
+
+class OperationalCapability(BaseModel):
+    status: Literal["CONFIGURED", "NOT_CONFIGURED", "NOT_IMPLEMENTED"]
+    reason_code: str
+
+
+class AdminOperationsView(BaseModel):
+    tenant_id: UUID
+    entitlements: dict[str, bool]
+    subscription: OperationalCapability
+    trading_safety: dict[str, bool | str]
+    exchange: OperationalCapability
+    ndsp_connector: OperationalCapability
+    worker_queues: OperationalCapability
+    notifications: OperationalCapability
+    incidents: OperationalCapability
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -166,6 +183,36 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 id=entry.id, email=entry.email, role=entry.role, status=entry.status
             ) for entry in rows[:100]],
             truncated=len(rows) > 100,
+        )
+
+    # Internal browser-only operational projection. It contains only validated
+    # server configuration and explicit absence states; it never guesses health
+    # for services/data stores that M1 does not implement.
+    @app.get("/api/v1/admin/operations",
+             response_model=AdminOperationsView, include_in_schema=False)
+    async def admin_operations(
+        request: Request,
+        user: Annotated[User, Depends(get_administrator)],
+    ) -> AdminOperationsView:
+        not_implemented = OperationalCapability(
+            status="NOT_IMPLEMENTED", reason_code="M1_DATA_SOURCE_NOT_IMPLEMENTED"
+        )
+        return AdminOperationsView(
+            tenant_id=user.tenant_id,
+            entitlements={"live_trading": request.app.state.settings.live_trading_enabled},
+            subscription=OperationalCapability(
+                status="NOT_IMPLEMENTED", reason_code="BILLING_NOT_IMPLEMENTED"
+            ),
+            trading_safety=request.app.state.settings.trading_safety,
+            exchange=OperationalCapability(
+                status="NOT_CONFIGURED", reason_code="EXCHANGE_CONNECTOR_NOT_CONFIGURED"
+            ),
+            ndsp_connector=OperationalCapability(
+                status="NOT_CONFIGURED", reason_code="NDSP_CONNECTOR_NOT_CONFIGURED"
+            ),
+            worker_queues=not_implemented,
+            notifications=not_implemented,
+            incidents=not_implemented,
         )
 
     @app.middleware("http")

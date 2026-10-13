@@ -18,7 +18,7 @@ from nex_api.audit import persist_audit
 from nex_api.config import Settings
 from nex_api.database import database_is_available
 from nex_api.main import create_app
-from nex_api.models import AuditEvent, SECURITY_TENANT_ID, User
+from nex_api.models import AuditEvent, SECURITY_TENANT_ID, Tenant, User
 from test_oidc import issue_token, make_verifier
 from test_oidc import signing_material as oidc_signing_material
 
@@ -237,6 +237,26 @@ def test_administrator_user_directory_rls_is_tenant_scoped(target, identities):
     asyncio.run(check())
 
 
+def test_administrator_operations_tenant_context_is_rls_scoped(target, identities):
+    """The tenant identity underlying operations can never resolve another tenant."""
+    tenant, other, _ = identities
+
+    async def check():
+        engine = create_async_engine(target["app"])
+        factory = async_sessionmaker(engine, expire_on_commit=False)
+        async with factory() as session:
+            for role in ("USER", "OPERATOR", "ADMIN", "SUPER_ADMIN"):
+                await session.execute(text(
+                    "SELECT set_config('app.tenant_id',:tenant,true), "
+                    "set_config('app.role',:role,true)"
+                ), {"tenant": str(tenant), "role": role})
+                assert await session.get(Tenant, tenant) is not None, role
+                assert await session.get(Tenant, other) is None, role
+        await engine.dispose()
+
+    asyncio.run(check())
+
+
 def test_oidc_to_postgres_disabled_and_role_boundaries(target, identities, signing_material):
     tenant, other, users = identities
     private_key, jwks = signing_material
@@ -280,6 +300,9 @@ def test_oidc_to_postgres_disabled_and_role_boundaries(target, identities, signi
                 "DISABLED_TENANT": "TENANT_DISABLED",
             }[role]
             assert admin_audit.json()["reason_code"] == expected_admin_reason, admin_audit.text
+            operations = client.get("/api/v1/admin/operations", headers=headers)
+            assert operations.status_code == 403, operations.text
+            assert operations.json()["reason_code"] == expected_admin_reason, operations.text
             if role == "OPERATOR":
                 denied = client.get(f"/api/v1/tenants/{other}/audit-events", headers=headers)
                 assert denied.status_code == 404

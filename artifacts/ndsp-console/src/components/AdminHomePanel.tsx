@@ -45,6 +45,7 @@ export default function AdminHomePanel() {
             <Activity size={15} aria-hidden /> Service health
           </Link>
           <Link className="button" href="/admin/users-tenants/">Tenant users</Link>
+          <Link className="button" href="/admin/trading-safety/">Operational boundaries</Link>
           <Link className="button" href="/admin/audit/">
             <ClipboardList size={15} aria-hidden /> Audit events
           </Link>
@@ -54,8 +55,8 @@ export default function AdminHomePanel() {
       <section className="panel admin-home-boundary">
         <h2>Remaining administrator surfaces</h2>
         <p className="muted">
-          User and tenant changes, trading controls, exchange and NDSP health,
-          queues and incident workflows remain unavailable in M1.
+          User and tenant changes, trading controls and operational workflows remain unavailable.
+          Status pages report absent connectors and data sources explicitly without inventing health.
         </p>
       </section>
     </>

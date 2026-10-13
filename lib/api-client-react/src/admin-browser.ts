@@ -16,6 +16,28 @@ export type AdminDirectoryView = {
   truncated: boolean;
 };
 
+export type OperationalCapability = {
+  status: "CONFIGURED" | "NOT_CONFIGURED" | "NOT_IMPLEMENTED";
+  reason_code: string;
+};
+
+export type AdminOperationsView = {
+  tenant_id: string;
+  entitlements: Record<string, boolean>;
+  subscription: OperationalCapability;
+  trading_safety: {
+    trading_mode: string;
+    live_trading_enabled: boolean;
+    global_kill_switch: boolean;
+    binance_allow_withdraw: boolean;
+  };
+  exchange: OperationalCapability;
+  ndsp_connector: OperationalCapability;
+  worker_queues: OperationalCapability;
+  notifications: OperationalCapability;
+  incidents: OperationalCapability;
+};
+
 // The existing external /admin/v1/... contracts remain unchanged.
 // Browser cookies are intentionally limited to /api. These aliases have
 // identical FastAPI get_administrator/MFA/RLS dependencies to canonical routes.
@@ -28,3 +50,6 @@ export const getBrowserAdminAudit = (options?: CustomFetchOptions): Promise<Audi
 
 export const getBrowserAdminDirectory = (options?: CustomFetchOptions): Promise<AdminDirectoryView> =>
   customFetch<AdminDirectoryView>("/api/v1/admin/directory", { ...options, method: "GET" });
+
+export const getBrowserAdminOperations = (options?: CustomFetchOptions): Promise<AdminOperationsView> =>
+  customFetch<AdminOperationsView>("/api/v1/admin/operations", { ...options, method: "GET" });
