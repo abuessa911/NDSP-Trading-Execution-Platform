@@ -45,11 +45,20 @@ function OperationsContent({ section }: { section: string }) {
       : section === "ndsp-health" ? data.ndsp_connector
       : section === "notifications" ? data.notifications
       : section === "workers-queues" ? data.worker_queues : data.incidents;
-    rows = section === "trading-safety" ? Object.entries(data.trading_safety).map(([k, v]) => [k, String(v)])
-      : section === "subscriptions" ? [
+    if (section === "trading-safety") {
+      rows = Object.entries(data.trading_safety).map(
+        ([key, value]): [string, string] => [key, String(value)],
+      );
+    } else if (section === "subscriptions") {
+      rows = [
         ["subscription", `${capability.status} · ${capability.reason_code}`],
-        ...Object.entries(data.entitlements).map(([k, v]) => [`entitlement: ${k}`, String(v)]),
-      ] : [["status", capability.status], ["reason", capability.reason_code]];
+        ...Object.entries(data.entitlements).map(
+          ([key, value]): [string, string] => [`entitlement: ${key}`, String(value)],
+        ),
+      ];
+    } else {
+      rows = [["status", capability.status], ["reason", capability.reason_code]];
+    }
   }
 
   return <section className="panel">
