@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 35
     env:
-      M1_PROJECT: nex-m1-ci-${{ github.run_id }}a${{ github.run_attempt }}
+      M1_PROJECT: nex-m1-isolated-verification-ci${{ github.run_id }}a${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -82,7 +82,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
-      AUTH_PROJECT: nex-m1-auth-ci-${{ github.run_id }}a${{ github.run_attempt }}
+      AUTH_PROJECT: nex-m1-isolated-verification-authci${{ github.run_id }}a${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@v4
         with:
