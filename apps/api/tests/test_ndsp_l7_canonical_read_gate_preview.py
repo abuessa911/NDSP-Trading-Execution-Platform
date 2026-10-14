@@ -117,8 +117,9 @@ def test_source_signed_fixture_valid_but_order_execution_never_authorized() -> N
     services, called = _services()
     result = _run(services)
     assert result.document == _source_raw()
-    assert result.source_decision_id == SOURCE_ID
-    assert result.tenant_id == TENANT
+    assert not hasattr(result, "source_decision_id")
+    assert not hasattr(result, "tenant_id")
+    assert SOURCE_ID.encode() not in result.document
     assert result.decision_version == 2
     assert result.execution_authorized is False
     assert called == [
