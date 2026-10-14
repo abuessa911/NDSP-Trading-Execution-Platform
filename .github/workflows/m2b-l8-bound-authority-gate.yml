@@ -1,0 +1,47 @@
+# L8: offline, signed test-authority only. No production service or data access.
+name: NEX M2-B L8 — Signed Subject and Entitlement Binding Gate
+on:
+  pull_request:
+    branches: [test/m2b-l7-ndsp-canonical-session-owner-gate-20261014]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  l8-test-bound-identity:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@v5
+      - name: No real network, HTTP listeners, DB, or order authority
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import ast
+          p=Path('apps/api/nex_api/ndsp_subject_bound_read_l8_preview.py')
+          src=p.read_text()
+          imports=set()
+          for n in ast.walk(ast.parse(src)):
+              if isinstance(n,ast.Import):
+                  imports.update(a.name.split('.')[0] for a in n.names)
+              if isinstance(n,ast.ImportFrom) and n.module:
+                  imports.add(n.module.split('.')[0])
+          assert not imports.intersection({'fastapi','httpx','requests','socket','asyncpg','subprocess','redis'})
+          for token in ('http://','https://','app.listen(', 'place_order(', 'submit_order('):
+              assert token not in src
+          assert 'synthetic_only: bool = True' in src
+          assert 'secrets.token_urlsafe(24)' in src
+          assert '_verify_binding(' in src and 'read_only_test_decision(' in src
+          print('M2B_L8_NO_REAL_IDENTITY_OR_TRADE_CONNECTORS=PASS')
+          PY
+      - name: Locked acceptance for signed subject and entitlement bindings
+        env:
+          CI: 'true'
+          GITHUB_ACTIONS: 'true'
+        run: bash scripts/m2b_l8_subject_binding_acceptance.sh
