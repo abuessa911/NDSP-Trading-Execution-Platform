@@ -8,7 +8,6 @@ from __future__ import annotations
 import asyncio
 import json
 import os
-from dataclasses import replace
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import urlsplit
