@@ -36,7 +36,8 @@ jobs:
           for token in ('http://','https://','app.listen(', 'place_order(', 'submit_order('):
               assert token not in src
           assert 'synthetic_only: bool = True' in src
-          assert 'execution_authorized' not in src or 'execution_authorized' in src
+          assert 'secrets.token_urlsafe(24)' in src
+          assert '_verify_binding(' in src and 'read_only_test_decision(' in src
           print('M2B_L8_NO_REAL_IDENTITY_OR_TRADE_CONNECTORS=PASS')
           PY
       - name: Locked acceptance for signed subject and entitlement bindings
