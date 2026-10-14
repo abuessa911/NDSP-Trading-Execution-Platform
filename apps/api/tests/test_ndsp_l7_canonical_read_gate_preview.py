@@ -51,7 +51,7 @@ def _services(
 ) -> tuple[SyntheticCanonicalAuthorities, list[str]]:
     calls: list[str] = []
     session_data = session if session is not None else {
-        "ok": True, "user": {"id": str(SUBJECT)},
+        "ok": True, "user": {"id": str(SUBJECT), "status": "active"},
     }
     entitlement = ent if ent is not None else {
         "ok": True,
@@ -141,6 +141,8 @@ def test_older_signed_version_is_read_only_and_not_an_order() -> None:
     ("kind", "code", "last_step"),
     [
         ("no_session", "L7_AUTH_REQUIRED", 1),
+        ("inactive_session", "L7_ACCOUNT_NOT_ACTIVE", 1),
+        ("status_missing", "L7_ACCOUNT_NOT_ACTIVE", 1),
         ("email_only", "L7_AUTH_SUBJECT_UNVERIFIED", 1),
         ("subject_malformed", "L7_AUTH_SUBJECT_UNVERIFIED", 1),
         ("wrong_entitlement_authority", "L7_ENTITLEMENT_AUTHORITY_UNVERIFIED", 2),
@@ -161,7 +163,7 @@ def test_older_signed_version_is_read_only_and_not_an_order() -> None:
 def test_rejects_untrusted_or_unauthorized_data_before_disclosure(
     kind: str, code: str, last_step: int,
 ) -> None:
-    session = {"ok": True, "user": {"id": str(SUBJECT)}}
+    session = {"ok": True, "user": {"id": str(SUBJECT), "status": "active"}}
     ent = {
         "ok": True,
         "authority": "NDSP_CANONICAL_ENTITLEMENT_9091_V1",
@@ -181,6 +183,10 @@ def test_rejects_untrusted_or_unauthorized_data_before_disclosure(
     raw = _source_raw()
     if kind == "no_session":
         session["ok"] = False
+    elif kind == "inactive_session":
+        session["user"]["status"] = "suspended"
+    elif kind == "status_missing":
+        session["user"].pop("status")
     elif kind == "email_only":
         session["user"] = {"email": "sandbox@example.invalid"}
     elif kind == "subject_malformed":
