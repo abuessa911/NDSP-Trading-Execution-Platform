@@ -13,6 +13,20 @@ jobs:
   synthetic-signer-conformance:
     runs-on: ubuntu-24.04
     timeout-minutes: 16
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: nex_m2b_preview
+          POSTGRES_USER: m2b_fixture
+          POSTGRES_PASSWORD: synthetic-m2b-admin-only
+        ports:
+          - 127.0.0.1:5432:5432
+        options: >-
+          --health-cmd "pg_isready -U m2b_fixture -d nex_m2b_preview"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 12
     steps:
       - uses: actions/checkout@v4
         with:
@@ -25,10 +39,17 @@ jobs:
         run: |
           uv sync --frozen
           uv run --frozen ruff check apps/api/nex_api/ndsp_contract_preview.py \
-            apps/api/tests/test_ndsp_contract_preview.py
+            apps/api/tests/test_ndsp_contract_preview.py \
+            apps/api/nex_api/ndsp_replay_preview.py \
+            apps/api/tests/test_ndsp_replay_postgres_preview.py
           uv run --frozen mypy apps/api/nex_api
           uv run --frozen pytest -q apps/api/tests/test_ndsp_contract_preview.py
           uv run --frozen python scripts/export-m1-openapi.py --check
+      - name: Disposable localhost PostgreSQL append-only tenant and replay proof
+        env:
+          M2B_PREVIEW_ADMIN_DSN: postgresql://m2b_fixture:synthetic-m2b-admin-only@127.0.0.1:5432/nex_m2b_preview
+        run: |
+          uv run --frozen pytest -q apps/api/tests/test_ndsp_replay_postgres_preview.py
       - name: Verify no real NDSP bridge or execution interface is introduced
         run: |
           python - <<'PY'

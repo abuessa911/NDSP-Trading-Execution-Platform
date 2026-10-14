@@ -45,6 +45,43 @@ decision, manipulate an NEX state machine, or alter NDSP.
 - Signing keys in unit tests are generated ephemerally for synthetic
   test vectors; **no private signing keys are included in code or CI.**
 
+## Additional disposable PostgreSQL replay/tenant proof (not a NEX migration)
+
+The separate `ndsp_replay_preview.py` proof has no FastAPI route and accepts
+only `VerifiedSyntheticDecision` metadata whose environment remains `test`.
+It explicitly requires a trusted tenant ID supplied by the test fixture,
+never a client-owned tenant identifier. The SQL definition lives **only** in
+`infra/testing/m2b_receipt_preview.sql`: it is **not** in Alembic migrations,
+NEX's runtime Base metadata, deployment manifests or NDSP.
+
+- Disposable GitHub PostgreSQL 16 service uses the literal database name
+  `nex_m2b_preview`, localhost only and **synthetic test passwords**.
+  The test refuses any alternate DB, hostname, username or password.
+- The test administrator creates a dedicated no-superuser/no-BYPASSRLS
+  `nex_m2b_preview_app` role and a freshly created schema, and drops both at
+  the end; an existing test role/schema causes refusal, not reuse.
+- A primary key on `tenant_id,decision_id,decision_version`, FORCE ROW LEVEL
+  SECURITY, scoped `current_setting('m2b.tenant_id')`, SELECT/INSERT-only
+  grants and UPDATE/DELETE triggers protect immutable receipts.
+- Transaction advisory locking and latest-version checks make concurrent
+  identical deliveries idempotent, reject older versions and same-version
+  conflicting evidence, and append newer versions without erasing history.
+- Tests confirm tenant isolation, zero visibility with no tenant context,
+  rejection of UPDATE/DELETE, concurrency behavior and persistence after a
+  database-connection-pool restart.
+- This is only a **proof** of the persistence and tenant RLS design with
+  synthetic metadata. It does **not** make real signed NDSP decisions admissible,
+  bind an actual verified signer to tenant ownership or authorize trading.
+
+**Read-only NDSP evidence audit (14 Oct 2026):** the existing NDSP source tree
+contains `backend/architecture/contracts/COMPLETED_DECISION_CONTRACT.md`,
+which defines a read-only published/completed-decision consumer boundary, but
+the inspected backend contract and architecture sources did **not** yield
+an issuer-published signed `NDSP-NEX-1.0` contract, golden vector or approved
+canonical signing profile. This scoped inspection is not a claim that
+no additional private integration material exists. Do not derive a fake
+signature from an unsigned completed decision.
+
 ## Mandatory blockers before actual M2-B acceptance
 
 1. **NDSP publisher contract:** an approved immutable `NDSP-NEX-1.0` JSON
