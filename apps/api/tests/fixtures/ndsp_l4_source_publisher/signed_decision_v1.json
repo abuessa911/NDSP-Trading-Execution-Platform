@@ -1,0 +1,20 @@
+{
+  "asset": "BTCUSDT",
+  "contract_version": "NDSP-NEX-1.0",
+  "decision_id": "1af59be4-41ad-533b-b74f-a8ba4c667b28",
+  "decision_state": "BLOCKED",
+  "decision_version": 1,
+  "direction": "FLAT",
+  "evidence_hash": "sha256:ebd2f7801c07512da19fc20c9ec5fb800e410147d4b9a183fea6406438191533",
+  "issued_at": "2026-10-14T10:00:00Z",
+  "key_id": "ndsp-l4-f245ee943cc5378560ffebe3",
+  "market": "CRYPTO",
+  "risk_class": "BLOCKED",
+  "scenario_state": "UNDER_MONITORING",
+  "source_environment": "test",
+  "source_system": "NDSP",
+  "timeframe": "4H",
+  "valid_from": "2026-10-14T10:00:00Z",
+  "valid_until": "2026-10-15T10:00:00Z",
+  "signature": "xInPA+uLUYwhulr32cFZ37SEuAnyk/Us14LXf5qxWch1G74LZV6Wy9+G6HryNK+CfylEUy8+PJzexyxsnhtMCw=="
+}
