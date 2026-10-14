@@ -1,1 +1,1 @@
-export const BOT_NAME = "Hunter_KSA1";
+export const BOT_NAME = "hunter_ksa1 bot";
