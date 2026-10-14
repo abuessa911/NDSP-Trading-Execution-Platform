@@ -26,6 +26,7 @@ http.createServer(async (request, response) => {
     const pathname = decodeURIComponent(requestUrl.pathname);
     if (pathname === "/preview/market/closed-candles") {
       response.setHeader("Content-Type", "application/json; charset=utf-8");
+      if (request.method !== "GET") { response.writeHead(405).end(); return; }
       if (!marketPreviewEnabled || !/^(?:127\.0\.0\.1|localhost):1934[12]$/.test(request.headers.host || "")) {
         response.writeHead(404).end('{"status":"UNAVAILABLE"}');
         return;
