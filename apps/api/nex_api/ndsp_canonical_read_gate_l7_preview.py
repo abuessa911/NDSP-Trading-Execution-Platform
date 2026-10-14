@@ -13,7 +13,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import Awaitable, Callable, Mapping
+from typing import Awaitable, Callable, Mapping, NoReturn
 from uuid import UUID
 
 from nex_api.ndsp_contract_preview import (
@@ -54,7 +54,7 @@ class ReadOnlySourceDecision:
     execution_authorized: bool = False
 
 
-def _deny(code: str) -> None:
+def _deny(code: str) -> NoReturn:
     raise CanonicalGateDenied(code)
 
 
@@ -126,10 +126,11 @@ def _plan_allows(
             }):
         _deny("L7_TIMEFRAME_NOT_ENTITLED")
     mode = entitlement.get("asset_mode")
+    slots = entitlement.get("asset_slots")
     if mode == "all_supported":
         if (entitlement.get("fixed_asset")
-                or (type(entitlement.get("asset_slots")) is int
-                    and entitlement["asset_slots"] > 0)):
+                or (isinstance(slots, int) and not isinstance(slots, bool)
+                    and slots > 0)):
             _deny("L7_ENTITLEMENT_POLICY_CONFLICT")
         return
     fixed = entitlement.get("fixed_asset")
