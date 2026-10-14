@@ -94,7 +94,8 @@ def _utc_clock(value: datetime) -> None:
 async def append_synthetic_source_event(
     pool: asyncpg.Pool, *, token: str, idp_public_key_pem: bytes,
     raw_signed: bytes, source: Mapping[str, object],
-    source_public_keys: Mapping[str, bytes], now_utc: datetime,
+    source_public_keys: Mapping[str, bytes],
+    trusted_source_owners: Mapping[str, UUID], now_utc: datetime,
 ) -> SourceReceipt:
     """Append issuer-signed version to isolated DB; DB enforces no gaps/rewrite.
 
@@ -113,6 +114,12 @@ async def append_synthetic_source_event(
     source_id = source["decision_id"]
     if not isinstance(source_id, str) or not _SOURCE_ID.fullmatch(source_id):
         raise NDSPContractRejected("NDSP_L5_SOURCE_ID_INVALID")
+    # A valid caller identity is NOT evidence the caller owns this decision.
+    # Trusted server-side CDS ownership is independently required. This map
+    # is a synthetic authority fixture, never a client-provided request field.
+    if (not isinstance(trusted_source_owners, Mapping)
+            or trusted_source_owners.get(source_id) != tenant):
+        raise NDSPContractRejected("NDSP_L5_SOURCE_OWNER_MISMATCH")
     if not isinstance(raw_signed, bytes) or not 100 <= len(raw_signed) <= 16384:
         raise NDSPContractRejected("NDSP_L5_SIGNED_BYTES_INVALID")
     envelope = json.loads(raw_signed)
