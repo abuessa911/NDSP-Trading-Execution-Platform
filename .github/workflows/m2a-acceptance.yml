@@ -24,10 +24,12 @@ jobs:
       - name: Locked dependencies, static checks and offline market contract tests
         run: |
           uv sync --frozen
-          uv run --frozen ruff check apps/api/nex_api/binance_closed_candles.py \
-            apps/api/tests/test_binance_closed_candles.py scripts/m2a_binance_closed_candles.py
+          uv run --frozen ruff check apps/api scripts/ci-m1-compose.py \
+            scripts/verify-m1-compose.py scripts/tests scripts/m2a_binance_closed_candles.py
           uv run --frozen mypy apps/api/nex_api
-          uv run --frozen pytest -q apps/api/tests/test_binance_closed_candles.py
+          uv run --frozen pytest -q apps/api/tests/test_binance_closed_candles.py apps/api/tests/test_market_data_internal.py
+          uv run --frozen python scripts/export-m1-openapi.py --check
+          uv run --frozen pytest -q apps/api/tests scripts/tests
           PYTHONPATH=apps/api uv run --frozen python scripts/m2a_binance_closed_candles.py --help
       - name: No exchange trade calls or integration changes in M2-A
         run: |

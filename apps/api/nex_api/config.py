@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     live_trading_enabled: bool = False
     global_kill_switch: bool = True
     binance_allow_withdraw: bool = False
+    m2a_public_market_enabled: bool = False  # isolated admin-only test gate
 
     database_url: str | None = None
     migration_database_url: str | None = None
@@ -57,6 +58,8 @@ class Settings(BaseSettings):
             raise ValueError("GLOBAL_KILL_SWITCH must remain true in M1.")
         if self.binance_allow_withdraw:
             raise ValueError("BINANCE_ALLOW_WITHDRAW must remain false in M1.")
+        if self.m2a_public_market_enabled and self.environment != "test":
+            raise ValueError("M2A market API is test-only, never production/dev.")
         if self.secret_provider not in {"env", "file"}:
             raise ValueError("SECRET_PROVIDER must be either env or file.")
         if self.oidc_allowed_algorithm not in {"RS256", "ES256"}:
