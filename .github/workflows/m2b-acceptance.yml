@@ -1,0 +1,47 @@
+# Synthetic signed-contract preview only, NOT NDSP integration/production.
+name: NEX M2-B — Synthetic Signature Contract Preview
+on:
+  pull_request:
+    branches: [m2a/binance-public-closed-candles-20261014]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: nex-m2b-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  synthetic-signer-conformance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@v5
+      - name: Locked dependencies and fail-closed verifier tests
+        run: |
+          uv sync --frozen
+          uv run --frozen ruff check apps/api/nex_api/ndsp_contract_preview.py \
+            apps/api/tests/test_ndsp_contract_preview.py
+          uv run --frozen mypy apps/api/nex_api
+          uv run --frozen pytest -q apps/api/tests/test_ndsp_contract_preview.py
+          uv run --frozen python scripts/export-m1-openapi.py --check
+      - name: Verify no real NDSP bridge or execution interface is introduced
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import ast
+          source = Path('apps/api/nex_api/ndsp_contract_preview.py').read_text()
+          tree = ast.parse(source)
+          imports = {a.name.split('.')[0] for n in ast.walk(tree)
+                     if isinstance(n, (ast.Import, ast.ImportFrom))
+                     for a in (n.names if isinstance(n, ast.Import) else [])}
+          assert not imports.intersection({'httpx', 'requests', 'redis', 'subprocess'})
+          assert 'source_environment"] != "test"' in source
+          assert 'execution_authorized: bool = False' in source
+          assert not any(name in source for name in ('client.post(', 'submit_order(', 'fetch_decision('))
+          print('M2B_NO_RUNTIME_NDSP_OR_TRADING_BOUNDARY=PASS')
+          PY
