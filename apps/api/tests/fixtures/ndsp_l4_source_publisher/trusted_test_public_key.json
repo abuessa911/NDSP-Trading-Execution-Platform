@@ -1,0 +1,10 @@
+{
+  "algorithm": "Ed25519",
+  "canonicalization": "ASCII_SORTED_COMPACT_JSON_UTF8_PROPOSED_TEST_ONLY",
+  "contract_version": "NDSP-NEX-1.0",
+  "key_id": "ndsp-l4-f245ee943cc5378560ffebe3",
+  "private_key_persisted": false,
+  "profile_status": "PROPOSED_SYNTHETIC_TEST_ONLY",
+  "public_key_base64": "530rBB1bD9wkL0kLpR7GtQVGO9IFqCBRrwNPHGZy0M0=",
+  "signed_bytes_sha256": "590b011b0ffd1972c5406773c8fab465387ae170d4af645b59285af1dfcdb7d1"
+}
