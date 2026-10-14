@@ -23,6 +23,7 @@ from nex_api.routes.tenants import AuditEventView, router as tenants_router
 from nex_api.routes.auth import router as auth_router
 from nex_api.browser_provider import BrowserProvider
 from nex_api.browser_sessions import BrowserSessions
+from nex_api.market_data_internal import router as market_data_router
 from nex_api.secrets import build_secret_provider, resolve_configuration
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -108,6 +109,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(health_router, prefix="/api")
     app.include_router(tenants_router, prefix="/api")
     app.include_router(auth_router, prefix="/api")
+    # M2-A routes remain admin + server MFA guarded and disabled by default.
+    app.include_router(market_data_router)
 
     @app.exception_handler(HTTPException)
     async def http_error(request: Request, error: HTTPException) -> JSONResponse:

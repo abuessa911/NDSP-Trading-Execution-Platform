@@ -13,7 +13,7 @@ from redis.asyncio import Redis
 from nex_api.browser_sessions import BrowserSessions
 
 
-def exercise(fixture, http):
+def exercise(fixture, http, *, m2a_enabled=False):
     checks = []
 
     def check(name, value):
@@ -271,6 +271,9 @@ def exercise(fixture, http):
                   and operational.get("ndsp_connector", {}).get("status") == "NOT_CONFIGURED"
                   and operational.get("worker_queues", {}).get("status") == "NOT_IMPLEMENTED")
 
+            if m2a_enabled:
+                from m2a_auth_checks import real_admin_checks
+                real_admin_checks(fixture, http, headers, me.json()["tenant_id"], role, check)
             other = "00000000-0000-4000-8000-000000000099"
             isolated = http.get(ORIGIN + "/api/v1/tenants/" + other + "/audit-events", headers=headers)
             check("cross-tenant privileged audit denied: " + role, isolated.status_code == 404)
@@ -394,6 +397,9 @@ def exercise(fixture, http):
               and user_refresh.status_code == 200
               and user_session_after_refresh.status_code == 200
               and user_session_after_refresh.json()["administrator_mfa_verified"] is False)
+        if m2a_enabled:
+            from m2a_auth_checks import real_lower_role_checks
+            real_lower_role_checks(http, user_headers, "USER", check)
         # Browser UI must not request privileged endpoints for ordinary USER.
         user_admin_requests = []
         page.on("request", lambda request: user_admin_requests.append(request.url)
@@ -442,6 +448,9 @@ def exercise(fixture, http):
               and operator_directory.json()["reason_code"] == "ROLE_NOT_ALLOWED"
               and operator_operations.status_code == 403
               and operator_operations.json()["reason_code"] == "ROLE_NOT_ALLOWED")
+        if m2a_enabled:
+            from m2a_auth_checks import real_lower_role_checks
+            real_lower_role_checks(http, operator_headers, "OPERATOR", check)
         operator_admin_requests = []
         page.on("request", lambda request: operator_admin_requests.append(request.url)
                 if request.url.startswith((ORIGIN + "/admin/v1/", ORIGIN + "/api/v1/admin/")) else None)

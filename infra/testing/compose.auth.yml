@@ -32,6 +32,7 @@ services:
       OIDC_ADMIN_MFA_CLIENT_ID: ${OIDC_ADMIN_MFA_CLIENT_ID}
       OIDC_ADMIN_MFA_CLIENT_SECRET: ${OIDC_ADMIN_MFA_CLIENT_SECRET}
       OIDC_ADMIN_MFA_MAX_AGE: ${OIDC_ADMIN_MFA_MAX_AGE}
+      M2A_PUBLIC_MARKET_ENABLED: ${NEX_AUTH_M2A_PUBLIC_MARKET_ENABLED:-false}
     volumes:
       - ${NEX_AUTH_TEMP:?Explicit temporary directory}/tls:/etc/nex-test/tls:ro
   gateway:
