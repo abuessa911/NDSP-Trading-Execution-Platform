@@ -1,0 +1,20 @@
+name: hunter_ksa1 bot — Display Branding Review
+on:
+  pull_request:
+    branches: [test/m2b-l8-subject-bound-authority-proof-20261014]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  branding-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Verify approved spelling and preserved M1 safety scope
+        run: node --test artifacts/ndsp-console/tests/branding.test.mjs
