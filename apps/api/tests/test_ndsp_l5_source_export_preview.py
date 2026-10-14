@@ -151,7 +151,7 @@ async def _exercise() -> None:
             return await append_synthetic_source_event(
                 pool, token=tok, idp_public_key_pem=trusted_public,
                 raw_signed=raw, source=src, source_public_keys=keys,
-                now_utc=NOW,
+                trusted_source_owners={SOURCE: A}, now_utc=NOW,
             )
 
         async def read(tok: str, clock: datetime = NOW):
@@ -191,9 +191,11 @@ async def _exercise() -> None:
         with pytest.raises(NDSPContractRejected, match="NDSP_L5_SOURCE_EXPIRED"):
             await read(read_a, datetime(2026, 10, 15, 10, tzinfo=timezone.utc))
 
-        # Same original source ID belongs to a separate authenticated tenant.
-        assert (await append(write_b, v1, src1)).result == "STORED"
-        assert (await read(read_b)).document == v1
+        # Even a valid signed tenant B token CANNOT publish tenant A's source.
+        with pytest.raises(NDSPContractRejected, match="NDSP_L5_SOURCE_OWNER_MISMATCH"):
+            await append(write_b, v1, src1)
+        with pytest.raises(NDSPContractRejected, match="NDSP_L5_NOT_FOUND_OR_UNAUTHORIZED"):
+            await read(read_b)
 
         # Direct raw SQL from no tenant context must return nothing (test RLS).
         async with pool.acquire() as conn:
