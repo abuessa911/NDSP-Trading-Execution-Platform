@@ -43,3 +43,71 @@ jobs:
           assert module.count('client.get(') == 2
           print('M2A_READ_ONLY_BOUNDARY=PASS')
           PY
+
+  keycloak-redis-m2a:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 48
+    env:
+      AUTH_PROJECT: nex-m1-isolated-verification-m2aci${{ github.run_id }}a${{ github.run_attempt }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.6
+      - uses: astral-sh/setup-uv@v5
+      - name: Install disposable browser
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/pw-browsers
+        run: uv run --frozen --with playwright==1.63.0 playwright install --with-deps chromium
+      - name: Real Keycloak MFA + PostgreSQL + Redis, market requests quota-blocked
+        env:
+          AUTH_CONTEXT: ${{ runner.temp }}/m2a-auth-source
+          AUTH_EVIDENCE: ${{ runner.temp }}/m2a-auth-evidence
+          PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/pw-browsers
+        run: |
+          env -i PATH="$PATH" HOME="$RUNNER_TEMP" PLAYWRIGHT_BROWSERS_PATH="$PLAYWRIGHT_BROWSERS_PATH" \
+            uv run --frozen --with playwright==1.63.0 python scripts/verify-m1-auth.py \
+              --m2a --project "$AUTH_PROJECT" --context "$AUTH_CONTEXT" --evidence "$AUTH_EVIDENCE"
+      - name: Summarize sanitized M2-A genuine auth verdict
+        if: always()
+        env:
+          AUTH_EVIDENCE: ${{ runner.temp }}/m2a-auth-evidence
+        run: |
+          python - <<'PYLOG'
+          import json, os
+          from pathlib import Path
+          root = Path(os.environ['AUTH_EVIDENCE'])
+          p = root / 'result.json'
+          if not p.is_file():
+              print('M2A_GENUINE_AUTH_VERDICT=NO_RESULT')
+          else:
+              try:
+                  v = json.loads(p.read_text())
+                  checks = v.get('mfa_checks', [])
+                  recorded = [x for x in checks if isinstance(x, dict)
+                              and x.get('check', '').startswith('M2A ')
+                              and type(x.get('passed')) is bool]
+                  print('M2A_GENUINE_AUTH_VERDICT=' + str(v.get('m2a_admin_real_auth_redis', 'INCOMPLETE')))
+                  print('M2A_GENUINE_AUTH_CHECKS=' + str(len(recorded)))
+                  print('M2A_GENUINE_AUTH_PASSED=' + str(sum(x['passed'] for x in recorded)))
+                  print('M2A_FAILED_STAGE=' + str(v.get('failed_stage', 'NONE')))
+              except (ValueError, OSError, TypeError):
+                  print('M2A_GENUINE_AUTH_VERDICT=INVALID_RESULT')
+          PYLOG
+      - name: Retry owned disposable cleanup if needed
+        if: always()
+        env:
+          AUTH_CONTEXT: ${{ runner.temp }}/m2a-auth-source
+          AUTH_EVIDENCE: ${{ runner.temp }}/m2a-auth-evidence
+        run: |
+          env -i PATH="$PATH" HOME="$RUNNER_TEMP" \
+            python scripts/verify-m1-auth.py --finalize \
+              --project "$AUTH_PROJECT" --context "$AUTH_CONTEXT" --evidence "$AUTH_EVIDENCE"

@@ -17,8 +17,11 @@ def main() -> None:
     parser.add_argument("--context", type=Path, required=True)
     parser.add_argument("--evidence", type=Path, required=True)
     parser.add_argument("--finalize", action="store_true")
+    parser.add_argument("--m2a", action="store_true", help="Isolated M2-A real-auth gate")
     args = parser.parse_args()
     fixture = AuthEnvironment(args.project, args.context, args.evidence)
+    if args.m2a:
+        fixture.env["NEX_AUTH_M2A_PUBLIC_MARKET_ENABLED"] = "true"
     if args.finalize:
         fixture.finalize()
         return
@@ -50,8 +53,10 @@ def main() -> None:
             report["checks"] = exercise(fixture, client)
             stage = "genuine administrator password/TOTP enforcement"
             from m1_admin_browser import exercise as exercise_mfa
-            report["mfa_checks"] = exercise_mfa(fixture, client)
+            report["mfa_checks"] = exercise_mfa(fixture, client, m2a_enabled=args.m2a)
             report["administrator_mfa"] = "PASS"
+            if args.m2a:
+                report["m2a_admin_real_auth_redis"] = "PASS"
             source_path = fixture.evidence / "source.json"
             source = json.loads(source_path.read_text())
             source["mfa_verification"] = (
