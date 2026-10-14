@@ -45,6 +45,31 @@ decision, manipulate an NEX state machine, or alter NDSP.
 - Signing keys in unit tests are generated ephemerally for synthetic
   test vectors; **no private signing keys are included in code or CI.**
 
+## Independent NDSP-side synthetic publisher cross-compatibility
+
+The authorized publisher prototype is in an **entirely separate local Git
+sandbox on Kali**, not part of the NEX repository or NDSP production source.
+The NDSP deployment folder is not itself a Git checkout and an NDSP source
+repository is not available to this environment, so this is **not a branch
+of the canonical production project**.
+
+The issuer-side preview signs a fixed `source_environment=test`,
+`decision_state=BLOCKED` decision with a throwaway private key generated
+in memory. **Only** the signed synthetic JSON document and a separately
+pinned test public-key record are copied into
+`apps/api/tests/fixtures/ndsp_publisher_preview/`. The fixture's
+`signed_bytes_sha256` is independently recomputed in NEX and the pinned
+test public key is supplied to the verifier from the separate fixture, not
+from the untrusted signed payload.
+
+The independent conformance test
+`test_ndsp_publisher_golden_preview.py` checks acceptance plus signature
+tampering, unknown key, expiry and inability to claim production trading.
+It neither fetches production NDSP data nor contains any issuer signing
+private key. This is proof that two independent **test implementations**
+agree on the proposed signature bytes; it is **not** proof that the
+current NDSP production platform issues or approves these signatures.
+
 ## Additional disposable PostgreSQL replay/tenant proof (not a NEX migration)
 
 The separate `ndsp_replay_preview.py` proof has no FastAPI route and accepts

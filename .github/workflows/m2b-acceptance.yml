@@ -43,7 +43,8 @@ jobs:
             apps/api/nex_api/ndsp_replay_preview.py \
             apps/api/tests/test_ndsp_replay_postgres_preview.py
           uv run --frozen mypy apps/api/nex_api
-          uv run --frozen pytest -q apps/api/tests/test_ndsp_contract_preview.py
+          uv run --frozen pytest -q apps/api/tests/test_ndsp_contract_preview.py \
+            apps/api/tests/test_ndsp_publisher_golden_preview.py
           uv run --frozen python scripts/export-m1-openapi.py --check
       - name: Disposable localhost PostgreSQL append-only tenant and replay proof
         env:
