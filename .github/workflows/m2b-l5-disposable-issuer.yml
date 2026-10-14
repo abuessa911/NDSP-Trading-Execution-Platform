@@ -1,0 +1,60 @@
+# NO production deployment or gateway registration.
+name: NEX M2-B L5 — Disposable Source Ledger and Tenant Authorization
+on:
+  pull_request:
+    branches: [test/m2b-l4-ndsp-issuer-crosslanguage-20261014]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-source-authorization:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: nex_m2b_preview
+          POSTGRES_USER: m2b_fixture
+          POSTGRES_PASSWORD: synthetic-m2b-admin-only
+        ports:
+          - 127.0.0.1:5432:5432
+        options: >-
+          --health-cmd "pg_isready -U m2b_fixture -d nex_m2b_preview"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@v5
+      - name: Verify no live NDSP importer, route, or execution privilege
+        shell: bash
+        run: |
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+          p=Path('apps/api/nex_api/ndsp_source_export_l5_preview.py')
+          tree=ast.parse(p.read_text())
+          imports=set()
+          for n in ast.walk(tree):
+              if isinstance(n, ast.Import):
+                  imports|={i.name.split('.')[0] for i in n.names}
+              if isinstance(n, ast.ImportFrom) and n.module:
+                  imports.add(n.module.split('.')[0])
+          assert not imports.intersection({'fastapi','httpx','requests','socket','redis','subprocess'})
+          assert 'verify_test_only_source_binding(' in p.read_text()
+          assert 'execution_authorized: bool = False' in p.read_text()
+          assert not Path('apps/api/alembic/versions/m2b_l5_source_export.py').exists()
+          assert not any(x in p.read_text() for x in ('submit_order(', 'place_order(', 'client.post('))
+          print('M2B_L5_NO_REAL_SOURCE_OR_TRADING=PASS')
+          PY
+      - name: Execute isolated cryptographic identity and durable source ledger
+        shell: bash
+        env:
+          M2B_L5_ADMIN_DSN: postgresql://m2b_fixture:synthetic-m2b-admin-only@127.0.0.1:5432/nex_m2b_preview
+        run: bash scripts/m2b_l5_disposable_acceptance.sh
