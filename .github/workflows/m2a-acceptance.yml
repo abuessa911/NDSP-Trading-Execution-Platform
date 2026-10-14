@@ -109,5 +109,5 @@ jobs:
           AUTH_EVIDENCE: ${{ runner.temp }}/m2a-auth-evidence
         run: |
           env -i PATH="$PATH" HOME="$RUNNER_TEMP" \
-            python scripts/verify-m1-auth.py --finalize \
+            uv run --frozen python scripts/verify-m1-auth.py --finalize \
               --project "$AUTH_PROJECT" --context "$AUTH_CONTEXT" --evidence "$AUTH_EVIDENCE"
