@@ -1,0 +1,25 @@
+# Offline synthetic-only checks, no production secrets or deployment.
+name: NEX M2-B L3 — Real Source Authorization Block Gate
+on:
+  pull_request:
+    branches: [test/m2b-l2-disposable-identity-ledger-20261014]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  real-link-denied:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@v5
+      - name: Prove real NDSP acceptance is blocked
+        env:
+          CI: 'true'
+          GITHUB_ACTIONS: 'true'
+        run: bash scripts/m2b_l3_readonly_gate.sh
