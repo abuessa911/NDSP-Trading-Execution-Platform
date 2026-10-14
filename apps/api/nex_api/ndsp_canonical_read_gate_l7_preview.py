@@ -74,7 +74,16 @@ def _verified_subject(session: Mapping[str, object]) -> UUID:
     user = session.get("user")
     if not isinstance(user, dict):
         _deny("L7_AUTH_SUBJECT_UNVERIFIED")
-    return _canonical_uuid(user.get("id"), "L7_AUTH_SUBJECT_UNVERIFIED")
+    # The real /api/auth/session validates JWT and loads a user record but
+    # unlike decision-room-access it does not independently deny inactive
+    # accounts. Require status here before any entitlement/owner lookup.
+    subject = _canonical_uuid(user.get("id"), "L7_AUTH_SUBJECT_UNVERIFIED")
+    if (not isinstance(user.get("status"), str)
+            or user["status"].strip().lower() not in {
+                "active", "approved", "verified",
+            }):
+        _deny("L7_ACCOUNT_NOT_ACTIVE")
+    return subject
 
 
 def _verified_entitlement(authority: Mapping[str, object]) -> Mapping[str, object]:
