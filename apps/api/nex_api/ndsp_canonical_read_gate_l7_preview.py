@@ -48,8 +48,6 @@ class SyntheticCanonicalAuthorities:
 @dataclass(frozen=True, slots=True)
 class ReadOnlySourceDecision:
     document: bytes
-    source_decision_id: str
-    tenant_id: UUID
     decision_version: int
     execution_authorized: bool = False
 
@@ -207,6 +205,5 @@ async def read_only_test_decision(
             or verified.execution_authorized):
         _deny("L7_SIGNED_SOURCE_CONTEXT_MISMATCH")
     return ReadOnlySourceDecision(
-        document=bytes(raw), source_decision_id=source_decision_id,
-        tenant_id=tenant, decision_version=verified.decision_version,
+        document=bytes(raw), decision_version=verified.decision_version,
     )
