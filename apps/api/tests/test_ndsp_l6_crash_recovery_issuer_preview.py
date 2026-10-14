@@ -196,8 +196,13 @@ async def _proof() -> None:
             await reserve(_token(wrong_idp_priv, TENANT, "ndsp.source.reserve"), uuid4(), source1)
         with pytest.raises(NDSPContractRejected, match="NDSP_L5_SCOPE_OR_ENVIRONMENT_DENIED"):
             await reserve(read_token, uuid4(), source1)
+        # V1/V2 fixtures differ by issuer version, not original source fields:
+        # retrying the same request with the same source is correctly idempotent.
+        assert (await reserve(reserve_token, operation_1, source2)).status == "IDEMPOTENT"
+        changed_source = dict(source2)
+        changed_source["symbol"] = "ETHUSDT"
         with pytest.raises(NDSPContractRejected, match="NDSP_L6_OPERATION_REUSED_WITH_OTHER_SOURCE"):
-            await reserve(reserve_token, operation_1, source2)
+            await reserve(reserve_token, operation_1, changed_source)
 
         # Simulate process death after reservation before signature: reconnect.
         await pool.close()
