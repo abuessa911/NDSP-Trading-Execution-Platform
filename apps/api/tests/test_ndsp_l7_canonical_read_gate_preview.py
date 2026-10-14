@@ -17,7 +17,7 @@ import pytest
 
 from nex_api.ndsp_canonical_read_gate_l7_preview import (
     CanonicalGateDenied,
-    TestCanonicalAuthorities,
+    SyntheticCanonicalAuthorities,
     read_only_test_decision,
 )
 
@@ -48,7 +48,7 @@ def _services(
     owner: dict[str, object] | None = None,
     signed: bytes | None = None,
     errors: frozenset[str] = frozenset(),
-) -> tuple[TestCanonicalAuthorities, list[str]]:
+) -> tuple[SyntheticCanonicalAuthorities, list[str]]:
     calls: list[str] = []
     session_data = session if session is not None else {
         "ok": True, "user": {"id": str(SUBJECT)},
@@ -97,7 +97,7 @@ def _services(
             raise LookupError("test")
         return raw
 
-    return TestCanonicalAuthorities(
+    return SyntheticCanonicalAuthorities(
         session=session_authority,
         entitlement=ent_authority,
         ownership=owner_authority,
@@ -106,7 +106,7 @@ def _services(
     ), calls
 
 
-def _run(services: TestCanonicalAuthorities, now: datetime = NOW):
+def _run(services: SyntheticCanonicalAuthorities, now: datetime = NOW):
     return asyncio.run(read_only_test_decision(
         credentials="synthetic-session-fixture", source_decision_id=SOURCE_ID,
         authorities=services, now_utc=now,
