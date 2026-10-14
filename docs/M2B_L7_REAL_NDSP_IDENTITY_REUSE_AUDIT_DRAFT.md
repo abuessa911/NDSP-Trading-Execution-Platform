@@ -16,7 +16,7 @@ Verified by read-only source inspection, not requests against live user sessions
 - Dependency-injected pure async Python gate (NO HTTP listener or real NDSP calls).
 - Test mock for session resembles {ok:true,user:{id:<canonical UUID>}}; entitlement mock contains exact 9091 authority name; ownership mock is a separate trusted server-side authority with source_decision_id, canonical owner_user_id, tenant_id, Published/public and source context.
 - Reuses pinned *synthetic* Ed25519 source signer public key from L4; rejects any signed envelope with wrong key/signature, expired or mismatched context and any state other than BLOCKED/FLAT/test.
-- Fail closed on missing/unknown session, email-only identity, wrong owner, missing publication, mismatched symbol/timeframe, unentitled asset/timeframe, unknown selected-asset assignment, authority timeout, tampered signature, malformed credentials or explicit production context.
+- Fail closed on missing/unknown session, **inactive or missing account status** (canonical session itself does not guarantee account activation), email-only identity, wrong owner, missing publication, mismatched symbol/timeframe, unentitled asset/timeframe, unknown selected-asset assignment, authority timeout, tampered signature, malformed credentials or explicit production context.
 - Source metadata/owner binding is trusted ONLY because fixtures are injected server-side; there is currently no real CDS ownership authority. No tenant or role is derived from client headers or signature alone.
 - Returns only previously signed synthetic envelope bytes; execution_authorized=False. Does not grant order permission or install a protected gateway.
 
