@@ -31,7 +31,7 @@ export default function ConsoleShell({ children }: { children: ReactNode }) {
   return <div className="console-shell console-shell--operator" data-mode={mode.toLowerCase()}>
     <a className="skip-link" href="#console-content">{t("Skip to content")}</a>
     <aside className={`console-nav ${open ? "is-open" : ""}`} id="console-navigation" aria-label={t("Navigation")}>
-      <Link href="/" className="brand" onClick={close}><span className="brand-mark">N</span><span><strong>NAWAF</strong><small>{BOT_NAME}</small></span></Link>
+      <Link href="/" className="brand" onClick={close}><span className="brand-mark">H</span><span><strong>{BOT_NAME}</strong><small>{t("Independent trading bot")}</small></span></Link>
       <div className="nav-scope"><span className="scope-dot" /> {t("M1 FOUNDATION")} <span className="mono">01</span></div>
       {groups.map(g => <nav key={g.label} aria-label={t(g.label)}>
         <p className="nav-label">{t(g.label)}</p>
@@ -57,7 +57,7 @@ export default function ConsoleShell({ children }: { children: ReactNode }) {
       <header className="console-top">
         <div className="row">
           <button className="button nav-toggle" type="button" aria-label={open ? t("Close navigation") : t("Open navigation")} aria-expanded={open} aria-controls="console-navigation" onClick={() => setOpen(!open)}>{open ? <X size={18} /> : <Menu size={18} />}</button>
-          <span className="top-label"><Activity size={15} aria-hidden /> {t("NAWAF / FOUNDATION")}</span>
+          <span className="top-label"><Activity size={15} aria-hidden /> {BOT_NAME} · {t("M1 FOUNDATION")}</span>
         </div>
         <div className="row top-actions">
           <button className="button small" type="button" onClick={() => setLang(lang === "en" ? "ar" : "en")} aria-label={t("Language")} data-testid="toggle-language"><Languages size={13} aria-hidden />{lang === "en" ? "العربية" : "English"}</button>
@@ -75,7 +75,7 @@ export default function ConsoleShell({ children }: { children: ReactNode }) {
       <main className="console-main" id="console-content" tabIndex={-1}>
         <AuthControls />
         {children}
-        <footer className="console-footer">{t("NAWAF · MASTER SPEC V1 · M1 only · Later milestones require separate authorization.")}</footer>
+        <footer className="console-footer">{BOT_NAME} · {t("MASTER SPEC V1 · M1 only · Later milestones require separate authorization.")}</footer>
       </main>
     </div>
   </div>;
