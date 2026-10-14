@@ -45,6 +45,41 @@ decision, manipulate an NEX state machine, or alter NDSP.
 - Signing keys in unit tests are generated ephemerally for synthetic
   test vectors; **no private signing keys are included in code or CI.**
 
+## Source-derived CDS-001 signer proof (NDSP isolated Contabo branch)
+
+Separate from the prior synthetic standalone Kali issuer, we now copied
+only 48 SHA256-verified source and governance files from the **actual NDSP
+Completed Decision Service** into a new independent, locally versioned,
+unconnected Contabo development Git tree at
+`/home/ndsp/ndsp-nex-signing-dev-20261014`.
+The production service was not modified, executed, restarted, connected to
+a database, or given signing keys.
+
+A standalone `publisher/ndsp_nex_test_signer.cjs` in the **source slice**
+creates an Ed25519 signature of a fully synthetic CDS-001
+Published/public/test record. Existing `main.cjs` routes remain unchanged.
+Only the signed JSON test vector and its PUBLIC ephemeral verification key
+were copied to `apps/api/tests/fixtures/ndsp_source_slice/`; no publisher
+private key, user record, production credential, database or protected NMP/TDL
+value enters NEX. The independent Python NEX verifier checks signature,
+trust key, expiry and tampering with five cross-language tests.
+
+**Blocking mapping differences discovered from authoritative source:**
+real CDS decision IDs are text of form `CD-...` while NEX expects UUID,
+so the fixture uses a **synthetic-only namespaced UUIDv5**. Real CDS does
+not have an approved monotonic `decision_version`, timeframe or finite
+`valid_from` derivation. `Published` cannot be treated as `EXECUTABLE`
+without independent governance. The fixture supplies explicit test-only
+version/timeframe and forces BLOCKED/FLAT/UNDER_MONITORING;
+its SHA256 evidence is only a **synthetic metadata digest**.
+None of these mappings or signing bytes is approved for real production.
+
+This proves that **source-derived synthetic NDSP publisher code can be
+verified by NEX**, not that a legitimate NDSP production decision may be
+consumed or traded. Approval of issuer identity, key rotation, real version,
+tenant provenance, source evidence, and contractual state mapping remains
+mandatory before any NDSP integration.
+
 ## Independent NDSP-side synthetic publisher cross-compatibility
 
 The authorized publisher prototype is in an **entirely separate local Git
