@@ -1,0 +1,45 @@
+# CI exercises ONLY synthetic local mocks. No real NDSP access or secrets.
+name: NEX M2-B L7 — Canonical Session and Source Owner Gate
+on:
+  pull_request:
+    branches: [test/m2b-l6-crash-recovery-issuer-journal-20261014]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  l7-offline-identity-gate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@v5
+      - name: Verify isolated authorization boundary has no live connectors
+        run: |
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+          p=Path('apps/api/nex_api/ndsp_canonical_read_gate_l7_preview.py')
+          src=p.read_text()
+          imports=set()
+          for n in ast.walk(ast.parse(src)):
+              if isinstance(n,ast.Import):
+                  imports|={a.name.split('.')[0] for a in n.names}
+              if isinstance(n,ast.ImportFrom) and n.module:
+                  imports.add(n.module.split('.')[0])
+          assert not imports.intersection({'fastapi','httpx','requests','socket','subprocess','asyncpg'})
+          assert 'execution_authorized: bool = False' in src
+          assert 'verify_synthetic_ndsp_contract(' in src
+          for forbidden in ('place_order(', 'submit_order(', 'https://','http://'):
+              assert forbidden not in src
+          print('M2B_L7_NO_PRODUCTION_IDP_CDS_OR_ORDER=PASS')
+          PY
+      - name: Run locked synthetic canonical read-only gate acceptance
+        env:
+          CI: 'true'
+          GITHUB_ACTIONS: 'true'
+        run: bash scripts/m2b_l7_canonical_read_gate_acceptance.sh
