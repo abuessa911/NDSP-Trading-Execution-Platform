@@ -1,0 +1,66 @@
+# hunter_ksa1 bot — static M1 console preview acceptance. NEVER trading.
+name: hunter_ksa1 bot — Safe Preview Build
+on:
+  pull_request:
+    branches: [chore/brand-hunter-ksa1-bot-20261014]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  isolated-preview:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+      - name: Assert disabled trading safety baseline is unchanged
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          readme=Path('README.md').read_text()
+          for s in ['hunter_ksa1 bot','TRADING_MODE=paper','LIVE_TRADING_ENABLED=false',
+                    'GLOBAL_KILL_SWITCH=true','BINANCE_ALLOW_WITHDRAW=false']:
+              assert s in readme
+          cfg=Path('artifacts/ndsp-console/next.config.ts').read_text()
+          assert 'output: process.env.NODE_ENV === "production" ? "export"' in cfg
+          src=Path('artifacts/ndsp-console/src/components/ConsoleShell.tsx').read_text()
+          assert 'Mode selector changes appearance only. No trading mode is applied.' in src
+          assert 'No exchange or trading access.' in src
+          print('HUNTER_PREVIEW_NO_LIVE_TRADE=PASS')
+          PY
+      - name: Install locked workspace
+        run: pnpm install --frozen-lockfile
+      - name: Build static Next.js console
+        env:
+          BASE_PATH: /
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: pnpm --filter @workspace/ndsp-console run build
+      - name: Typecheck static console
+        run: pnpm --filter @workspace/ndsp-console run typecheck
+      - name: Verify all frontend routes, identity guards, branding
+        run: pnpm --filter @workspace/ndsp-console run test
+      - name: Assert static output is only public preview and never protected user data
+        run: |
+          test -f artifacts/ndsp-console/out/index.html
+          test -f artifacts/ndsp-console/out/404.html
+          grep -qi "hunter_ksa1 bot" artifacts/ndsp-console/out/index.html
+          if grep -REq 'PRIVATE KEY|__Secure-nex_session=' artifacts/ndsp-console/out --include='*.html'; then
+            echo 'REFUSE_SENSITIVE_STATIC_EXPORT'
+            exit 2
+          fi
+          echo 'HUNTER_SAFE_STATIC_PREVIEW_BUILD=PASS'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hunter-ksa1-bot-static-preview
+          path: artifacts/ndsp-console/out/
+          retention-days: 7
+          if-no-files-found: error
