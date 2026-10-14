@@ -1,0 +1,66 @@
+# M2-B L2 intentionally adds NO deployment, production DB, orders or secrets.
+name: NEX M2-B L2 — Disposable Identity Ledger Tests
+on:
+  pull_request:
+    branches: [design/m2b-identity-ledger-rfc-20261014]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: m2b-l2-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  isolated-l2-postgres:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: nex_m2b_preview
+          POSTGRES_USER: m2b_fixture
+          POSTGRES_PASSWORD: synthetic-m2b-admin-only
+        ports:
+          - 127.0.0.1:5432:5432
+        options: >-
+          --health-cmd "pg_isready -U m2b_fixture -d nex_m2b_preview"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@v5
+      - name: Confirm test-only boundary and offline imports
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import ast
+          source = Path('apps/api/nex_api/ndsp_identity_ledger_l2_preview.py').read_text()
+          tree = ast.parse(source)
+          imported = set()
+          for item in ast.walk(tree):
+              if isinstance(item, ast.Import):
+                  imported |= {a.name.split('.')[0] for a in item.names}
+              elif isinstance(item, ast.ImportFrom) and item.module:
+                  imported.add(item.module.split('.')[0])
+          assert not imported.intersection(
+              {'httpx','requests','fastapi','subprocess','redis','socket'}
+          )
+          assert 'verify_test_only_source_binding(' in source
+          assert 'execution_authorized: bool = False' in source
+          for token in ('submit_order(', 'place_order(', 'http://','https://'):
+              assert token not in source
+          assert not Path('apps/api/alembic/versions/m2b_l2_identity_ledger.py').exists()
+          print('M2B_L2_NO_PRODUCTION_CONNECTOR_OR_ORDERS=PASS')
+          PY
+      - name: Locked complete isolated ledger acceptance
+        env:
+          M2B_L2_ADMIN_DSN: postgresql://m2b_fixture:synthetic-m2b-admin-only@127.0.0.1:5432/nex_m2b_preview
+        shell: bash
+        run: bash scripts/m2b_l2_isolated_acceptance.sh
