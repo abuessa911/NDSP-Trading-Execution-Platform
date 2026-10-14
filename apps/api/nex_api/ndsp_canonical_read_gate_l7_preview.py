@@ -35,7 +35,7 @@ class CanonicalGateDenied(Exception):
 
 
 @dataclass(frozen=True, slots=True)
-class TestCanonicalAuthorities:
+class SyntheticCanonicalAuthorities:
     # Each function is a sandbox-only, trust-domain boundary simulation.
     session: Callable[[str], Awaitable[Mapping[str, object]]]
     entitlement: Callable[[str], Awaitable[Mapping[str, object]]]
@@ -146,7 +146,7 @@ def _plan_allows(
 
 async def read_only_test_decision(
     *, credentials: str, source_decision_id: str,
-    authorities: TestCanonicalAuthorities, now_utc: datetime,
+    authorities: SyntheticCanonicalAuthorities, now_utc: datetime,
 ) -> ReadOnlySourceDecision:
     """Simulate auth/session 9020 -> entitlement 9091 -> owner -> signed read.
 
