@@ -1,0 +1,44 @@
+# M2-A public market-data reader; no deployment, live API probes or credentials.
+name: NEX M2-A — Read-Only Binance Acceptance
+on:
+  pull_request:
+    branches: [m1/hosted-acceptance-ci-20261013]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: nex-m2a-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  readonly-static-and-unit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@v5
+      - name: Locked dependencies, static checks and offline market contract tests
+        run: |
+          uv sync --frozen
+          uv run --frozen ruff check apps/api/nex_api/binance_closed_candles.py \
+            apps/api/tests/test_binance_closed_candles.py scripts/m2a_binance_closed_candles.py
+          uv run --frozen mypy apps/api/nex_api
+          uv run --frozen pytest -q apps/api/tests/test_binance_closed_candles.py
+          PYTHONPATH=apps/api uv run --frozen python scripts/m2a_binance_closed_candles.py --help
+      - name: No exchange trade calls or integration changes in M2-A
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          module = Path('apps/api/nex_api/binance_closed_candles.py').read_text()
+          forbidden = ('/order', '/position', 'post(', 'put(', 'delete(', 'API_KEY', 'api_secret')
+          assert all(word not in module.lower() for word in
+                     ('/order', '/position', '.post(', '.put(', '.delete(', 'api_secret')))
+          assert 'follow_redirects=False' in module
+          assert 'trust_env=False' in module
+          assert module.count('client.get(') == 2
+          print('M2A_READ_ONLY_BOUNDARY=PASS')
+          PY
