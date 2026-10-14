@@ -1,0 +1,73 @@
+# Synthetic signed-contract preview only, NOT NDSP integration/production.
+name: NEX M2-B — Synthetic Signature Contract Preview
+on:
+  pull_request:
+    branches: [m2a/binance-public-closed-candles-20261014]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: nex-m2b-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  synthetic-signer-conformance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: nex_m2b_preview
+          POSTGRES_USER: m2b_fixture
+          POSTGRES_PASSWORD: synthetic-m2b-admin-only
+        ports:
+          - 127.0.0.1:5432:5432
+        options: >-
+          --health-cmd "pg_isready -U m2b_fixture -d nex_m2b_preview"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@v5
+      - name: Locked dependencies and fail-closed verifier tests
+        run: |
+          uv sync --frozen
+          uv run --frozen ruff check apps/api/nex_api/ndsp_contract_preview.py \
+            apps/api/tests/test_ndsp_contract_preview.py \
+            apps/api/nex_api/ndsp_replay_preview.py \
+            apps/api/tests/test_ndsp_replay_postgres_preview.py \
+            apps/api/nex_api/ndsp_source_binding_preview.py \
+            apps/api/tests/test_ndsp_source_binding_preview.py
+          uv run --frozen mypy apps/api/nex_api
+          uv run --frozen pytest -q apps/api/tests/test_ndsp_contract_preview.py \
+            apps/api/tests/test_ndsp_publisher_golden_preview.py \
+            apps/api/tests/test_ndsp_source_slice_golden_preview.py \
+            apps/api/tests/test_ndsp_source_binding_preview.py
+          uv run --frozen python scripts/export-m1-openapi.py --check
+      - name: Disposable localhost PostgreSQL append-only tenant and replay proof
+        env:
+          M2B_PREVIEW_ADMIN_DSN: postgresql://m2b_fixture:synthetic-m2b-admin-only@127.0.0.1:5432/nex_m2b_preview
+        run: |
+          uv run --frozen pytest -q apps/api/tests/test_ndsp_replay_postgres_preview.py
+      - name: Verify no real NDSP bridge or execution interface is introduced
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import ast
+          source = Path('apps/api/nex_api/ndsp_contract_preview.py').read_text()
+          tree = ast.parse(source)
+          imports = {a.name.split('.')[0] for n in ast.walk(tree)
+                     if isinstance(n, (ast.Import, ast.ImportFrom))
+                     for a in (n.names if isinstance(n, ast.Import) else [])}
+          assert not imports.intersection({'httpx', 'requests', 'redis', 'subprocess'})
+          assert 'source_environment"] != "test"' in source
+          assert 'execution_authorized: bool = False' in source
+          assert not any(name in source for name in ('client.post(', 'submit_order(', 'fetch_decision('))
+          print('M2B_NO_RUNTIME_NDSP_OR_TRADING_BOUNDARY=PASS')
+          PY
