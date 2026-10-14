@@ -1,0 +1,61 @@
+# Synthetic source authority PROOF, never production integration/deployment.
+name: NEX M2-B L6 — Issuer Reservation Recovery Proof
+on:
+  pull_request:
+    branches: [test/m2b-l5-durable-source-authorization-20261014]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  disposable-issuer-recovery:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: nex_m2b_preview
+          POSTGRES_USER: m2b_fixture
+          POSTGRES_PASSWORD: synthetic-m2b-admin-only
+        ports:
+          - 127.0.0.1:5432:5432
+        options: >-
+          --health-cmd "pg_isready -U m2b_fixture -d nex_m2b_preview"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@v5
+      - name: Confirm absence of runtime NDSP connector/trading entrypoint
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import ast
+          s=Path('apps/api/nex_api/ndsp_source_issuer_l6_preview.py')
+          contents=s.read_text()
+          tree=ast.parse(contents)
+          imports=set()
+          for n in ast.walk(tree):
+              if isinstance(n,ast.Import):
+                  imports.update(a.name.split('.')[0] for a in n.names)
+              if isinstance(n,ast.ImportFrom) and n.module:
+                  imports.add(n.module.split('.')[0])
+          assert not imports.intersection({'fastapi','requests','httpx','socket','subprocess'})
+          for forbidden in ('submit_order(', 'place_order(', 'client.post(', 'https://'):
+              assert forbidden not in contents
+          assert 'verify_test_only_source_binding(' in contents
+          assert not Path('apps/api/alembic/versions/m2b_l6_source_issuer.py').exists()
+          print('M2B_L6_NO_REAL_SOURCE_OR_ORDER_SURFACE=PASS')
+          PY
+      - name: Durable database crash recovery and fail-closed scopes
+        shell: bash
+        env:
+          M2B_L6_ADMIN_DSN: postgresql://m2b_fixture:synthetic-m2b-admin-only@127.0.0.1:5432/nex_m2b_preview
+        run: bash scripts/m2b_l6_disposable_crash_acceptance.sh
