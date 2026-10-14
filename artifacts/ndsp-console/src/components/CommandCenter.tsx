@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BOT_NAME } from "../lib/bot-profile";
 import HealthPanel from "./HealthPanel";
 import IdentityPanel from "./IdentityPanel";
 import DemoDashboard from "../ndsp/DemoDashboard";
@@ -13,7 +14,7 @@ export default function CommandCenter() {
     <section className="panel">
       <h2>M1 foundation — acceptance pending</h2>
       <p className="notice">M1 NOT ACCEPTED. Administrator password + TOTP was verified against the isolated test provider; production/provider readiness and other independent assurance gates remain open. M2 is not authorized.</p>
-      <p className="muted">NAWAF has its own repository, database, authentication and audit boundary. It does not access or modify NDSP. No trading, exchange credentials or execution engine is present.</p>
+      <p className="muted">{BOT_NAME} has its own repository, database, authentication and audit boundary. It does not access or modify NDSP. No trading, exchange credentials or execution engine is present.</p>
     </section>
     <DemoDashboard />
     <div className="row"><h2>Real M1 foundation</h2><span className="tag">REAL API DATA · NOT A DEMO</span></div>
