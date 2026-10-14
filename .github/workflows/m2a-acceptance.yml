@@ -34,9 +34,8 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           module = Path('apps/api/nex_api/binance_closed_candles.py').read_text()
-          forbidden = ('/order', '/position', 'post(', 'put(', 'delete(', 'API_KEY', 'api_secret')
-          assert all(word not in module.lower() for word in
-                     ('/order', '/position', '.post(', '.put(', '.delete(', 'api_secret')))
+          forbidden = ('/order', '/position', '.post(', '.put(', '.delete(', 'api_secret')
+          assert all(word not in module.lower() for word in forbidden)
           assert 'follow_redirects=False' in module
           assert 'trust_env=False' in module
           assert module.count('client.get(') == 2
