@@ -45,6 +45,28 @@ decision, manipulate an NEX state machine, or alter NDSP.
 - Signing keys in unit tests are generated ephemerally for synthetic
   test vectors; **no private signing keys are included in code or CI.**
 
+## Source identity/version/evidence binding proof (test only)
+
+The new `ndsp_source_binding_preview.py` is a pure offline NEX function.
+After independently verifying an issuer test signature, it validates a
+separately supplied **synthetic CDS metadata tuple**, requiring exact source
+field names and explicit `CD-...` identity, monotonic test version field,
+symbol, market, timeframe, published/public status, UTC time order and SHA256
+of the allowlisted source tuple. It checks that the separately derived
+synthetic UUIDv5 equals the signed NEX UUID and that all critical signed
+fields agree. Any tampered source, version, missing field, private/unpublished
+state, invalid timestamp or unexpected protected field fails closed.
+The bridge never grants execution authority.
+
+The authoritative production CDS service still lacks an approved
+`decision_version`, source-to-UUID mapping, signed evidence provenance,
+tenant-bound read permission and production signing trust root. The use of
+`CD-TEST-20261014`, `__synthetic_version=1` and UUIDv5 namespace in
+the proof are **strictly unapproved test conventions**; no real NDSP record
+has been accepted. Source-side RFC
+`NDSP_NEX_INTERCHANGE_RFC_V1_DRAFT.md` is pending human governance review,
+and does NOT change the frozen NDSP-NEX-1.0 public contract.
+
 ## Source-derived CDS-001 signer proof (NDSP isolated Contabo branch)
 
 Separate from the prior synthetic standalone Kali issuer, we now copied
