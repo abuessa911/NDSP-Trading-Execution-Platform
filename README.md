@@ -1,8 +1,14 @@
-# NEX Trading Execution Platform
+# hunter_ksa1 bot — Trading Execution Platform
 
-NEX is a new, standalone foundation for a future decision-driven trading
-execution platform. It is independent of NDSP. The NEX Master Specification is
-the engineering source of truth; the NDSP platform report is product vision only.
+**Official bot name:** `hunter_ksa1 bot`.
+
+The bot is a standalone foundation for future decision-driven trading execution,
+independent of NDSP. The original engineering project used the temporary name
+NEX; historical specification references, `nex_api` modules, environment keys,
+repository paths and versioned API/cryptographic contracts retain that legacy
+identifier until an independently reviewed compatibility migration is approved.
+The Master Specification remains the engineering source of truth; the NDSP
+platform report remains product vision only.
 
 M0 Architecture Freeze and M1 Foundation are the only in-scope milestones for
 this build. No Binance integration, paper execution engine, or real-money
