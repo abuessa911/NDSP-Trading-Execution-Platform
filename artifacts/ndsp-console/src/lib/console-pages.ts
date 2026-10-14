@@ -25,7 +25,7 @@ export const userPages: ConsolePage[] = [
   { slug: "settings", title: "Settings", description: "Account identity, tenant, session security and local display preferences." },
   { slug: "security", title: "Security", description: "Current server-authoritative session assurance and authentication boundaries." },
   { slug: "activity", title: "Activity Preview", description: "Searchable synthetic activity examples, separate from protected M1 audit evidence.", milestone: "UI PREVIEW" },
-  { slug: "health", title: "Service Health", description: "Live liveness and readiness checks from the NAWAF control API." },
+  { slug: "health", title: "Service Health", description: "Live liveness and readiness checks from the hunter_ksa1 bot control API." },
   { slug: "audit", title: "Audit Access", description: "Audit access remains blocked pending independently verified administrative MFA." },
 ];
 
