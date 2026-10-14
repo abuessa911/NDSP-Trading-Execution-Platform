@@ -111,6 +111,7 @@ def _owner_record(
     tenant = _canonical_uuid(record.get("tenant_id"), "L7_TENANT_UNVERIFIED")
     symbol, timeframe = record.get("symbol"), record.get("timeframe")
     if (not isinstance(symbol, str) or not re.fullmatch(r"[A-Z0-9]{5,20}", symbol)
+            or not isinstance(timeframe, str)
             or timeframe not in {"5m", "15m", "4H"}):
         _deny("L7_SOURCE_CONTEXT_UNVERIFIED")
     return tenant, symbol, timeframe
