@@ -26,7 +26,9 @@ export default function LiveMarketPreview() {
     try {
       const params = new URLSearchParams({ market, symbol, interval });
       const response = await fetch("/preview/market/closed-candles?" + params.toString(), {
-        cache: "no-store", credentials: "omit", signal: AbortSignal.timeout(10000),
+        // The entire bot is protected with same-origin HTTP Basic authentication.
+        // "omit" drops the browser's login from this fetch and causes HTTP 401.
+        cache: "no-store", credentials: "same-origin", signal: AbortSignal.timeout(10000),
       });
       if (!response.ok) throw new Error("خدمة الشموع الحقيقية غير متاحة.");
       const raw: unknown = await response.json();
