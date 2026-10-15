@@ -85,6 +85,11 @@ test("UI keeps live verified data separate from demo data and never enables exec
   assert.match(source, /execution_authorized !== false/);
   assert.match(source, /orders_sent !== 0/);
   assert.match(source, /لا أوامر تداول/);
+  // Protected Basic-auth pages must forward the cached same-origin browser
+  // credentials to the read-only endpoint. Cross-origin requests stay excluded.
+  assert.match(source, /credentials: "same-origin"/);
+  assert.doesNotMatch(source, /credentials: "omit"/);
+  assert.match(source, /fetch\("/preview/market/closed-candles\?/);
   const server = readFileSync(new URL("../scripts/serve-static.mjs", import.meta.url), "utf8");
   assert.match(server, /HUNTER_READONLY_MARKET_PREVIEW === "true"/);
   assert.match(server, /127\.0\.0\.1/);
