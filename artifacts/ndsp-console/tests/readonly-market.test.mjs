@@ -89,7 +89,7 @@ test("UI keeps live verified data separate from demo data and never enables exec
   // credentials to the read-only endpoint. Cross-origin requests stay excluded.
   assert.match(source, /credentials: "same-origin"/);
   assert.doesNotMatch(source, /credentials: "omit"/);
-  assert.match(source, /fetch\("/preview/market/closed-candles\?/);
+  assert.ok(source.includes('fetch("/preview/market/closed-candles?'));
   const server = readFileSync(new URL("../scripts/serve-static.mjs", import.meta.url), "utf8");
   assert.match(server, /HUNTER_READONLY_MARKET_PREVIEW === "true"/);
   assert.match(server, /127\.0\.0\.1/);
