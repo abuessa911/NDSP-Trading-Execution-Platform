@@ -1,0 +1,46 @@
+name: hunter_ksa1 bot — Closed Candles Read-Only QA
+on:
+  pull_request:
+    branches: [release/hunter-ksa1-bot-safe-preview-20261014]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  no-trading-market-preview:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: pnpm
+      - name: Verify adapter no order, credential, or NDSP access surface
+        run: |
+          node --test artifacts/ndsp-console/tests/readonly-market.test.mjs
+      - name: Locked workspace install
+        run: pnpm install --frozen-lockfile
+      - name: Static console Next.js production build
+        env:
+          BASE_PATH: /
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: pnpm --filter @workspace/ndsp-console run build
+      - name: Typecheck complete console
+        run: pnpm --filter @workspace/ndsp-console run typecheck
+      - name: Export and read-only dashboard regression tests
+        run: pnpm --filter @workspace/ndsp-console run test
+      - name: No protected credentials or trade routes in static build
+        run: |
+          test -f artifacts/ndsp-console/out/index.html
+          grep -qi "hunter_ksa1 bot" artifacts/ndsp-console/out/index.html
+          test -f artifacts/ndsp-console/out/markets/index.html
+          if grep -ERq 'SECRET_KEY=|BEGIN PRIVATE KEY|__Secure-nex_session=' artifacts/ndsp-console/out --include='*.html'; then
+            echo 'REFUSE_SENSITIVE_EXPORTED_UI'
+            exit 1
+          fi
+          echo 'HUNTER_CLOSED_CANDLE_READONLY_QA=PASS'

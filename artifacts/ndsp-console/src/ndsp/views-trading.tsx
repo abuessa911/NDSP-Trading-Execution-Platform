@@ -6,6 +6,7 @@ import { Tx, Async, Chip, DemoBanner, DataGrid, KV, Kpi, LineChart, Meter, Pnl, 
 import { useI18n } from "./i18n";
 import { replaySeries, strategySketch, timelineSteps, traceNotes } from "./mocks/demo-data";
 import PreviewChart from "./PreviewCharts";
+import LiveMarketPreview from "./LiveMarketPreview";
 import type { Market, Order, Position, Signal, SignalStage, Strategy, Trade } from "./types";
 
 const uniq = <T,>(rows: T[], f: (r: T) => string) => [...new Set(rows.map(f))];
@@ -13,7 +14,7 @@ const uniq = <T,>(rows: T[], f: (r: T) => string) => [...new Set(rows.map(f))];
 export function MarketsView() {
   const q = useDemo(marketService.list); const { t } = useI18n();
   const [fav, setFav] = useState<Set<string>>(new Set(["BTCUSDT"])); const [onlyFav, setOnlyFav] = useState(false);
-  return <><DemoBanner />
+  return <><LiveMarketPreview /><DemoBanner />
     <Async q={q} rows={6}>{rows => {
       const list = rows.filter(r => !onlyFav || fav.has(r.symbol));
       const cols: Col<Market>[] = [
