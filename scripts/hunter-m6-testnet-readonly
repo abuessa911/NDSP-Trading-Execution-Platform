@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+umask 077
+[[ "$(id -u)" == 0 ]] || { echo STATUS=BLOCKED_ROOT_REQUIRED >&2; exit 2; }
+ROOT=/opt/hunter_ksa1-bot
+export PYTHONPATH="$ROOT/apps/api${PYTHONPATH:+:$PYTHONPATH}"
+exec "$ROOT/.venv-qa/bin/python" -m nex_api.hunter_m6_research_testnet "$@"

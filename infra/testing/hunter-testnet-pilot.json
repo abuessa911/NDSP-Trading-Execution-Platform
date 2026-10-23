@@ -1,0 +1,11 @@
+{
+  "mode": "testnet",
+  "mainnet_enabled": false,
+  "symbol": "BTCUSDT",
+  "strategy": "ema20_50_long_only",
+  "daily_loss_pct": "2",
+  "trade_risk_pct": "0.5",
+  "max_exposure_pct": "10",
+  "stop_pct": "1",
+  "margin_mode": "CROSS"
+}

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Operator-only private Binance Futures Testnet runner.
+set -Eeuo pipefail
+umask 077
+[[ "$(id -u)" == 0 ]] || { echo "STATUS=BLOCKED_ROOT_ONLY" >&2; exit 2; }
+ROOT=/opt/hunter_ksa1-bot
+export PYTHONPATH="$ROOT/apps/api${PYTHONPATH:+:$PYTHONPATH}"
+exec "$ROOT/.venv-qa/bin/python" -m nex_api.hunter_m5_testnet_pilot \
+  --config /etc/hunter-ksa1-execution/config.json \
+  --state /var/lib/hunter-ksa1-execution/testnet-state.json "$@"
