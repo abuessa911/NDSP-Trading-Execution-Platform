@@ -1,19 +1,43 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Star, Play, Pause } from "lucide-react";
-import { marketService, orderService, positionService, signalService, strategyService, tradeService } from "./services";
+import { marketService, signalService, strategyService } from "./services";
 import { Tx, Async, Chip, DemoBanner, DataGrid, KV, Kpi, LineChart, Meter, Pnl, Section, money, num, useDemo, type Col } from "./ui";
 import { useI18n } from "./i18n";
 import { replaySeries, strategySketch, timelineSteps, traceNotes } from "./mocks/demo-data";
 import PreviewChart from "./PreviewCharts";
 import LiveMarketPreview from "./LiveMarketPreview";
-import type { Market, Order, Position, Signal, SignalStage, Strategy, Trade } from "./types";
+import HunterControlPanel from "../components/HunterControlPanel";
+import TestnetExecutionPanel from "../components/TestnetExecutionPanel";
+import HunterStrategyScannerPanel from "../components/HunterStrategyScannerPanel";
+import HunterExecutionReviewPanel from "../components/HunterExecutionReviewPanel";
+import HunterTradingPreferencesPanel from "../components/HunterTradingPreferencesPanel";
+import PaperBrokerPanel from "../components/PaperBrokerPanel";
+import type { Market, Signal, SignalStage, Strategy } from "./types";
 
 const uniq = <T,>(rows: T[], f: (r: T) => string) => [...new Set(rows.map(f))];
 
 export function MarketsView() {
   const q = useDemo(marketService.list); const { t } = useI18n();
   const [fav, setFav] = useState<Set<string>>(new Set(["BTCUSDT"])); const [onlyFav, setOnlyFav] = useState(false);
+  const [favoritesLoaded, setFavoritesLoaded] = useState(false);
+  useEffect(() => {
+    try {
+      const value = localStorage.getItem("hunter-ksa1-preview-favorites-v1");
+      if (value !== null) {
+        const saved: unknown = JSON.parse(value);
+        if (Array.isArray(saved) && saved.length <= 100 && saved.every(x => typeof x === "string" && /^[A-Z0-9]{2,16}$/.test(x))) {
+          setFav(new Set(saved));
+        }
+      }
+    } catch { /* Browser storage is optional for preview favorites. */ }
+    setFavoritesLoaded(true);
+  }, []);
+  useEffect(() => {
+    if (!favoritesLoaded) return;
+    try { localStorage.setItem("hunter-ksa1-preview-favorites-v1", JSON.stringify([...fav])); }
+    catch { /* Preview controls remain available without browser storage. */ }
+  }, [fav, favoritesLoaded]);
   return <><LiveMarketPreview /><DemoBanner />
     <Async q={q} rows={6}>{rows => {
       const list = rows.filter(r => !onlyFav || fav.has(r.symbol));
@@ -31,105 +55,66 @@ export function MarketsView() {
         { key: "pos", label: "Position", value: r => r.position },
       ];
       return <Section title="Markets" aside={<label className="field-inline check"><input type="checkbox" checked={onlyFav} onChange={e => setOnlyFav(e.target.checked)} /><span>{t("Favorites")}</span></label>}>
-        <p className="muted"><Tx>{"Watchlist stars live in this tab only; they are not saved. Prices are static demo values and do not tick."}</Tx></p>
+        <p className="muted"><Tx>{"Preview favorites are saved in this browser. The table below still contains static demo prices; use the separate read-only live market panel for verified candles."}</Tx></p>
         <DataGrid rows={list} cols={cols} label="markets" detailTitle={r => r.symbol} filters={[{ label: "Signal", options: ["Buy", "Sell", "Neutral"], pick: r => r.signal }, { label: "Bot", options: ["Trading", "Watching", "Idle"], pick: r => r.bot }]} empty={{ title: "Nothing here", text: "No markets match. Clear filters or the favorites toggle." }} />
       </Section>;
     }}</Async></>;
 }
 
 export function TerminalView() {
-  const { t } = useI18n();
-  const q = useDemo(marketService.list); const [sym, setSym] = useState("BTCUSDT"); const [tf, setTf] = useState("1h"); const [side, setSide] = useState<"Buy" | "Sell">("Buy");
-  return <><DemoBanner what="Chart area and order ticket are placeholders. Buy/Sell cannot submit; no order is created anywhere." />
-    <Async q={q} rows={5}>{rows => {
-      const m = rows.find(r => r.symbol === sym) ?? rows[0];
-      return <div className="terminal">
-        <Section title="Markets" className="t-list"><ul className="sym-list">{rows.map(r => <li key={r.id}><button className={r.symbol === sym ? "active" : ""} aria-pressed={r.symbol === sym} onClick={() => setSym(r.symbol)}><span>{r.symbol}</span><Pnl v={r.change24h} money={false} /></button></li>)}</ul></Section>
-        <section className="panel t-chart"><div className="row"><div><h2>{m.symbol}</h2><span className="big-price mono">{num(m.price)}</span> <Pnl v={m.change24h} money={false} /></div>
-          <div className="seg" role="group" aria-label={t("Timeframe")}>{["1m", "5m", "15m", "30m", "1h", "4h", "1D", "1W"].map(x => <button key={x} aria-pressed={x === tf} className={x === tf ? "on" : ""} onClick={() => setTf(x)}>{x}</button>)}</div></div>
-          <PreviewChart values={m.spark.map(value => m.price * (1 + (value - 50) / 1000))} label={`${m.symbol} synthetic illustrative price path`} unit="USDT" />
-          <p className="muted"><Tx>{"Future chart integration slot. Timeframe "}</Tx>{tf}<Tx>{" changes the selector only; these are synthetic samples, not historical candles."}</Tx></p>
-          <div className="stat-row"><Kpi label="High" value={num(m.price * 1.012)} /><Kpi label="Low" value={num(m.price * 0.981)} /><Kpi label="Volume" value={m.volume} /><Kpi label="Volatility" value={String(m.volatility)} /></div></section>
-        <section className="panel t-ticket"><h2><Tx>{"Order ticket"}</Tx></h2><span className="tag"><Tx>{"UNCONNECTED · DEMO UI"}</Tx></span>
-          <div className="seg full" role="group" aria-label={t("Side")}><button className={side === "Buy" ? "on gain-bg" : ""} aria-pressed={side === "Buy"} onClick={() => setSide("Buy")}><Tx>{"Buy"}</Tx></button><button className={side === "Sell" ? "on loss-bg" : ""} aria-pressed={side === "Sell"} onClick={() => setSide("Sell")}><Tx>{"Sell"}</Tx></button></div>
-          <label className="field"><span><Tx>{"Quantity"}</Tx></span><input disabled placeholder="0.000" /></label>
-          <button className="button wide" disabled><Tx>{side}</Tx> {m.symbol}<Tx>{" unavailable"}</Tx></button>
-          <p className="muted"><Tx>{"Execution is not implemented. M1 NOT ACCEPTED."}</Tx></p>
-          <KV rows={[["Strategy", m.strategy], ["Signal", m.signal], ["Position", m.position], ["Execution allowance", "Blocked (demo)"]]} /></section>
-      </div>;
-    }}</Async></>;
+  const { lang } = useI18n();
+  return <><HunterControlPanel /><HunterTradingPreferencesPanel /><TestnetExecutionPanel /><HunterStrategyScannerPanel /><HunterExecutionReviewPanel /><LiveMarketPreview /><PaperBrokerPanel />
+    <section className="panel">
+      <h2>{lang === "ar" ? "إرسال الأوامر" : "Order submission"}</h2>
+      <p className="notice">{lang === "ar"
+        ? "التنفيذ الحي غير مفعّل. إعدادات الأصل والفريم والنمط والرافعة تُؤكَّد من الشريط الموحد أعلاه."
+        : "Live execution is disabled. Confirm asset, timeframe, style and leverage in the shared settings above."}</p>
+      <p className="muted">{lang === "ar" ? "أزرار المحاكاة تسجل أوامر افتراضية فقط؛ لا ترسل أوامر للبورصة." : "Simulation buttons record virtual orders only; no orders are sent to an exchange."}</p>
+    </section>
+  </>;
 }
 
 export function PositionsView() {
-  const q = useDemo(positionService.list);
-  return <><DemoBanner /><Async q={q} rows={4}>{rows => {
-    const cols: Col<Position>[] = [
-      { key: "symbol", label: "Symbol", value: r => r.symbol, render: r => <strong>{r.symbol}</strong> },
-      { key: "side", label: "Side", value: r => r.side, render: r => <Chip tone={r.side === "LONG" ? "ok" : "bad"}>{r.side}</Chip> },
-      { key: "size", label: "Size", value: r => r.size, numeric: true, render: r => num(r.size) },
-      { key: "entry", label: "Entry", value: r => r.entry, numeric: true, render: r => num(r.entry) },
-      { key: "mark", label: "Mark", value: r => r.mark, numeric: true, render: r => num(r.mark) },
-      { key: "lev", label: "Leverage", value: r => r.leverage, numeric: true, render: r => `${r.leverage}x` },
-      { key: "margin", label: "Margin", value: r => r.margin, numeric: true, render: r => money(r.margin) },
-      { key: "pnl", label: "Unrealized P&L", value: r => r.pnl, numeric: true, render: r => <Pnl v={r.pnl} /> },
-      { key: "stop", label: "Stop", value: r => r.stop, numeric: true, render: r => (r.stop ? num(r.stop) : "none") },
-      { key: "target", label: "Target", value: r => r.target, numeric: true, render: r => num(r.target) },
-      { key: "strategy", label: "Strategy", value: r => r.strategy }, { key: "opened", label: "Opened", value: r => r.opened },
-      { key: "status", label: "Status", value: r => r.status, render: r => <Chip tone={r.status === "Protected" ? "ok" : "warn"}>{r.status}</Chip> },
-    ];
-    return <><div className="stat-row"><Kpi label="Open positions" value={String(rows.length)} /><Kpi label="Unrealized P&L" value={money(rows.reduce((a, r) => a + r.pnl, 0))} tone="gain" /><Kpi label="Margin used" value={money(rows.reduce((a, r) => a + r.margin, 0))} /></div>
-      <Section title="Positions"><DataGrid rows={rows} cols={cols} label="positions" detailTitle={r => `${r.symbol} ${r.side}`} filters={[{ label: "Side", options: ["LONG", "SHORT"], pick: r => r.side }, { label: "Status", options: uniq(rows, r => r.status), pick: r => r.status }]}
-        detailExtra={r => <><p className="muted"><Tx>{"Entry to target range"}</Tx></p><Meter pct={Math.max(0, Math.min(100, ((r.mark - r.entry) / (r.target - r.entry)) * 100))} label="Progress to target" /></>}
-        empty={{ title: "Nothing here", text: "No open positions in the demo dataset match this view." }} /></Section></>;
-  }}</Async></>;
+  return <PaperBrokerPanel view="positions" />;
 }
 
 export function OrdersView() {
-  const { t } = useI18n();
-  const q = useDemo(orderService.list); const [tab, setTab] = useState("All");
-  return <><DemoBanner /><Async q={q} rows={4}>{rows => {
-    const cols: Col<Order>[] = [
-      { key: "id", label: "Order ID", value: r => r.id, render: r => <span className="mono">{r.id}</span> }, { key: "symbol", label: "Symbol", value: r => r.symbol },
-      { key: "side", label: "Side", value: r => r.side, render: r => <Chip tone={r.side === "BUY" ? "ok" : "bad"}>{r.side}</Chip> }, { key: "type", label: "Type", value: r => r.type },
-      { key: "qty", label: "Quantity", value: r => r.qty, numeric: true, render: r => num(r.qty) }, { key: "price", label: "Price", value: r => r.price, numeric: true, render: r => num(r.price) },
-      { key: "filled", label: "Filled", value: r => r.filled, numeric: true, render: r => `${Math.round((r.filled / r.qty) * 100)}%` },
-      { key: "status", label: "Status", value: r => r.status, render: r => <Chip tone={r.status === "Filled" ? "ok" : r.status === "Rejected" ? "bad" : r.status === "Open" ? "info" : "mute"}>{r.status}</Chip> },
-      { key: "strategy", label: "Strategy", value: r => r.strategy }, { key: "created", label: "Created", value: r => r.created }, { key: "updated", label: "Updated", value: r => r.updated },
-    ];
-    return <Section title="Orders"><div className="seg" role="tablist" aria-label="Order status">{["All", "Open", "Filled", "Cancelled", "Rejected"].map(s => <button key={s} role="tab" aria-selected={tab === s} className={tab === s ? "on" : ""} onClick={() => setTab(s)}>{t(s)}</button>)}</div>
-      <DataGrid rows={tab === "All" ? rows : rows.filter(r => r.status === tab)} cols={cols} label="orders" detailTitle={r => r.id} detailExtra={r => <p className="notice">{r.note}</p>} empty={{ title: "Nothing here", text: "No orders in this state." }} /></Section>;
-  }}</Async></>;
+  return <PaperBrokerPanel view="orders" />;
 }
 
 export function TradesView() {
-  const q = useDemo(tradeService.list);
-  return <><DemoBanner /><Async q={q} rows={4}>{rows => {
-    const cols: Col<Trade>[] = [
-      { key: "symbol", label: "Symbol", value: r => r.symbol }, { key: "dir", label: "Direction", value: r => r.direction },
-      { key: "entry", label: "Entry", value: r => r.entry, numeric: true, render: r => num(r.entry) }, { key: "exit", label: "Exit", value: r => r.exit, numeric: true, render: r => num(r.exit) },
-      { key: "qty", label: "Quantity", value: r => r.qty, numeric: true }, { key: "pnl", label: "Realized P&L", value: r => r.pnl, numeric: true, render: r => <Pnl v={r.pnl} /> },
-      { key: "fees", label: "Fees", value: r => r.fees, numeric: true, render: r => money(r.fees) }, { key: "strategy", label: "Strategy", value: r => r.strategy }, { key: "tf", label: "Timeframe", value: r => r.timeframe },
-      { key: "opened", label: "Opened", value: r => r.opened }, { key: "closed", label: "Closed", value: r => r.closed }, { key: "dur", label: "Duration", value: r => r.duration },
-      { key: "result", label: "Result", value: r => r.result, render: r => <Chip tone={r.result === "Win" ? "ok" : "bad"}>{r.result}</Chip> },
-    ];
-    return <Section title="Trade History"><DataGrid rows={rows} cols={cols} label="trades" detailTitle={r => `${r.symbol} ${r.direction}`} empty={{ title: "Nothing here", text: "No closed trades match." }}
-      filters={[{ label: "Sample day", options: uniq(rows, r => r.closed.split(" ")[0]), pick: r => r.closed.split(" ")[0] }, { label: "Symbol", options: uniq(rows, r => r.symbol), pick: r => r.symbol }, { label: "Strategy", options: uniq(rows, r => r.strategy), pick: r => r.strategy }, { label: "Result", options: ["Win", "Loss"], pick: r => r.result }, { label: "Direction", options: ["LONG", "SHORT"], pick: r => r.direction }]} /></Section>;
-  }}</Async></>;
+  return <PaperBrokerPanel view="history" />;
+}
+
+function strategyUpdateLabel(value: string, lang: "ar" | "en"): string {
+  if (lang !== "ar") return value;
+  const match = /^(\d+)([mh]) ago$/.exec(value);
+  if (!match) return value;
+  const count = Number(match[1]);
+  const digits = count.toLocaleString("ar-SA");
+  if (match[2] === "m") return count === 1 ? "قبل دقيقة" : count === 2 ? "قبل دقيقتين" : `قبل ${digits} ${count >= 3 && count <= 10 ? "دقائق" : "دقيقة"}`;
+  return count === 1 ? "قبل ساعة" : count === 2 ? "قبل ساعتين" : `قبل ${digits} ${count >= 3 && count <= 10 ? "ساعات" : "ساعة"}`;
+}
+function strategySignalLabel(value: string, t: (s: string) => string): string {
+  const match = /^(Buy|Sell) ([A-Z0-9]+) · (\d{2}:\d{2})$/.exec(value);
+  return match ? `${t(match[1])} ${match[2]} · ${match[3]}` : t(value);
 }
 
 export function StrategiesView() {
-  const q = useDemo(strategyService.list); const [sel, setSel] = useState<string | null>(null); const [over, setOver] = useState<Record<string, Strategy["state"]>>({});
-  return <><DemoBanner what="State toggles below change this preview only. They do not start, stop or configure any real strategy." />
+  const { lang, t } = useI18n();
+  const q = useDemo(strategyService.list); const [sel, setSel] = useState<string | null>(null);
+  return <><HunterStrategyScannerPanel /><DemoBanner what="Historical strategy metrics and signals below remain synthetic examples; only the scanner above reads live closed candles." />
     <Async q={q} rows={4}>{rows => {
-      const cur = rows.find(r => r.id === sel); const st = (s: Strategy) => over[s.id] ?? s.state;
+      const cur = rows.find(r => r.id === sel); const st = (s: Strategy) => s.state;
       return <div className="split"><div className="strategy-list">{rows.map(s => <article key={s.id} className={`strategy ${sel === s.id ? "sel" : ""}`}>
-        <header><button className="linkish" onClick={() => setSel(s.id)} aria-pressed={sel === s.id}><h3>{s.name}</h3></button><Chip tone={st(s) === "Active" ? "ok" : st(s) === "Paused" ? "warn" : "mute"}>{st(s)}</Chip></header>
-        <p className="muted">{s.markets.join(" · ")} · {s.timeframe}</p>
+        <header><button className="linkish" onClick={() => setSel(s.id)} aria-pressed={sel === s.id}><h3>{t(s.name)}</h3></button><Chip tone={st(s) === "Active" ? "ok" : st(s) === "Paused" ? "warn" : "mute"}>{st(s)}</Chip></header>
+        <p className="muted"><bdi dir="ltr">{s.markets.join(" · ")} · {s.timeframe}</bdi></p>
         <div className="stat-row tight"><Kpi label="Win rate" value={`${s.winRate}%`} /><Kpi label="P&L" value={money(s.pnl)} tone={s.pnl >= 0 ? "gain" : "loss"} /><Kpi label="Trades" value={String(s.trades)} /></div>
-         <p className="muted"><Tx>{"Risk allocation "}</Tx>{s.risk}%</p><Meter pct={s.risk} label={`${s.name} risk allocation`} />
+        <p className="muted">{t("Risk allocation")}: <bdi dir="ltr">{s.risk}%</bdi></p>
+        <Meter pct={s.risk} label={`${t("Risk allocation")} — ${t(s.name)}`} />
         <div className="row"><button className="button small" onClick={() => setSel(s.id)}><Tx>{"Details"}</Tx></button>
-          <button className="button small" onClick={() => setOver(o => ({ ...o, [s.id]: st(s) === "Active" ? "Paused" : "Active" }))}>{st(s) === "Active" ? <><Pause size={12} aria-hidden /><Tx>{"Preview pause"}</Tx></> : <><Play size={12} aria-hidden /><Tx>{"Preview enable"}</Tx></>}</button></div></article>)}</div>
-        <section className="panel" aria-live="polite">{cur ? <><h2>{cur.name}</h2><p><Tx>{cur.note}</Tx></p><KV rows={[["State", st(cur)], ["Markets", cur.markets.join(", ")], ["Timeframe", cur.timeframe], ["Last signal", cur.lastSignal], ["Updated", cur.updated], ["Configuration", "Read-only preview"]]} />
+</div></article>)}</div>
+        <section className="panel" aria-live="polite">{cur ? <><h2>{t(cur.name)}</h2><p><Tx>{cur.note}</Tx></p><KV rows={[["State", t(st(cur))], ["Markets", cur.markets.join(", ")], ["Timeframe", cur.timeframe], ["Last signal", strategySignalLabel(cur.lastSignal, t)], ["Updated", strategyUpdateLabel(cur.updated, lang)], ["Configuration", t("Read-only preview")]]} />
            <LineChart data={strategySketch.map(v => v * (cur.pnl >= 0 ? 1 : -1))} height={90} label="Synthetic performance sketch, not reported strategy returns" /></> : <p className="muted"><Tx>{"Select a strategy to inspect its overview."}</Tx></p>}</section></div>;
     }}</Async></>;
 }
@@ -156,11 +141,20 @@ export function TraceView() {
 }
 
 export function ReplayView() {
-   const [pos, setPos] = useState(40);
-  return <><DemoBanner what="Synthetic series, scrubber only. No historical replay runs." /><Section title="Replay Lab">
-     <PreviewChart values={replaySeries.slice(0, Math.max(2, Math.round((pos / 100) * replaySeries.length)))} label="Synthetic replay preview" unit="index" />
-    <label className="field"><span><Tx>{"Position "}</Tx>{pos}%</span><input type="range" min={5} max={100} value={pos} onChange={e => setPos(Number(e.target.value))} /></label>
-    <button className="button" disabled><Tx>{"Start isolated replay unavailable"}</Tx></button></Section></>;
+  const [pos, setPos] = useState(40);
+  const [playing, setPlaying] = useState(false);
+  useEffect(() => {
+    if (!playing) return;
+    const timer = window.setInterval(() => setPos(p => Math.min(100, p + 5)), 350);
+    return () => window.clearInterval(timer);
+  }, [playing]);
+  useEffect(() => { if (pos >= 100 && playing) setPlaying(false); }, [pos, playing]);
+  return <><DemoBanner what="Synthetic sample playback only. No historical candles, trades, or real replay engine are used." /><Section title="Replay Lab">
+    <PreviewChart values={replaySeries.slice(0, Math.max(2, Math.round((pos / 100) * replaySeries.length)))} label="Synthetic replay preview" unit="index" />
+    <label className="field"><span><Tx>{"Position "}</Tx>{pos}%</span><input type="range" min={5} max={100} value={pos} onChange={e => { setPos(Number(e.target.value)); setPlaying(false); }} /></label>
+    <button type="button" className="button" aria-pressed={playing} onClick={() => { if (pos >= 100) setPos(5); setPlaying(p => !p); }}>
+      <Tx>{playing ? "Pause synthetic playback" : "Play synthetic sample"}</Tx>
+    </button></Section></>;
 }
 
 

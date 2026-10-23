@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+import Link from "../components/DocumentLink";
 import { AlertTriangle, Link2Off, ShieldCheck } from "lucide-react";
 import { alertService, analyticsService, auditService, healthService, riskService } from "./services";
 import { Tx, Async, Chip, DataGrid, DemoBanner, EmptyState, Kpi, KV, Meter, money, Pnl, Section, useDemo, type Col } from "./ui";
@@ -64,6 +64,31 @@ export function AlertsView() {
   const [ack, setAck] = useState<Set<string>>(new Set());
   const [read, setRead] = useState<Set<string>>(new Set());
   const [tab, setTab] = useState("All");
+  const [alertsLoaded, setAlertsLoaded] = useState(false);
+  useEffect(() => {
+    try {
+      const value = localStorage.getItem("hunter-ksa1-preview-alert-flags-v1");
+      if (value) {
+        const parsed: unknown = JSON.parse(value);
+        if (parsed && typeof parsed === "object") {
+          const flags = parsed as Record<string, unknown>;
+          const safeIds = (items: unknown): items is string[] =>
+            Array.isArray(items) && items.length <= 500 &&
+            items.every(item => typeof item === "string" && item.length > 0 && item.length <= 80);
+          if (safeIds(flags.read)) setRead(new Set(flags.read));
+          if (safeIds(flags.ack)) setAck(new Set(flags.ack));
+        }
+      }
+    } catch { /* Browser storage is optional for preview actions. */ }
+    setAlertsLoaded(true);
+  }, []);
+  useEffect(() => {
+    if (!alertsLoaded) return;
+    try {
+      localStorage.setItem("hunter-ksa1-preview-alert-flags-v1",
+        JSON.stringify({ read: [...read], ack: [...ack] }));
+    } catch { /* Read and acknowledged preview states still work in this tab. */ }
+  }, [read, ack, alertsLoaded]);
   const cols: Col<Alert>[] = [
     { key: "time", label: "Time", value: row => row.time },
     { key: "severity", label: "Severity", value: row => row.severity, render: row => <Chip tone={row.severity === "Critical" ? "bad" : row.severity === "Warning" ? "warn" : "info"}>{row.severity}</Chip> },
@@ -71,12 +96,12 @@ export function AlertsView() {
     { key: "subject", label: "Subject", value: row => row.subject },
     { key: "status", label: "Status", value: row => ack.has(row.id) ? "Acknowledged" : read.has(row.id) ? "Read" : "Unread" },
   ];
-  return <><DemoBanner what="Read/acknowledgment actions only change this local preview. No alert is acknowledged in any backend." />
+  return <><DemoBanner what="Read and acknowledgment actions are saved in this browser as preview only. No alert is acknowledged in any backend." />
     <Async q={q}>{rows => <Section title="Alert center"><div className="seg" role="group" aria-label={t("Alert status")}>{["All", "Unread", "Read", "Acknowledged"].map(value => <button key={value} className={value === tab ? "on" : ""} aria-pressed={value === tab} onClick={() => setTab(value)}>{t(value)}</button>)}</div>
       <DataGrid rows={rows.filter(row => tab === "All" || (tab === "Acknowledged" ? ack.has(row.id) : tab === "Read" ? read.has(row.id) && !ack.has(row.id) : !read.has(row.id) && !ack.has(row.id)))} cols={cols} label="alerts" detailTitle={row => row.title}
         filters={[{ label: "Severity", options: ["Information", "Warning", "Critical"], pick: row => row.severity }, { label: "Category", options: ["Trading", "Risk", "Strategy", "Exchange", "System", "Security"], pick: row => row.category }]}
         detailExtra={row => <><p className={row.severity === "Critical" ? "notice" : "inline-note"}>{t(row.message)}</p><div className="demo-actions"><button className="button" onClick={() => setRead(value => new Set(value).add(row.id))}>{t("Mark read in preview")}</button><button className="button" disabled={ack.has(row.id)} onClick={() => setAck(value => new Set(value).add(row.id))}>{t("Acknowledge in preview")}</button></div></>}
-        empty={{ title: "Nothing here", text: "No demo alerts match this status or filter. Local acknowledgment is not persisted." }} />
+        empty={{ title: "Nothing here", text: "No demo alerts match this status or filter. Preview acknowledgment is saved in this browser only." }} />
     </Section>}</Async></>;
 }
 
@@ -86,21 +111,69 @@ export function ExchangeView() {
     <Section title="Exchange boundary" aside={<Link2Off size={18} aria-hidden />}><p className="notice"><Tx>{"Actual exchange access: NOT CONNECTED. Binance integration is outside M1."}</Tx></p>
       <label className="field"><span><Tx>{"Inspect a demo connection state"}</Tx></span><select value={state} onChange={e => setState(e.target.value)}><option value="Disconnected"><Tx>{"Disconnected"}</Tx></option><option value="Degraded"><Tx>{"Degraded"}</Tx></option><option value="Connected example"><Tx>{"Connected example"}</Tx></option></select></label>
       <KV rows={[["Exchange", "Binance · UI placeholder"], ["Illustrative state", `${state} — DEMO ONLY`], ["Mode", "Testnet presentation · not configured"], ["API status", "Not queried"], ["Credentials", "Not supplied · never collected by this preview"], ["Permissions", "Illustrative trade permission; withdrawal always unavailable"], ["Last verification", "No real verification performed"]]} />
-      <button className="button" disabled><Tx>{"Configure connection — unavailable"}</Tx></button>
+      <Link className="button" href="/markets/"><Tx>{"Open read-only market panel"}</Tx></Link>
     </Section></>;
 }
+
+const previewBotSettingsKey = "hunter-ksa1-bot-preview-preferences-v1";
+const previewMarkets = ["BTCUSDT", "ETHUSDT", "SOLUSDT"];
+const previewTimeframes = ["5m", "15m", "1h", "4h"];
 
 export function BotSettingsView() {
   const [name, setName] = useState(BOT_NAME), [market, setMarket] = useState("BTCUSDT"), [timeframe, setTimeframe] = useState("1h");
   const [risk, setRisk] = useState("1"), [notify, setNotify] = useState(true);
-  return <><DemoBanner what="Draft bot preferences are local component state only. They reset on reload and are never saved or applied." /><Section title="Bot settings preview">
+  const [saveMessage, setSaveMessage] = useState("");
+  const { t } = useI18n();
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(previewBotSettingsKey);
+      if (!raw) return;
+      const saved: unknown = JSON.parse(raw);
+      if (!saved || typeof saved !== "object") return;
+      const item = saved as Record<string, unknown>;
+      if (item.version !== 1) return;
+      if (typeof item.name === "string" && item.name.length > 0 && item.name.length <= 60) setName(item.name);
+      if (typeof item.market === "string" && previewMarkets.includes(item.market)) setMarket(item.market);
+      if (typeof item.timeframe === "string" && previewTimeframes.includes(item.timeframe)) setTimeframe(item.timeframe);
+      if (typeof item.risk === "string" && Number.isFinite(Number(item.risk)) && Number(item.risk) >= 0.1 && Number(item.risk) <= 5) setRisk(item.risk);
+      if (typeof item.notify === "boolean") setNotify(item.notify);
+    } catch {
+      setSaveMessage("Preview preferences could not be loaded from this browser.");
+    }
+  }, []);
+  function savePreview() {
+    const positionRisk = Number(risk);
+    if (!name.trim() || name.length > 60 || !Number.isFinite(positionRisk) || positionRisk < 0.1 || positionRisk > 5) {
+      setSaveMessage("Enter a valid preview name and position risk between 0.1% and 5%.");
+      return;
+    }
+    try {
+      localStorage.setItem(previewBotSettingsKey, JSON.stringify({
+        version: 1, name: name.trim(), market, timeframe, risk: String(positionRisk), notify,
+      }));
+      setSaveMessage("Preview preferences saved in this browser only. No trading configuration changed.");
+    } catch {
+      setSaveMessage("Could not save preview preferences in this browser.");
+    }
+  }
+  function resetPreview() {
+    setName(BOT_NAME); setMarket("BTCUSDT"); setTimeframe("1h"); setRisk("1"); setNotify(true);
+    try {
+      localStorage.removeItem(previewBotSettingsKey);
+      setSaveMessage("Preview preferences reset in this browser.");
+    } catch {
+      setSaveMessage("Could not clear preview preferences in this browser.");
+    }
+  }
+  return <><DemoBanner what="These sample bot preferences are stored in this browser only when you save them. They never change the server bot, trading strategy, margin, or exchange settings." /><Section title="Bot settings preview">
     <div className="preview-grid"><label className="field"><span><Tx>{"Demo bot name"}</Tx></span><input value={name} maxLength={60} onChange={e => setName(e.target.value)} /></label>
       <label className="field"><span><Tx>{"Default market"}</Tx></span><select value={market} onChange={e => setMarket(e.target.value)}>{["BTCUSDT", "ETHUSDT", "SOLUSDT"].map(v => <option key={v}>{v}</option>)}</select></label>
       <label className="field"><span><Tx>{"Timeframe"}</Tx></span><select value={timeframe} onChange={e => setTimeframe(e.target.value)}>{["5m", "15m", "1h", "4h"].map(v => <option key={v}>{v}</option>)}</select></label>
       <label className="field"><span><Tx>{"Illustrative position risk (%)"}</Tx></span><input type="number" min="0.1" max="5" step="0.1" value={risk} onChange={e => setRisk(e.target.value)} /></label></div>
     <label className="field-inline check"><input type="checkbox" checked={notify} onChange={e => setNotify(e.target.checked)} /><span><Tx>{"Show preview notifications preference"}</Tx></span></label>
     <p className="inline-note"><Tx>{"No real bot exists in M1. Timezone, operating mode and safety limits are not changed by these drafts."}</Tx></p>
-    <div className="demo-actions"><button className="button" onClick={() => { setName(BOT_NAME); setMarket("BTCUSDT"); setTimeframe("1h"); setRisk("1"); setNotify(true); }}><Tx>{"Reset draft"}</Tx></button><button className="button" disabled><Tx>{"Save unavailable — no persistence"}</Tx></button></div>
+    <div className="demo-actions"><button type="button" className="button" onClick={resetPreview}><Tx>{"Reset draft"}</Tx></button><button type="button" className="button" onClick={savePreview}><Tx>{"Save preview preferences"}</Tx></button></div>
+    <p className="muted" role="status">{t(saveMessage)}</p>
   </Section></>;
 }
 

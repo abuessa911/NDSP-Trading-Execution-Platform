@@ -1,3 +1,5 @@
+import asyncio
+from contextlib import suppress
 from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import asynccontextmanager
 from typing import Annotated, Literal
@@ -16,11 +18,24 @@ from nex_api.config import Settings, get_settings
 from nex_api.database import create_session_factory
 from nex_api.dependencies import get_administrator, get_provisioned_user, get_session
 from nex_api.logging import configure_logging
-from nex_api.models import SECURITY_TENANT_ID, Tenant, User
+from nex_api.models import AuditEvent, SECURITY_TENANT_ID, Tenant, User
 from nex_api.oidc import OIDCVerifier
 from nex_api.routes.health import ReadyResponse, readiness, router as health_router
 from nex_api.routes.tenants import AuditEventView, router as tenants_router
 from nex_api.routes.auth import router as auth_router
+from nex_api.routes.registrations import router as registrations_router
+from nex_api.routes.trading_profile import router as trading_profile_router
+from nex_api.routes.trading_control import router as trading_control_router, monitor_worker
+from nex_api.routes.strategy_scanner import router as strategy_scanner_router, strategy_scan_worker
+from nex_api.routes.bot_power import router as bot_power_router
+from nex_api.routes.risk_equity import router as risk_equity_router
+from nex_api.routes.ed25519_connection import router as ed25519_connection_router
+from nex_api.routes.trade_decision import router as trade_decision_router
+from nex_api.paper_broker import PaperBroker
+from nex_api.testnet_execution import TestnetExecution
+from nex_api.testnet_worker import worker as testnet_worker
+from nex_api.routes.testnet_execution import router as testnet_execution_router
+from nex_api.routes.paper_trading import router as paper_router, paper_worker
 from nex_api.browser_provider import BrowserProvider
 from nex_api.browser_sessions import BrowserSessions
 from nex_api.market_data_internal import router as market_data_router
@@ -93,7 +108,36 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             app.state.redis, configured.nex_session_encryption_key.get_secret_value()
         ) if (configured.oidc_browser_login_enabled and app.state.redis is not None
               and configured.nex_session_encryption_key is not None) else None
-        yield
+        app.state.paper_broker = PaperBroker(configured.hunter_paper_ledger_path) if configured.hunter_paper_enabled else None
+        app.state.testnet_execution = (TestnetExecution(configured.hunter_testnet_state_directory)
+            if configured.hunter_testnet_execution_enabled else None)
+        paper_task = asyncio.create_task(paper_worker(app)) if app.state.paper_broker is not None else None
+        testnet_task = (asyncio.create_task(testnet_worker(app))
+                        if app.state.testnet_execution is not None and app.state.redis is not None else None)
+        task = None
+        scanner_task = None
+        if configured.hunter_market_monitor_enabled and app.state.redis is not None:
+            task = asyncio.create_task(monitor_worker(app.state.redis))
+            scanner_task = asyncio.create_task(strategy_scan_worker(app.state.redis))
+        try:
+            yield
+        finally:
+            if testnet_task is not None:
+                testnet_task.cancel()
+                with suppress(asyncio.CancelledError):
+                    await testnet_task
+            if paper_task is not None:
+                paper_task.cancel()
+                with suppress(asyncio.CancelledError):
+                    await paper_task
+            if task is not None:
+                task.cancel()
+                with suppress(asyncio.CancelledError):
+                    await task
+            if scanner_task is not None:
+                scanner_task.cancel()
+                with suppress(asyncio.CancelledError):
+                    await scanner_task
         if app.state.redis is not None:
             await app.state.redis.aclose()
         if app.state.session_factory is not None:
@@ -109,6 +153,16 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(health_router, prefix="/api")
     app.include_router(tenants_router, prefix="/api")
     app.include_router(auth_router, prefix="/api")
+    app.include_router(registrations_router)
+    app.include_router(trading_profile_router)
+    app.include_router(trading_control_router)
+    app.include_router(strategy_scanner_router)
+    app.include_router(bot_power_router)
+    app.include_router(risk_equity_router)
+    app.include_router(ed25519_connection_router)
+    app.include_router(trade_decision_router)
+    app.include_router(paper_router)
+    app.include_router(testnet_execution_router)
     # M2-A routes remain admin + server MFA guarded and disabled by default.
     app.include_router(market_data_router)
 
@@ -285,6 +339,5 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     return app
 
 
-from nex_api.models import AuditEvent  # noqa: E402
 
 app = create_app()

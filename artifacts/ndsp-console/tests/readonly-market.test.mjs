@@ -89,9 +89,27 @@ test("UI keeps live verified data separate from demo data and never enables exec
   // credentials to the read-only endpoint. Cross-origin requests stay excluded.
   assert.match(source, /credentials: "same-origin"/);
   assert.doesNotMatch(source, /credentials: "omit"/);
-  assert.ok(source.includes('fetch("/preview/market/closed-candles?'));
+  assert.ok(source.includes('fetch("/api/v1/trading/profile/workspace/candles'));
   const server = readFileSync(new URL("../scripts/serve-static.mjs", import.meta.url), "utf8");
   assert.match(server, /HUNTER_READONLY_MARKET_PREVIEW === "true"/);
   assert.match(server, /127\.0\.0\.1/);
   assert.doesNotMatch(server, /order\/test|api\/v3\/order|fapi\/v1\/order/);
+});
+
+
+test("real closed-candle output is loaded automatically on Markets and Trading, never as a trading signal", () => {
+  const live = readFileSync(new URL("../src/ndsp/LiveMarketPreview.tsx", import.meta.url), "utf8");
+  const trading = readFileSync(new URL("../src/ndsp/views-trading.tsx", import.meta.url), "utf8");
+  const startup = live.slice(live.indexOf("useEffect(() =>"), live.indexOf("const last = data?.candles.at"));
+  assert.match(startup, /fetch\("\/api\/v1\/trading\/profile\/workspace\/candles"/);
+  assert.match(startup, /\[workspace, busy, revision, lang\]/);
+  assert.match(startup, /setData\(null\)/);
+  assert.match(startup, /abort\.abort\(\)/);
+  assert.match(startup, /execution_authorized !== false/);
+  assert.match(startup, /orders_sent !== 0/);
+  assert.match(startup, /Math\.abs\(Date\.now\(\) - d\.serverTimeMs\)/);
+  assert.ok((trading.match(/<LiveMarketPreview \/>/g) ?? []).length === 2);
+  assert.match(trading, /Simulation buttons record virtual orders only/);
+  assert.match(trading, /<PaperBrokerPanel/);
+  assert.doesNotMatch(startup, /order\/test|api\/v3\/order|fapi\/v1\/order/);
 });

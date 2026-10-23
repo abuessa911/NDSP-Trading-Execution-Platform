@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Link from "../../components/DocumentLink";
 import AdminHomePanel from "../../components/AdminHomePanel";
 import PageFrame from "../../components/PageFrame";
 import { adminPages, pageHref } from "../../lib/console-pages";

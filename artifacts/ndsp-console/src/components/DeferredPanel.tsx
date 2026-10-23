@@ -1,6 +1,6 @@
 "use client";
 import { LockKeyhole } from "lucide-react";
-import Link from "next/link";
+import Link from "./DocumentLink";
 import { useI18n } from "../ndsp/i18n";
 
 export default function DeferredPanel({ title, description, milestone }: { title: string; description: string; milestone: string }) {

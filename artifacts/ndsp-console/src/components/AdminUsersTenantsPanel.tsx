@@ -6,6 +6,7 @@ import {
 } from "@workspace/api-client-react";
 import { browserRequest, useAuth } from "./AuthProvider";
 import AdminAccessGate, { useHasAdministratorAccess } from "./AdminAccessGate";
+import AdminRegistrationPanel from "./AdminRegistrationPanel";
 
 type RequestFailure = { status?: number; data?: unknown };
 
@@ -137,7 +138,7 @@ function DirectoryContent() {
 
 export default function AdminUsersTenantsPanel() {
   const { identity } = useAuth();
-  return <AdminAccessGate><DirectoryContent
+  return <AdminAccessGate><><DirectoryContent
     key={String(identity?.user_id) + ":" + String(identity?.tenant_id) + ":" + String(identity?.role)} />
-  </AdminAccessGate>;
+    <AdminRegistrationPanel /></></AdminAccessGate>;
 }

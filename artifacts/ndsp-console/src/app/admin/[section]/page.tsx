@@ -7,6 +7,7 @@ import AdminHealthPanel from "../../../components/AdminHealthPanel";
 import AdminUsersTenantsPanel from "../../../components/AdminUsersTenantsPanel";
 import AdminOperationsPanel from "../../../components/AdminOperationsPanel";
 import PageFrame from "../../../components/PageFrame";
+import { OwnerGuide } from "../../../components/Guides";
 
 export const dynamicParams = false;
 export function generateStaticParams() { return adminPages.map(page => ({ section: page.slug })); }
@@ -21,7 +22,8 @@ export default async function AdminPage({ params }: Props) {
   const page = adminPages.find(p => p.slug === section);
   if (!page) notFound();
   let content;
-  if (section === "operations-center") content = <AdminHealthPanel />;
+  if (section === "owner-guide") content = <OwnerGuide />;
+  else if (section === "operations-center") content = <AdminHealthPanel />;
   else if (section === "audit") content = <AdminAuditPanel />;
   else if (section === "users-tenants") content = <AdminUsersTenantsPanel />;
   else if (["subscriptions", "trading-safety", "exchange-health", "ndsp-health",

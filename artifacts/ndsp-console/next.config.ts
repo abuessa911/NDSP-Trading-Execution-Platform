@@ -18,6 +18,7 @@ const config: NextConfig = {
   agentRules: false,
   trailingSlash: true,
   basePath: rawBase === "/" ? "" : rawBase.replace(/\/$/, ""),
+  env: { NEXT_PUBLIC_BOT_BASE_PATH: rawBase === "/" ? "" : rawBase.replace(/\/$/, "") },
   poweredByHeader: false,
   allowedDevOrigins: ["**.replit.dev", "**.replit.app", "localhost", "127.0.0.1"],
   transpilePackages: ["@workspace/api-client-react"],

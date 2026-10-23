@@ -6,7 +6,7 @@ import secrets
 import time
 import asyncio
 from typing import Any, Annotated
-from urllib.parse import urlsplit
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Query
 from fastapi.responses import JSONResponse, RedirectResponse
@@ -141,12 +141,19 @@ def csrf(request: Request, record: Record) -> None:
         raise failure("CSRF_NOT_VALID", "A valid CSRF token is required.")
 
 
-@router.post("/login", operation_id="login", response_model=LoginResult,
-             responses={501: {"description": "Real provider configuration required"}})
-async def login(request: Request, admin_mfa: Annotated[bool, Query()] = False) -> JSONResponse:
+async def _begin_browser_auth(request: Request, admin_mfa: bool, register: bool,
+                              *, browser_navigation: bool, lang: str | None = None) -> JSONResponse | RedirectResponse:
+    """Same PKCE, nonce and cookie flow for JS POST and native HTML navigation.
+
+    Browser navigation is deliberately safe for plain links (GET). It never
+    authenticates a user by itself and always requires provider state checks.
+    """
     provider, store = context(request, "LOGIN")
     try:
-        same_origin(request)
+        if not browser_navigation:
+            same_origin(request)
+        if register and admin_mfa:
+            raise failure("REGISTRATION_ADMIN_MFA_NOT_ALLOWED", "Public registration is not an administrator flow.")
         if admin_mfa:
             if not request.app.state.settings.oidc_admin_mfa_policy:
                 raise failure("MFA_EXTERNAL_REQUIREMENT", "Administrator MFA is not configured.")
@@ -154,13 +161,28 @@ async def login(request: Request, admin_mfa: Annotated[bool, Query()] = False) -
         state, binding, nonce, verifier = (secrets.token_urlsafe(48) for _ in range(4))
         url = await provider.authorization(state, nonce, verifier, fresh_mfa=True) if admin_mfa \
             else await provider.authorization(state, nonce, verifier)
+        if register:
+            parts = urlsplit(url)
+            if not parts.path.endswith("/auth"):
+                raise failure("OIDC_REGISTRATION_UNAVAILABLE", "Registration endpoint not supported.", 503)
+            url = urlunsplit((parts.scheme, parts.netloc, parts.path[:-5] + "/registrations", parts.query, parts.fragment))
+        if lang in {"ar", "en"}:
+            parts = urlsplit(url)
+            q = [(k, v) for k, v in parse_qsl(parts.query, keep_blank_values=True)
+                 if k not in {"ui_locales", "kc_locale"}]
+            q += [("ui_locales", lang), ("kc_locale", lang)]
+            url = urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(q), parts.fragment))
         await event(request, "LOGIN_STARTED")
         await store.create("flow", state, {
             "binding": hashlib.sha256(binding.encode()).hexdigest(),
             "nonce": nonce, "verifier": verifier,
             "admin_mfa": admin_mfa,
+            "lang": lang if lang in {"ar", "en"} else None,
         }, 300)
-        response = JSONResponse({"authorization_url": url}, headers=headers())
+        if browser_navigation:
+            response = RedirectResponse(url, status_code=303, headers=headers())
+        else:
+            response = JSONResponse({"authorization_url": url}, headers=headers())
         cookie(response, FLOW_COOKIE, binding, 300)
         request.state.auth_audit_managed = True
         return response
@@ -168,6 +190,22 @@ async def login(request: Request, admin_mfa: Annotated[bool, Query()] = False) -
         return await rejected(request, "LOGIN_DENIED", reason(error), error.status_code)
     except Exception:
         return await rejected(request, "LOGIN_FAILED", "OIDC_PROVIDER_UNAVAILABLE", 503)
+
+
+@router.post("/login", operation_id="login", response_model=LoginResult,
+             responses={501: {"description": "Real provider configuration required"}})
+async def login(request: Request, admin_mfa: Annotated[bool, Query()] = False,
+                register: Annotated[bool, Query()] = False) -> JSONResponse:
+    return await _begin_browser_auth(request, admin_mfa, register, browser_navigation=False)
+
+
+@router.get("/start", include_in_schema=False,
+            response_model=None)
+async def browser_navigation_start(request: Request, admin_mfa: Annotated[bool, Query()] = False,
+                                   register: Annotated[bool, Query()] = False,
+                                   lang: Annotated[str, Query(pattern="^(ar|en)$")] = "ar") -> JSONResponse | RedirectResponse:
+    """Accessible native link for Safari and browsers with JavaScript disabled."""
+    return await _begin_browser_auth(request, admin_mfa, register, browser_navigation=True, lang=lang)
 
 
 @router.get("/callback", operation_id="oidcCallback",
@@ -196,7 +234,33 @@ async def callback(request: Request) -> JSONResponse | RedirectResponse:
             from nex_api.administrator_mfa import assurance
             mfa = assurance(request.app.state.settings, claims)
         identity |= {"mfa": mfa, "admin_mfa": bool(pending.data.get("admin_mfa"))}
-        await authorize(request, identity | {"access_token": tokens["access_token"]})
+        try:
+            await authorize(request, identity | {"access_token": tokens["access_token"]})
+        except HTTPException as error:
+            # Ordinary sign-in can identify an administrator without possessing
+            # the independent administrator-client OTP assurance. Do not grant
+            # an admin session on that proof. Upgrade once, through the existing
+            # server-controlled password+TOTP OIDC flow, rather than redirecting
+            # the user back to the public sign-in page in a loop.
+            if (reason(error) == "MFA_REQUIRED"
+                    and not pending.data.get("admin_mfa")
+                    and getattr(request.state, "audit_user", None)
+                    and request.state.audit_user.get("role") in {"ADMIN", "SUPER_ADMIN"}):
+                await provider.revoke(tokens)
+                tokens = {}
+                return await _begin_browser_auth(
+                    request, True, False, browser_navigation=True,
+                    lang=pending.data.get("lang"),
+                )
+            if reason(error) != "IDENTITY_NOT_PROVISIONED":
+                raise
+            from nex_api.registration_activation import activate_verified_invitation
+            from nex_api.registration_activation import activate_verified_self_signup
+            if not await activate_verified_invitation(request, claims):
+                if not await activate_verified_self_signup(request, claims):
+                    raise
+            # Fresh DB lookup applies all normal role, tenant and status checks.
+            await authorize(request, identity | {"access_token": tokens["access_token"]})
         if request.state.audit_user["role"] in {"ADMIN", "SUPER_ADMIN"}:
             await event(request, "ADMIN_MFA_VERIFIED")
         await event(request, "LOGIN_SUCCESS")
@@ -214,7 +278,7 @@ async def callback(request: Request) -> JSONResponse | RedirectResponse:
             "auth_expires_at": min(float(claims["exp"]), time.time() + int(tokens["expires_in"])),
             "access_token": tokens["access_token"], "refresh_token": tokens.get("refresh_token"),
         }, lifetime)
-        response = RedirectResponse(request.app.state.settings.oidc_post_logout_redirect_uri,
+        response = RedirectResponse(request.app.state.settings.oidc_post_login_redirect_uri,
                                     status_code=303, headers=headers())
         cookie(response, SESSION_COOKIE, opaque, lifetime)
         clear(response, FLOW_COOKIE)
@@ -296,7 +360,10 @@ async def refresh(request: Request) -> JSONResponse:
         csrf(request, record)
         if record.data.get("admin_mfa"):
             provider = provider.administrator()
-        await authorize(request, record.data)
+        # Provider access tokens can expire before the encrypted browser session.
+        # Refresh first using the bound, revocable provider refresh token; never
+        # treat expiry alone as MFA revocation. Authenticate the replacement
+        # against the DB and live provider *before* making it usable.
         token = record.data.get("refresh_token")
         if not token:
             raise failure("OIDC_REFRESH_NOT_AVAILABLE", "Refresh is not available.", 401)
@@ -325,6 +392,10 @@ async def refresh(request: Request) -> JSONResponse:
             "refresh_token": tokens.get("refresh_token", token),
             "auth_expires_at": time.time() + int(tokens["expires_in"]),
         }
+        # Fail closed on changed/disabled roles, stale MFA, provider revocation,
+        # wrong subject, or invalid new access token. In particular, the admin
+        # check MUST introspect the newly refreshed token, not the expired one.
+        await authorize(request, replacement)
         # Audit before making refreshed credentials usable; logout/CAS still wins.
         await event(request, "TOKEN_REFRESH_SUCCESS")
         if not await store.replace(opaque, record, replacement,
@@ -334,6 +405,12 @@ async def refresh(request: Request) -> JSONResponse:
         request.state.auth_audit_managed = True
         return JSONResponse({"status": "refreshed"}, headers=headers())
     except HTTPException as error:
+        # A replacement token rejected by authorization must not survive.
+        if tokens:
+            try:
+                await provider.revoke(tokens)
+            except ProviderFailure:
+                pass
         return await rejected(request, "TOKEN_REFRESH_DENIED",
                               reason(error), error.status_code)
     except Exception:

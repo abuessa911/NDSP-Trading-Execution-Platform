@@ -14,14 +14,14 @@ from typing import Literal
 import httpx
 
 Market = Literal["spot", "usdm_futures"]
-Interval = Literal["5m", "15m"]
+Interval = Literal["5m", "15m", "1h", "4h", "1d"]
 
 # URLs are not configurable: prevent SSRF, alternate API origins and signing.
 ENDPOINTS: dict[Market, tuple[str, str, str]] = {
     "spot": ("https://api.binance.com", "/api/v3/time", "/api/v3/klines"),
     "usdm_futures": ("https://fapi.binance.com", "/fapi/v1/time", "/fapi/v1/klines"),
 }
-INTERVAL_MS: dict[Interval, int] = {"5m": 300_000, "15m": 900_000}
+INTERVAL_MS: dict[Interval, int] = {"5m": 300_000, "15m": 900_000, "1h": 3_600_000, "4h": 14_400_000, "1d": 86_400_000}
 _SYMBOL = re.compile(r"[A-Z0-9]{5,20}\Z", re.ASCII)
 MAX_LIMIT = 200
 

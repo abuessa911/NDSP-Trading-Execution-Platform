@@ -16,6 +16,7 @@ type AuthContextValue = {
   message: string;
   act: (action: "login" | "mfa_login" | "logout" | "refresh") => Promise<void>;
   revalidate: () => Promise<void>;
+  getCsrfToken: () => string | null;
 };
 const AuthContext = createContext<AuthContextValue | null>(null);
 
@@ -55,7 +56,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
       try {
-        const current = await getBrowserSession(browserRequest);
+        let current: SessionResult;
+        try {
+          current = await getBrowserSession(browserRequest);
+        } catch (error) {
+          // An access JWT can expire before the sealed browser session. Only
+          // on a real HTTP 401 and with an existing in-memory CSRF proof do we
+          // ask the server to rotate it; revoked or expired MFA still fails closed.
+          const status = error && typeof error === "object" && "status" in error ? error.status : null;
+          const csrf = session.current?.csrf_token;
+          if (status !== 401 || !csrf || !valid()) throw error;
+          await refreshBrowserSession({ ...browserRequest, headers: { "X-NEX-CSRF": csrf } });
+          current = await getBrowserSession(browserRequest);
+        }
         const me = await getMe(browserRequest);
         if (!valid()) return;
         if (!current.authenticated || current.user_id !== me.user_id || current.tenant_id !== me.tenant_id || current.role !== me.role) {
@@ -68,11 +81,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setMessage(current.administrator_mfa_verified
           ? "Authenticated administrator session; password + TOTP verified server-side."
           : "Authenticated application session.");
-      } catch {
+      } catch (error) {
         if (!valid()) return;
+        // Only an explicit 401 proves the browser session is absent or invalid.
+        // Network, gateway and provider failures must not appear as a logout.
+        const status = error && typeof error === "object" && "status" in error ? error.status : null;
         clear();
-        setState("anonymous");
-        setMessage("Sign in with the configured identity provider. No protected access is granted.");
+        if (status === 401) {
+          setState("anonymous");
+          setMessage("Sign in with the configured identity provider. No protected access is granted.");
+        } else {
+          setState("unavailable");
+          setMessage("Authentication service is unavailable. No access was granted.");
+        }
       }
     } catch {
       if (!valid()) return;
@@ -139,11 +160,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!csrf) throw new Error("No active session");
         const options = { ...browserRequest, headers: { "X-NEX-CSRF": csrf } };
         if (action === "logout") {
+          setMessage("Terminating application session…");
+          const result = await logout(options);
+          // Do not advertise sign-out until the server acknowledges revocation.
           clear();
           setState("anonymous");
           channel.current?.postMessage("logout");
-          setMessage("Terminating application session…");
-          const result = await logout(options);
           setMessage("Application session terminated.");
           if (result.logout_url) window.location.assign(result.logout_url);
         } else {
@@ -165,19 +187,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
         }
       }
-    } catch {
+    } catch (error) {
       clear();
-      setState("anonymous");
+      setState(action === "logout" ? "unavailable" : "anonymous");
+      const code = error instanceof Error
+        ? error.message.replace(/[^A-Za-z0-9_ -]/g, "").slice(0, 100)
+        : "UNKNOWN_ERROR";
       setMessage(action === "logout"
-        ? "Sign-out could not be fully confirmed. Local display was cleared; retry sign-in to check the server session."
-        : "Authentication request failed. No access was granted.");
+        ? "Sign-out could not be confirmed."
+        : `Authentication failed: ${code}`);
     } finally {
       actionInFlight.current = false;
       setBusy(false);
     }
   }
 
-  return <AuthContext.Provider value={{ state, identity, administratorMfaVerified, busy, message, act, revalidate }}>{children}</AuthContext.Provider>;
+  const getCsrfToken = () => session.current?.csrf_token ?? null;
+  return <AuthContext.Provider value={{ state, identity, administratorMfaVerified, busy, message, act, revalidate, getCsrfToken }}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

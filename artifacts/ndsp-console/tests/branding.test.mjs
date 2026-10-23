@@ -29,7 +29,7 @@ test("navigation, document title and page framing use canonical bot name", () =>
   const header = read("ndsp-console/src/components/ConsoleShell.tsx");
   assert.match(header, /<strong>\{BOT_NAME\}<\/strong>/);
   assert.match(header, /brand-mark">H<\/span>/);
-  assert.match(header, /\{BOT_NAME\} · \{t\("M1 FOUNDATION"\)\}/);
+  assert.match(header, /\{BOT_NAME\} · \{t\("Account workspace"\)\}/);
   const meta = read("ndsp-console/src/app/layout.tsx");
   assert.match(meta, /title: \{ default: \`\$\{BOT_NAME\} · M1 Console\`/);
   assert.match(read("ndsp-console/src/components/PageFrame.tsx"), /\{BOT_NAME\}/);

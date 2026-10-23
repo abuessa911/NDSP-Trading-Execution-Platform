@@ -106,6 +106,9 @@ async def get_provisioned_user(
     # A rollback expires ORM attributes, even with expire_on_commit=False.
     # Evidence middleware runs after the session closes: snapshot only safe IDs.
     request.state.audit_user = {"id": str(user.id), "tenant_id": user.tenant_id, "role": user.role}
+    if session.get_bind().dialect.name == "postgresql":
+        await session.execute(text("SELECT set_config('app.user_id', :uid, true)"),
+                              {"uid": str(user.id)})
     if user.status != "active":
         raise failure("USER_DISABLED", "User is disabled.")
     if session.get_bind().dialect.name == "postgresql":

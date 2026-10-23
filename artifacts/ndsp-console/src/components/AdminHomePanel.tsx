@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "./DocumentLink";
 import { Activity, ClipboardList } from "lucide-react";
 import { useAuth } from "./AuthProvider";
 import { useHasAdministratorAccess } from "./AdminAccessGate";

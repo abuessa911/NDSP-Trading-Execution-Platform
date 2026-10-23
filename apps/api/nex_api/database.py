@@ -46,7 +46,7 @@ async def database_is_available(
             version = (await session.execute(text(
                 "SELECT version_num FROM alembic_version"
             ))).scalar()
-            if version != "0004_m1_admin_directory_rls":
+            if version != "0006_verified_self_signup":
                 return False
             from nex_api.models import Base
             for name, table in Base.metadata.tables.items():
@@ -81,7 +81,9 @@ async def database_is_available(
                 "SELECT conname FROM pg_constraint WHERE connamespace='public'::regnamespace"
             ))).scalars())
             if not {"users_role_check", "users_status_check", "users_email_check",
-                    "audit_actor_type_check", "audit_outcome_check"} <= constraints:
+                    "audit_actor_type_check", "audit_outcome_check",
+                    "registration_invite_role_check", "registration_invite_status_check",
+                    "registration_invite_email_normalized_check"} <= constraints:
                 return False
             policy = (await session.execute(text(
                 "SELECT pg_get_expr(polqual,polrelid) FROM pg_policy "
@@ -110,8 +112,28 @@ async def database_is_available(
                 "SELECT has_table_privilege(current_user,'audit_events','UPDATE') OR "
                 "has_table_privilege(current_user,'audit_events','DELETE') OR "
                 "has_table_privilege(current_user,'audit_events','TRUNCATE') OR "
+                "has_table_privilege(current_user,'users','INSERT') OR "
+                "has_table_privilege(current_user,'users','UPDATE') OR "
+                "has_table_privilege(current_user,'registration_invitations','UPDATE') OR "
+                "has_table_privilege(current_user,'registration_invitations','DELETE') OR "
                 "has_schema_privilege(current_user,'public','CREATE')"
             ))).scalar():
+                return False
+            registration_policy = (await session.execute(text(
+                "SELECT pg_get_expr(polwithcheck, polrelid) FROM pg_policy "
+                "WHERE polname='invite_admin_insert' "
+                "AND polrelid='registration_invitations'::regclass"
+            ))).scalar()
+            if not registration_policy or not all(part in registration_policy for part in (
+                "app.tenant_id", "app.role", "app.user_id", "ADMIN", "SUPER_ADMIN", "USER"
+            )):
+                return False
+            permitted = (await session.execute(text(
+                "SELECT has_table_privilege(current_user,'registration_invitations','INSERT') "
+                "AND has_function_privilege(current_user, "
+                "'claim_verified_invitation(text,text,text,boolean)','EXECUTE')"
+            ))).scalar()
+            if not permitted:
                 return False
         return True
     except Exception:

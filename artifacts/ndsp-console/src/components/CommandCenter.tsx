@@ -1,34 +1,28 @@
-import Link from "next/link";
-import { BOT_NAME } from "../lib/bot-profile";
-import HealthPanel from "./HealthPanel";
-import IdentityPanel from "./IdentityPanel";
-import DemoDashboard from "../ndsp/DemoDashboard";
+"use client";
 
-const baseline = [
-  ["TRADING_MODE", "paper"], ["LIVE_TRADING_ENABLED", "false"],
-  ["GLOBAL_KILL_SWITCH", "true"], ["BINANCE_ALLOW_WITHDRAW", "false"],
-];
+import Link from "./DocumentLink";
+import { useI18n } from "../ndsp/i18n";
+import HealthPanel from "./HealthPanel";
+import HunterStrategyScannerPanel from "./HunterStrategyScannerPanel";
 
 export default function CommandCenter() {
+  const { lang } = useI18n();
+  const ar = lang === "ar";
   return <>
-    <section className="panel">
-      <h2>M1 foundation — acceptance pending</h2>
-      <p className="notice">M1 NOT ACCEPTED. Administrator password + TOTP was verified against the isolated test provider; production/provider readiness and other independent assurance gates remain open. M2 is not authorized.</p>
-      <p className="muted">{BOT_NAME} has its own repository, database, authentication and audit boundary. It does not access or modify NDSP. No trading, exchange credentials or execution engine is present.</p>
+    <section className="panel hunter-operator-intro">
+      <h2>{ar ? "تشغيل البوت والاستراتيجيات" : "Bot and strategy controls"}</h2>
+      <p>{ar
+        ? "زر تشغيل البوت وإيقافه موجود أعلى الصفحة. اختر الأصل والإطار الزمني والنمط، ثم اضغط تأكيد / تطبيق. يمكنك مراجعة الاستراتيجيات أدناه وتشغيل الفحص المرتبط بها."
+        : "Use the main bot power control at the top. Choose an asset, interval and trading style, then Confirm / Apply. Review and run the available strategy scanners below."}</p>
+      <p className="muted">{ar
+        ? "حالة التشغيل تأتي من الخادم. فحوص الاستراتيجيات تستخدم شموعًا مغلقة حقيقية، لكنها ليست أوامر تداول. التداول الحقيقي غير مفعل حتى تتحقق جميع شروط الاتصال والمخاطر."
+        : "Power state comes from the server. Strategy scanners use real closed candles but do not submit trades. Real order execution remains unavailable until connection and risk gates pass."}</p>
+      <div className="row">
+        <Link className="button" href="/strategies/">{ar ? "إدارة الاستراتيجيات" : "Manage strategies"}</Link>
+        <Link className="button" href="/settings/">{ar ? "إعدادات الاتصال" : "Connection settings"}</Link>
+      </div>
     </section>
-    <DemoDashboard />
-    <div className="row"><h2>Real M1 foundation</h2><span className="tag">REAL API DATA · NOT A DEMO</span></div>
-    <div className="panel-grid"><HealthPanel /><IdentityPanel /></div>
-    <section className="panel">
-      <h2>Required M1 safety baseline</h2>
-      <dl className="kv-list">{baseline.map(([name, value]) =>
-        <div className="kv-row" key={name}><dt className="mono">{name}</dt><dd className="mono">{value}</dd></div>)}</dl>
-      <p className="muted">Required configuration enforced by API startup validation. This is the documented baseline, not a live configuration reading or an editable control.</p>
-    </section>
-    <section className="panel">
-      <h2>Unavailable beyond M1</h2>
-      <p>Real trading, NDSP access, Binance access and execution require separately approved milestones. Financial values in the UI-preview section are synthetic; they do not represent a connected account or live activity.</p>
-      <div className="row"><Link className="button" href="/settings/">Account settings</Link><Link className="button" href="/subscription/">Entitlements</Link><Link className="button" href="/admin/">Admin access status</Link></div>
-    </section>
+    <HunterStrategyScannerPanel />
+    <HealthPanel />
   </>;
 }

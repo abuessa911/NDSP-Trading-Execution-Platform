@@ -35,6 +35,7 @@ def settings(**extra):
                     oidc_jwks_url=ISSUER + "/certs", oidc_client_id="nex-browser",
                     oidc_redirect_uri=ORIGIN + "/api/v1/auth/callback",
                     oidc_post_logout_redirect_uri=ORIGIN + "/",
+                    oidc_post_login_redirect_uri=ORIGIN + "/dashboard/",
                     nex_session_encryption_key=Fernet.generate_key().decode(), **extra)
 
 
@@ -125,6 +126,30 @@ def signed_in(browser):
     return status.json()["csrf_token"], browser.client.cookies.get(SESSION_COOKIE)
 
 
+@pytest.mark.parametrize(("path", "destination"), [
+    ("/api/v1/auth/start", "/auth"),
+    ("/api/v1/auth/start?register=true", "/registrations"),
+])
+def test_native_browser_navigation_protects_pkce_without_javascript(browser, path, destination):
+    response = browser.client.get(path)
+    assert response.status_code == 303
+    uri = urlsplit(response.headers["location"])
+    assert uri.path.endswith(destination)
+    state = parse_qs(uri.query)["state"][0]
+    assert len(state) >= 48
+    assert response.headers["cache-control"] == "no-store"
+    assert any("Secure" in c and "HttpOnly" in c and "SameSite=lax" in c
+               for c in response.headers.get_list("set-cookie"))
+    assert browser.client.get("/api/v1/auth/callback?code=unit-only-code&state=" + state).status_code == 303
+    assert browser.client.get("/api/v1/auth/session").status_code == 200
+
+
+def test_native_browser_navigation_rejects_admin_registration(browser):
+    response = browser.client.get("/api/v1/auth/start?admin_mfa=true&register=true")
+    assert response.status_code == 403
+    assert not browser.store.redis.data
+
+
 def test_pkce_rfc7636_s256_vector():
     assert pkce_challenge("dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk") == \
         "E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM"
@@ -172,7 +197,7 @@ def test_secure_cookie_and_no_token_callback_url(browser):
     values = response.headers.get_list("set-cookie")
     assert any("HttpOnly" in v and "Secure" in v and "SameSite=lax" in v
                and "Path=/api" in v and "Max-Age=1800" in v for v in values)
-    assert response.headers["location"] == ORIGIN + "/"
+    assert response.headers["location"] == ORIGIN + "/dashboard/"
     assert response.headers["cache-control"] == "no-store"
     for value in browser.store.redis.data.values():
         assert b"unit-only-refresh" not in value
@@ -202,6 +227,41 @@ def test_logout_revocation_and_refresh_replay(browser):
                                headers={"Origin": ORIGIN, "X-NEX-CSRF": csrf}).status_code == 401
     assert browser.client.get("/api/v1/me", headers={"Authorization": "Bearer unit"}).status_code == 401
     assert ("SESSION_REVOKED", "SUCCESS", None) in browser.events
+
+
+def test_expired_provider_access_token_can_be_refreshed_with_bound_session(browser):
+    csrf, sid = signed_in(browser)
+    record = asyncio.run(browser.store.load("session", sid))
+    record.data["auth_expires_at"] = time.time() - 10
+    browser.store.redis.data[browser.store.key("session", sid)] = browser.store.seal(record.data)
+    assert browser.client.get("/api/v1/me").status_code == 401
+    response = browser.client.post("/api/v1/auth/refresh",
+                                   headers={"Origin": ORIGIN, "X-NEX-CSRF": csrf})
+    assert response.status_code == 200
+    assert browser.client.get("/api/v1/me").status_code == 200
+    assert ("TOKEN_REFRESH_SUCCESS", "SUCCESS", None) in browser.events
+
+
+def test_refresh_rechecks_user_status_after_provider_rotation(browser):
+    csrf, sid = signed_in(browser)
+    browser.user.status = "disabled"
+    response = browser.client.post("/api/v1/auth/refresh",
+                                   headers={"Origin": ORIGIN, "X-NEX-CSRF": csrf})
+    assert response.status_code == 403
+    assert response.json()["reason_code"] == "USER_DISABLED"
+    assert ("TOKEN_REFRESH_SUCCESS", "SUCCESS", None) not in browser.events
+    browser.provider.revoke.assert_awaited()
+    assert browser.client.get("/api/v1/me").status_code == 403
+
+
+def test_refresh_requires_valid_csrf_even_with_active_session(browser):
+    _, sid = signed_in(browser)
+    response = browser.client.post("/api/v1/auth/refresh",
+                                   headers={"Origin": ORIGIN, "X-NEX-CSRF": "invalid"})
+    assert response.status_code == 403
+    assert response.json()["reason_code"] == "CSRF_NOT_VALID"
+    assert asyncio.run(browser.store.load("session", sid)) is not None
+    browser.provider.refresh.assert_not_awaited()
 
 
 def test_provider_logout_failure_still_terminates_local_session(browser):
@@ -309,3 +369,132 @@ def test_server_cookie_identifier_is_hashed():
     store = BrowserSessions(FakeRedis(), Fernet.generate_key().decode())
     opaque = "opaque-unit-id-" + "x" * 48
     assert store.key("session", opaque) == "nex:m1:session:" + hashlib.sha256(opaque.encode()).hexdigest()
+
+
+def test_hunter_style_requires_authenticated_session(browser):
+    # This is a bot-local preference, never an NDSP decision or order authority.
+    response = browser.client.get("/api/v1/trading/profile")
+    assert response.status_code == 401
+
+
+def test_hunter_investment_and_speculation_persist_server_side(browser):
+    csrf, _ = signed_in(browser)
+    default = browser.client.get("/api/v1/trading/profile")
+    assert default.status_code == 200
+    assert default.json() == {
+        "mode": "SPECULATIVE", "persisted": False,
+        "execution_authorized": False, "ndsp_contract_bound": False,
+    }
+    for mode in ("INVESTMENT", "SPECULATIVE"):
+        saved = browser.client.put("/api/v1/trading/profile",
+            headers={"Origin": ORIGIN, "X-NEX-CSRF": csrf}, json={"mode": mode})
+        assert saved.status_code == 200
+        assert saved.json() == {
+            "mode": mode, "persisted": True,
+            "execution_authorized": False, "ndsp_contract_bound": False,
+        }
+        fetched = browser.client.get("/api/v1/trading/profile")
+        assert fetched.json() == saved.json()
+    browser.user.id = UUID(int=5)
+    changed_owner = browser.client.get("/api/v1/trading/profile")
+    assert changed_owner.status_code == 200
+    assert changed_owner.json()["persisted"] is False
+
+
+def test_hunter_decision_style_rejects_csrf_origin_and_unsupported_fields(browser):
+    csrf, _ = signed_in(browser)
+    for headers in ({}, {"Origin": ORIGIN, "X-NEX-CSRF": "invalid"},
+                    {"Origin": "https://evil.example.test", "X-NEX-CSRF": csrf}):
+        response = browser.client.put("/api/v1/trading/profile",
+            json={"mode": "INVESTMENT"}, headers=headers)
+        assert response.status_code == 403
+    for item in ({"mode": "AUTOMATIC"}, {"mode": "INVESTMENT", "execute": True},
+                 {"mode": "SPECULATIVE", "ndsp_api_url": "https://ndsp.app"}):
+        result = browser.client.put("/api/v1/trading/profile",
+            json=item, headers={"Origin": ORIGIN, "X-NEX-CSRF": csrf})
+        assert result.status_code == 422
+    assert browser.client.get("/api/v1/trading/profile").json()["persisted"] is False
+
+@pytest.mark.parametrize("lang", ["ar", "en"])
+def test_public_browser_login_locale_is_passed_to_identity_provider(browser, lang):
+    response = browser.client.get("/api/v1/auth/start?lang=" + lang)
+    assert response.status_code == 303
+    values = parse_qs(urlsplit(response.headers["location"]).query)
+    assert values["ui_locales"] == [lang]
+    assert values["kc_locale"] == [lang]
+    assert "state" in values
+    assert response.headers.get("set-cookie")
+
+
+def test_public_browser_login_locale_rejects_unexpected_values(browser):
+    assert browser.client.get("/api/v1/auth/start?lang=xyz").status_code == 422
+
+
+def test_admin_role_normal_login_steps_up_only_once_without_granting_session(browser, monkeypatch):
+    """An ordinary browser client must never authenticate an administrator."""
+    from nex_api.dependencies import failure
+    browser.client.app.state.settings.oidc_admin_mfa_policy = "keycloak-password-totp-v1"
+    browser.client.app.state.settings.oidc_admin_mfa_client_id = "nex-m1-admin"
+    browser.provider.administrator = lambda: browser.provider
+    browser.provider.authorization.side_effect = (
+        lambda state, nonce, verifier, **kw:
+            ISSUER + "/auth?state=" + state + ("&mfa=1" if kw.get("fresh_mfa") else "")
+    )
+
+    async def simulate_role_and_admin_mfa(request, data):
+        request.state.audit_user = {
+            "id": str(browser.user.id),
+            "tenant_id": browser.user.tenant_id,
+            "role": "ADMIN",
+        }
+        if not data.get("admin_mfa"):
+            raise failure("MFA_REQUIRED", "Administrator MFA required.")
+        return browser.user
+
+    monkeypatch.setattr(auth, "authorize", simulate_role_and_admin_mfa)
+    monkeypatch.setattr("nex_api.administrator_mfa.assurance", lambda _settings, _claims: {
+        "policy": "keycloak-password-totp-v1",
+        "client": "nex-m1-admin", "auth_time": time.time(),
+        "methods": ["pwd", "otp"], "expires_at": time.time() + 300,
+    })
+    initial = browser.client.get("/api/v1/auth/start?lang=en")
+    assert initial.status_code == 303
+    first_state = parse_qs(urlsplit(initial.headers["location"]).query)["state"][0]
+    first = browser.client.get("/api/v1/auth/callback?code=unit-only-code&state=" + first_state)
+    assert first.status_code == 303
+    assert "mfa=1" in first.headers["location"]
+    assert "ui_locales=en" in first.headers["location"]
+    assert browser.client.cookies.get(SESSION_COOKIE) is None
+    browser.provider.revoke.assert_awaited_once()
+    second_state = parse_qs(urlsplit(first.headers["location"]).query)["state"][0]
+    complete = browser.client.get("/api/v1/auth/callback?code=unit-only-code&state=" + second_state)
+    assert complete.status_code == 303
+    assert complete.headers["location"] == ORIGIN + "/dashboard/"
+    assert browser.client.cookies.get(SESSION_COOKIE)
+
+
+def test_admin_step_up_failure_does_not_restart_in_a_loop(browser, monkeypatch):
+    from nex_api.dependencies import failure
+    browser.client.app.state.settings.oidc_admin_mfa_policy = "keycloak-password-totp-v1"
+    browser.client.app.state.settings.oidc_admin_mfa_client_id = "nex-m1-admin"
+    browser.provider.administrator = lambda: browser.provider
+    browser.provider.authorization.side_effect = (
+        lambda state, nonce, verifier, **kw: ISSUER + "/auth?state=" + state
+    )
+
+    async def deny_admin(request, _data):
+        request.state.audit_user = {"id": str(browser.user.id),
+                                   "tenant_id": browser.user.tenant_id, "role": "ADMIN"}
+        raise failure("MFA_REQUIRED", "Administrator MFA required.")
+
+    monkeypatch.setattr(auth, "authorize", deny_admin)
+    monkeypatch.setattr("nex_api.administrator_mfa.assurance", lambda *_: None)
+    started = browser.client.get("/api/v1/auth/start")
+    first_state = parse_qs(urlsplit(started.headers["location"]).query)["state"][0]
+    stepped = browser.client.get("/api/v1/auth/callback?code=unit&state=" + first_state)
+    state = parse_qs(urlsplit(stepped.headers["location"]).query)["state"][0]
+    final = browser.client.get("/api/v1/auth/callback?code=unit&state=" + state)
+    assert final.status_code == 303
+    assert "auth_error=MFA_REQUIRED" in final.headers["location"]
+    assert browser.provider.authorization.await_count == 2
+    assert browser.client.cookies.get(SESSION_COOKIE) is None

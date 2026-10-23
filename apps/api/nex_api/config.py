@@ -20,6 +20,13 @@ class Settings(BaseSettings):
     live_trading_enabled: bool = False
     global_kill_switch: bool = True
     binance_allow_withdraw: bool = False
+    hunter_paper_enabled: bool = False
+    hunter_testnet_execution_enabled: bool = False
+    hunter_testnet_state_directory: str = "/var/lib/hunter-ksa1-testnet/store"
+    hunter_paper_ledger_path: str = "/var/lib/hunter-ksa1-paper/ledger.sqlite3"
+    hunter_market_monitor_enabled: bool = False  # real public market reads; never orders
+    hunter_testnet_vault_key: SecretStr | None = None
+    hunter_live_vault_key: SecretStr | None = None  # separate vault, read-only production credentials
     m2a_public_market_enabled: bool = False  # isolated admin-only test gate
 
     database_url: str | None = None
@@ -40,6 +47,7 @@ class Settings(BaseSettings):
     oidc_admin_mfa_max_age: int = 600
     oidc_redirect_uri: str | None = None
     oidc_post_logout_redirect_uri: str | None = None
+    oidc_post_login_redirect_uri: str = "https://bot.ndsp.app/dashboard/"
     nex_session_encryption_key: SecretStr | None = None
     nex_session_seconds: int = 1800
 
@@ -71,14 +79,21 @@ class Settings(BaseSettings):
         if not 60 <= self.oidc_admin_mfa_max_age <= 900:
             raise ValueError("Administrator MFA lifetime must be between 60 and 900 seconds.")
         if self.oidc_admin_mfa_policy is not None:
-            # Only this explicitly approved disposable policy has been verified.
-            # Production or another issuer needs independent authority/evidence.
-            if (self.environment != "test" or not self.oidc_browser_login_enabled
+            # Each issuer/client pair is explicitly pinned. A public OIDC URL
+            # alone must never confer admin assurance; signed ID-token pwd+otp,
+            # freshness and live introspection are enforced independently.
+            allowed_pairs = {
+                ("test", "https://localhost:18443/oidc/realms/nex-m1-test",
+                 "nex-m1-admin"),
+                ("production", "https://bot.ndsp.app/oidc/realms/hunter-m1",
+                 "hunter-m1-admin"),
+            }
+            if (not self.oidc_browser_login_enabled
                     or self.oidc_admin_mfa_policy != "keycloak-password-totp-v1"
-                    or self.oidc_issuer != "https://localhost:18443/oidc/realms/nex-m1-test"
-                    or self.oidc_admin_mfa_client_id != "nex-m1-admin"
+                    or (self.environment, self.oidc_issuer,
+                        self.oidc_admin_mfa_client_id) not in allowed_pairs
                     or (self.secret_provider == "env" and not self.oidc_admin_mfa_client_secret)):
-                raise ValueError("Administrator MFA requires the approved isolated provider policy.")
+                raise ValueError("Administrator MFA requires a pinned, approved issuer and confidential client.")
         if self.oidc_browser_login_enabled:
             if (not all((self.oidc_configured, self.oidc_client_id, self.oidc_redirect_uri,
                          self.oidc_post_logout_redirect_uri))

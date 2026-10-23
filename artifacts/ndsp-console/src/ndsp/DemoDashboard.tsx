@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import Link from "../components/DocumentLink";
 import { dashboardService } from "./services";
 import { Tx, Async, Chip, DemoBanner, Kpi, Meter, money, Pnl, Section, useDemo } from "./ui";
 

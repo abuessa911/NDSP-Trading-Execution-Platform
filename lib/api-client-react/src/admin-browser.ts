@@ -53,3 +53,32 @@ export const getBrowserAdminDirectory = (options?: CustomFetchOptions): Promise<
 
 export const getBrowserAdminOperations = (options?: CustomFetchOptions): Promise<AdminOperationsView> =>
   customFetch<AdminOperationsView>("/api/v1/admin/operations", { ...options, method: "GET" });
+
+export type RegistrationInvitation = {
+  id: string;
+  email: string;
+  role: "USER";
+  status: "PENDING" | "ACCEPTED" | "REVOKED";
+  expires_at: string;
+};
+export type RegistrationInvitationsResponse = {
+  invitations: RegistrationInvitation[];
+  truncated: boolean;
+};
+
+// Administrator-authenticated, same-origin M1 registration operations.
+// Writes additionally require an ephemeral CSRF token from the verified session.
+export const getBrowserAdminRegistrations = (
+  options?: CustomFetchOptions,
+): Promise<RegistrationInvitationsResponse> =>
+  customFetch<RegistrationInvitationsResponse>(
+    "/api/v1/admin/registrations", { ...options, method: "GET" });
+
+export const createBrowserAdminRegistration = (
+  email: string, csrf: string, options?: CustomFetchOptions,
+): Promise<RegistrationInvitation> =>
+  customFetch<RegistrationInvitation>("/api/v1/admin/registrations", {
+    ...options, method: "POST",
+    headers: { "Content-Type": "application/json", "X-NEX-CSRF": csrf },
+    body: JSON.stringify({ email }),
+  });

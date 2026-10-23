@@ -7,9 +7,12 @@ export type ConsolePage = {
 
 // Future workflow routes are frontend-only previews, not authorization for a later milestone.
 export const userPages: ConsolePage[] = [
-  { slug: "command-center", title: "Command Center", description: "Trading-control UI preview, real M1 health and protected identity." },
-  { slug: "markets", title: "Markets", description: "Searchable demo watchlist. Static synthetic prices, no exchange connection.", milestone: "UI PREVIEW" },
+  { slug: "account-access", title: "Account Access", description: "Server-authoritative login, current account status and safe onboarding guidance." },
+  { slug: "registration", title: "Account Registration", description: "Administrator-only enrollment policy; public sign-up is disabled until the protected API exists." },
+  { slug: "command-center", title: "Command Center", description: "Actual bot control state and real closed-candle strategy scanners." },
+  { slug: "markets", title: "Markets", description: "Authenticated, live closed-candle read-only market data." },
   { slug: "trading", title: "Trading", description: "Mode, arming, execution controls and latest decisions.", milestone: "M3–M8" },
+  { slug: "user-guide", title: "User Guide", description: "Complete bilingual guide to existing bot pages, actual capabilities and preview boundaries." },
   { slug: "strategies", title: "Strategies", description: "Versions, assignments and paper/shadow/live readiness.", milestone: "M3–M6" },
   { slug: "positions", title: "Positions", description: "Open and closed positions and protective state.", milestone: "M3 onward" },
   { slug: "orders", title: "Orders", description: "Orders, fills, partials and reconciliation states.", milestone: "M3 onward" },
@@ -24,12 +27,13 @@ export const userPages: ConsolePage[] = [
   { slug: "subscription", title: "Subscription", description: "Server-authoritative entitlements. Plan and billing are not implemented in M1." },
   { slug: "settings", title: "Settings", description: "Account identity, tenant, session security and local display preferences." },
   { slug: "security", title: "Security", description: "Current server-authoritative session assurance and authentication boundaries." },
-  { slug: "activity", title: "Activity Preview", description: "Searchable synthetic activity examples, separate from protected M1 audit evidence.", milestone: "UI PREVIEW" },
+  { slug: "activity", title: "Activity", description: "Actual account activity is unavailable pending authenticated evidence integration." },
   { slug: "health", title: "Service Health", description: "Live liveness and readiness checks from the hunter_ksa1 bot control API." },
   { slug: "audit", title: "Audit Access", description: "Audit access remains blocked pending independently verified administrative MFA." },
 ];
 
 export const adminPages: ConsolePage[] = [
+  { slug: "owner-guide", title: "Owner Guide", description: "Bilingual administrator handbook for independent bot operation and safety governance." },
   { slug: "operations-center", title: "Operations Center", description: "Control API and tenant dependency health from the protected M1 route." },
   { slug: "users-tenants", title: "Users / Tenants", description: "Read-only, MFA-protected directory of users in the current tenant; no user mutations or plans." },
   { slug: "subscriptions", title: "Subscriptions", description: "Plans and server-authoritative entitlements." },
@@ -43,5 +47,5 @@ export const adminPages: ConsolePage[] = [
 ];
 
 export function pageHref(page: ConsolePage, admin = false) {
-  return admin ? `/admin/${page.slug}/` : page.slug === "command-center" ? "/" : `/${page.slug}/`;
+  return admin ? `/admin/${page.slug}/` : page.slug === "command-center" ? "/dashboard/" : `/${page.slug}/`;
 }

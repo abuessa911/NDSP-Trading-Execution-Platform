@@ -112,7 +112,7 @@ class BrowserProvider:
         doc = await self.document()
         params = {
             "client_id": self.settings.oidc_client_id, "response_type": "code",
-            "scope": "openid profile", "redirect_uri": self.settings.oidc_redirect_uri,
+            "scope": "openid profile email", "redirect_uri": self.settings.oidc_redirect_uri,
             "state": state, "nonce": nonce, "code_challenge": pkce_challenge(verifier),
             "code_challenge_method": "S256",
         }

@@ -22,7 +22,8 @@ test("every M1 and specified V1 route exports its own HTML document", async () =
   for (const route of ["", ...userRoutes, "admin", ...adminRoutes.map(r => `admin/${r}`)]) {
     const html = await read(`out/${route ? route + "/" : ""}index.html`);
     assert.match(html, /<!DOCTYPE html>/i, route);
-    assert.match(html, /M1 NOT ACCEPTED|M1 not accepted/i, route);
+    if (route) assert.match(html, /Live trading disabled/i, route);
+    else assert.match(html, /hunter-landing/, "public landing must remain a public page");
     assert.doesNotMatch(html, /csrf_token|__Secure-nex_session|user@nex\.example/i, route);
   }
   await access(root + "out/404.html");
@@ -47,13 +48,21 @@ test("every administrator surface exports a closed session gate without privileg
   assert.doesNotMatch(guard, /getMe|fetch\(|useAuth|listTenantAuditEvents|getAdmin/);
 });
 
-test("future workflow pages conspicuously label synthetic frontend-only previews", async () => {
+test("virtual ledger pages and remaining synthetic previews declare their data source", async () => {
   for (const route of userRoutes.filter(r => !["subscription", "settings", "health", "audit", "security"].includes(r))) {
     const html = await read(`out/${route}/index.html`);
-    assert.match(html, /DEMO DATA/, route);
-    assert.match(html, /NOT CONNECTED/, route);
-    assert.match(html, /READ-ONLY UI PREVIEW/, route);
-    assert.match(html, /BLOCKED/, route);
+    // The redundant global three-mode demo/status strip was removed from the UI.
+    // Each page must retain its own accurate source/preview disclosures.
+    if (["positions", "orders", "trade-history", "performance"].includes(route)) {
+      assert.match(html, /durable virtual-money account/, route);
+      assert.match(html, /Sign in to view your own ledger/, route);
+      assert.doesNotMatch(html, /ORD-30417|63800|1284\.6/, route);
+    } else if (route === "trading") {
+      assert.match(html, /Live execution is disabled/, route);
+    } else {
+      assert.match(html, /READ-ONLY UI PREVIEW/, route);
+    }
+    assert.doesNotMatch(html, /mode-switch|Simulation<\/button>|Testnet<\/button>|Live<\/button>/, route);
   }
   const services = await read("src/ndsp/services.ts");
   assert.doesNotMatch(services, /fetch\(|WebSocket|Authorization|Bearer|api[_-]?key/i);

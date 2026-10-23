@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Any
 from uuid import UUID, uuid4
 
-from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Index, JSON, String
+from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Index, JSON, String, text
 from sqlalchemy import UniqueConstraint, Uuid, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
@@ -51,6 +51,32 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+
+
+class RegistrationInvitation(Base):
+    """Tenant-scoped, administrator-issued invitation. No reusable bearer secret."""
+    __tablename__ = "registration_invitations"
+    __table_args__ = (
+        CheckConstraint("role = 'USER'", name="registration_invite_role_check"),
+        CheckConstraint("status IN ('PENDING','ACCEPTED','REVOKED')",
+                        name="registration_invite_status_check"),
+        CheckConstraint("email=lower(btrim(email)) AND length(email)>3",
+                        name="registration_invite_email_normalized_check"),
+        Index("registration_pending_email_uq", "email", unique=True,
+              postgresql_where=text("status='PENDING'")),
+        Index("registration_tenant_created_idx", "tenant_id", "created_at"),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
+    tenant_id: Mapped[UUID] = mapped_column(Uuid, ForeignKey("tenants.id", ondelete="RESTRICT"))
+    email: Mapped[str] = mapped_column(String(320), nullable=False)
+    role: Mapped[str] = mapped_column(String(24), nullable=False, default="USER")
+    status: Mapped[str] = mapped_column(String(24), nullable=False, default="PENDING")
+    issued_by: Mapped[UUID] = mapped_column(Uuid, ForeignKey("users.id", ondelete="RESTRICT"))
+    accepted_user_id: Mapped[UUID | None] = mapped_column(
+        Uuid, ForeignKey("users.id", ondelete="RESTRICT"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    accepted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class AuditEvent(Base):

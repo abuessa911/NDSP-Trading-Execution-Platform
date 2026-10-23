@@ -95,7 +95,7 @@ td, th { padding: 10px; text-align: left; border-bottom: 1px solid var(--line); 
   .panel-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 740px) {
-  .console-nav { position: fixed; inset: 62px auto 0 0; height: calc(100dvh - 62px); display: none; z-index: 10; width: min(310px, 85vw); box-shadow: 15px 0 30px #0006; }
+  .console-nav { position: fixed; inset: var(--console-header-height, 62px) auto 0 0; height: calc(100dvh - var(--console-header-height, 62px)); display: none; z-index: 10; width: min(310px, 85vw); box-shadow: 15px 0 30px #0006; }
   .console-nav.is-open { display: block; }
   .nav-toggle { display: inline-flex; padding: 5px; min-height: 28px; }
   .console-top { min-height: 62px; padding: 12px 16px; position: sticky; top: 0; z-index: 11; }
@@ -205,8 +205,8 @@ input[type="range"] { padding: 0; accent-color: var(--accent); }
 @media (max-width: 1100px) { .terminal { grid-template-columns: 160px minmax(0, 1fr); } .terminal .t-ticket { grid-column: 1 / -1; } .split, .chart-layout { grid-template-columns: 1fr; } }
 @media (max-width: 740px) {
   .system-strip { padding: 8px 16px; } .strip-note { display: none; }
-  [dir="rtl"] .console-nav { inset: 62px 0 0 auto; }
-  .nav-scrim { display: block; position: fixed; inset: 62px 0 0 0; background: #02060b99; border: 0; z-index: 9; }
+  [dir="rtl"] .console-nav { inset: var(--console-header-height, 62px) 0 0 auto; }
+  .nav-scrim { display: block; position: fixed; inset: var(--console-header-height, 62px) 0 0 0; background: #02060b99; border: 0; z-index: 9; }
   .terminal { grid-template-columns: 1fr; } .sym-list { display: flex; overflow-x: auto; } .sym-list button { white-space: nowrap; }
   .data-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   .data-table, .data-table tbody, .data-table tr, .data-table td { display: block; width: 100%; }
@@ -600,13 +600,15 @@ input::placeholder { color: #9babb9; }
 }
 @media (max-width: 740px) {
   .console-nav {
-    top: 62px;
-    height: calc(100dvh - 62px);
+    top: var(--console-header-height, 62px);
+    overscroll-behavior-y: contain;
+    scroll-padding-block: 12px;
+    height: calc(100dvh - var(--console-header-height, 62px));
     padding: 18px 15px;
     background: #0c1520;
     box-shadow: 15px 0 30px #0008;
   }
-  [dir="rtl"] .console-nav { inset: 62px 0 0 auto; }
+  [dir="rtl"] .console-nav { inset: var(--console-header-height, 62px) 0 0 auto; }
   .console-top { min-height: 62px; padding: 10px 14px; }
   .console-top > .row { gap: 8px; }
   .nav-toggle { width: 40px; height: 40px; min-height: 40px; justify-content: center; }
@@ -648,3 +650,505 @@ input::placeholder { color: #9babb9; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+
+/* Bilingual manuals: sidebar table of contents and readable chapter layout. */
+.manual-layout { display: grid; grid-template-columns: minmax(185px, 245px) minmax(0, 1fr); gap: 18px; align-items: start; }
+.manual-layout[dir="rtl"] { direction: rtl; }
+.manual-toc { position: sticky; top: 16px; max-height: calc(100vh - 40px); overflow: auto; }
+.manual-toc ol { margin: 0; padding-inline-start: 18px; }
+.manual-toc li { margin-bottom: 10px; font-size: 12px; }
+.manual-toc a { color: var(--text); line-height: 1.6; }
+.manual-toc a:hover { color: var(--accent); }
+.manual-body { display: grid; gap: 16px; min-width: 0; }
+.manual-intro, .manual-chapter { scroll-margin-top: 20px; }
+.manual-chapter ol { padding-inline-start: 22px; margin-bottom: 18px; }
+.manual-chapter li { margin-bottom: 12px; line-height: 1.9; overflow-wrap: anywhere; }
+.manual-chapter .button { text-decoration: none; }
+.manual-final { padding: 10px 4px; }
+@media (max-width: 850px) {
+  .manual-layout { grid-template-columns: 1fr; }
+  .manual-toc { position: static; max-height: none; }
+  .manual-toc ol { columns: 2; column-gap: 22px; }
+  .manual-toc li { break-inside: avoid; }
+}
+@media (max-width: 530px) {
+  .manual-toc ol { columns: 1; }
+  .manual-chapter, .manual-intro { padding: 18px; }
+}
+
+/* HUNTER_KSA1_GLOBAL_DARK_THEME_START */
+:root, html, body {
+  color-scheme: dark;
+  --hunter-bg: #0B1930;
+  --hunter-surface: #17283F;
+  --hunter-surface-raised: #203852;
+  --hunter-border: #304761;
+  --hunter-text: #F1F5F9;
+  --hunter-muted: #B6C8DC;
+  --hunter-accent: #1686C7;
+  --hunter-accent-hover: #237FB1;
+  --background: #0B1930;
+  --foreground: #F1F5F9;
+  --card: #17283F;
+  --card-foreground: #F1F5F9;
+  --popover: #17283F;
+  --popover-foreground: #F1F5F9;
+  --muted: #203852;
+  --muted-foreground: #B6C8DC;
+  --border: #304761;
+  --input: #203852;
+  --primary: #1686C7;
+  --primary-foreground: #FFFFFF;
+  --secondary: #203852;
+  --secondary-foreground: #F1F5F9;
+  --accent: #203852;
+  --accent-foreground: #F1F5F9;
+}
+html, body { background: var(--hunter-bg); color: var(--hunter-text); }
+.page-frame, .page-content, .page-content--workspace { color: var(--hunter-text); }
+.panel, .surface-header, .page-heading, .page-heading--editorial,
+.card, [data-slot="card"], [data-slot="popover-content"],
+[role="dialog"] { background-color: var(--hunter-surface); color: var(--hunter-text); border-color: var(--hunter-border); }
+.muted, .page-heading .muted { color: var(--hunter-muted); }
+input, textarea, select, [data-slot="input"], [data-slot="textarea"], [data-slot="select-trigger"] {
+ background-color: var(--hunter-surface-raised); color: var(--hunter-text); border-color: var(--hunter-border);
+}
+input::placeholder, textarea::placeholder { color: var(--hunter-muted); }
+.button, button.button { border-color: var(--hunter-border); }
+.button:not(:disabled):focus-visible, button:not(:disabled):focus-visible,
+a:focus-visible, input:focus-visible { outline: 2px solid #65C9F5; outline-offset: 2px; }
+/* HUNTER_KSA1_GLOBAL_DARK_THEME_END */
+
+/* HUNTER_VISUAL_MATCH_V1 — visual design system, does not alter authorization */
+:root {
+  --hunter-night: #06152c;
+  --hunter-deep: #091c38;
+  --hunter-panel: #102746;
+  --hunter-panel-raised: #142e50;
+  --hunter-blue: #0879ee;
+  --hunter-blue-light: #4fbaff;
+  --hunter-border-bright: #278bff;
+  --hunter-white: #f5f9ff;
+  --hunter-silver: #c9d9ed;
+}
+.hunter-public { min-height:100vh; background:radial-gradient(ellipse at 60% 30%, #102e58 0%, #081b37 49%, #061329 100%); color:var(--hunter-white); font-family:system-ui,"Noto Sans Arabic",Tahoma,sans-serif; }
+.hunter-public * { box-sizing:border-box; }
+.hunter-public a { color:#84d6ff; }
+.hunter-auth-page { display:grid; place-items:center; padding:30px 20px; }
+.hunter-auth-wrap { width:min(100%, 790px); }
+.hunter-return { display:inline-block; margin:0 8px 22px; text-decoration:none; font-size:13px; font-weight:700; }
+.hunter-auth-card { border:1px solid var(--hunter-border-bright); border-radius:25px; padding:clamp(22px,4vw,38px); background:linear-gradient(145deg,#102849 0%,#071b35 62%,#091a33 100%); box-shadow:0 25px 80px #020a1e70, inset 0 1px #78bfff18; }
+.hunter-brand-row { display:flex; flex-direction:row-reverse; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:2px; }
+.hunter-brand { display:flex; flex-direction:row-reverse; align-items:center; gap:17px; direction:ltr; text-align:left; }
+.hunter-brand strong { display:block; font-size:clamp(17px,2.2vw,25px); letter-spacing:.3px; color:var(--hunter-white); }
+.hunter-brand small { display:block; margin-top:4px; color:#d3e4f8; font-size:14px; }
+.hunter-shield { display:grid; place-items:center; flex:none; width:68px; height:76px; color:#90d9ff; font-size:32px; background:linear-gradient(155deg,#46b9ff,#0054cd); clip-path:polygon(50% 0,96% 19%,91% 68%,50% 100%,9% 68%,4% 19%); filter:drop-shadow(0 0 10px #008aff55); }
+.hunter-version { display:inline-flex; align-items:center; border:1px solid #258aff; background:#074070; color:#9fe2ff; border-radius:999px; padding:5px 16px; font-size:14px; }
+.hunter-auth-card h1 { margin:0 0 12px; font-size:clamp(30px,4.5vw,46px); font-weight:800; text-align:right; color:var(--hunter-white); }
+.hunter-auth-description { color:#e1e9f6; margin:0 0 24px; font-size:17px; line-height:1.8; }
+.hunter-auth-inner { padding:24px; background:linear-gradient(120deg,#122c4c,#0c213f); border:1px solid #30629b; border-radius:18px; box-shadow:inset 0 1px #ffffff0c; }
+.hunter-auth-inner .panel { background:transparent!important; border:0!important; box-shadow:none!important; padding:0!important; color:var(--hunter-white)!important; }
+.hunter-auth-inner .panel h2 { color:#5bc0ff!important; font-size:20px!important; }
+.hunter-auth-inner .panel p, .hunter-auth-inner .panel .muted { color:#e4edf9!important; }
+.hunter-auth-inner .row { gap:12px; }
+.hunter-auth-inner .button { background:#0a1d38!important; color:#fff!important; border:1px solid #4e9be4!important; border-radius:10px!important; min-height:48px; padding:10px 18px!important; font-weight:700!important; cursor:pointer; }
+.hunter-auth-inner .button:hover:not(:disabled) { background:#15416c!important; }
+.hunter-auth-inner .button:focus-visible { outline:3px solid #9edbff; outline-offset:2px; }
+.hunter-auth-inner button:disabled { opacity:.55; cursor:not-allowed; }
+.hunter-auth-inner button.button:first-child { background:linear-gradient(180deg,#078eff,#0750d5)!important; border-color:#218fff!important; }
+.hunter-auth-foot { text-align:center; margin:22px 0 0; color:#cbd8e9; font-size:14px; }
+.hunter-info h2 { margin:0 0 12px; color:#61bfff; font-size:23px; }
+.hunter-info p { line-height:1.9; color:#e4edf9; }
+.hunter-primary-link, .hunter-secondary-link { display:inline-block; padding:13px 25px; border-radius:11px; text-decoration:none; font-weight:750; }
+.hunter-public .hunter-primary-link { background:linear-gradient(180deg,#0795ff,#0750d7); color:#fff; border:1px solid #249aff; }
+.hunter-public .hunter-secondary-link { background:#0b2343; color:#eaf4ff; border:1px solid #4e9be4; }
+.hunter-nav { max-width:1160px; margin:auto; display:flex; align-items:center; justify-content:space-between; gap:20px; padding:28px 25px; }
+.hunter-nav-actions { display:flex; align-items:center; gap:18px; }
+.hunter-nav-actions a { text-decoration:none; font-weight:700; }
+.hunter-nav-actions .hunter-nav-cta { padding:10px 18px; border:1px solid #3194e8; border-radius:10px; background:#0e2b4f; }
+.hunter-hero { max-width:1160px; margin:80px auto 75px; padding:0 25px; }
+.hunter-hero h1 { font-size:clamp(36px,5vw,65px); line-height:1.25; margin:24px 0; }
+.hunter-hero p { max-width:730px; color:var(--hunter-silver); line-height:1.9; font-size:19px; }
+.hunter-hero-actions { display:flex; flex-wrap:wrap; gap:14px; margin-top:30px; }
+.hunter-feature-grid { max-width:1160px; margin:0 auto; padding:0 25px; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; }
+.hunter-feature { background:linear-gradient(145deg,#142e50,#0a1d39); border:1px solid #27669e; border-radius:18px; padding:24px; }
+.hunter-feature h2 { font-size:20px; color:#75caff; margin:0 0 12px; }
+.hunter-feature p { color:var(--hunter-silver); line-height:1.8; }
+.hunter-landing-footer { max-width:1160px; margin:50px auto 0; padding:24px 25px; font-size:13px; color:#9fb7d1; }
+/* All authenticated console pages: consistent surfaces and focus */
+:root { color-scheme:dark; --background:#07172d; --foreground:#f5f9ff; --card:#102746; --card-foreground:#f5f9ff; --popover:#102746; --popover-foreground:#f5f9ff; --muted:#142e50; --muted-foreground:#c9d9ed; --border:#30547d; --input:#142e50; --primary:#0879ee; --primary-foreground:#fff; --secondary:#142e50; --secondary-foreground:#f5f9ff; }
+html, body { background-color:#07172d; color:#f5f9ff; }
+.panel, .surface-header, .page-heading, [data-slot="card"] { border-color:#30547d; }
+button:focus-visible, a:focus-visible { outline:2px solid #6bc7ff; outline-offset:2px; }
+@media (max-width:700px) { .hunter-auth-card { padding:20px; } .hunter-brand-row { align-items:center; } .hunter-shield { width:44px; height:51px; font-size:24px; } .hunter-auth-inner { padding:16px; } .hunter-feature-grid { grid-template-columns:1fr; } .hunter-hero { margin-top:52px; } .hunter-nav { flex-wrap:wrap; } }
+
+
+
+
+
+
+/* HUNTER_DESKTOP_FULLBLEED_START */
+/* Real full-viewport layer: independent of page content width. */
+html,body { margin:0!important; min-height:100%!important; }
+body:has(.hunter-public) { background:#020a17!important; }
+body:has(.hunter-public)::before {
+  content:""!important; position:fixed!important; inset:0!important;
+  width:100vw!important; height:100vh!important; height:100dvh!important;
+  z-index:0!important; pointer-events:none!important;
+  background-image:linear-gradient(90deg,rgba(0,8,22,.16),rgba(0,9,23,.24)),url('/hunter-robot-scene.webp')!important;
+  background-repeat:no-repeat!important;
+  background-size:100% 100%,cover!important;
+  background-position:center,center!important;
+}
+body:has(.hunter-public) > * { position:relative!important; z-index:1!important; }
+.hunter-public {
+  position:relative!important; isolation:auto!important;
+  width:100%!important; max-width:none!important;
+  min-height:100vh!important; min-height:100dvh!important;
+  margin:0!important; overflow-x:clip!important;
+  background:transparent!important;
+}
+.hunter-public::before,.hunter-public::after { content:none!important; display:none!important; }
+.hunter-auth-page {
+  display:flex!important; flex-direction:column!important;
+  align-items:center!important; justify-content:center!important;
+  width:100%!important; max-width:none!important;
+  min-height:100vh!important; min-height:100dvh!important;
+  margin:0!important; padding:24px!important; box-sizing:border-box!important;
+}
+.hunter-auth-wrap { width:min(100%,660px)!important; max-width:660px!important; flex:0 1 auto!important; margin:0 auto!important; }
+.hunter-auth-card { width:100%!important; box-sizing:border-box!important; background:rgba(3,17,38,.91)!important; backdrop-filter:blur(14px)!important; }
+@media(max-width:767px){
+  body:has(.hunter-public)::before {background-position:center,35% center!important;}
+  .hunter-auth-page{padding:14px!important;}
+}
+/* HUNTER_DESKTOP_FULLBLEED_END */
+
+
+/* HUNTER_VISUAL_SAFE_START */
+/* Centered accessible login page with complete uncropped illustration. */
+body:has(> .hunter-public), body:has(.hunter-auth-page) { margin:0; background:#020b1b; }
+.hunter-public.hunter-auth-page {
+  position:relative !important;
+  isolation:isolate !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  box-sizing:border-box !important;
+  width:100% !important;
+  max-width:none !important;
+  min-height:100svh !important;
+  min-height:100dvh !important;
+  height:auto !important;
+  margin:0 !important;
+  padding:clamp(16px,3vh,32px) 16px !important;
+  overflow:visible !important;
+  background:radial-gradient(ellipse at 45% 55%,#0b2850 0%,#05152e 50%,#020b1b 100%) !important;
+}
+/* The image stays fully visible (contain); surrounding viewport blends into navy. */
+.hunter-public.hunter-auth-page::before {
+  content:"" !important;
+  position:fixed !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  z-index:0 !important;
+  pointer-events:none !important;
+  opacity:1 !important;
+  background-image:linear-gradient(90deg,rgba(1,9,25,.14),rgba(1,10,25,.10)),url('/hunter-robot-scene.webp') !important;
+  background-repeat:no-repeat,no-repeat !important;
+  background-size:100% 100%,contain !important;
+  background-position:center center,center center !important;
+}
+.hunter-public.hunter-auth-page::after {
+  content:"" !important;
+  position:fixed !important;
+  inset:0 !important;
+  z-index:0 !important;
+  pointer-events:none !important;
+  background:linear-gradient(180deg,rgba(1,9,23,.14),transparent 24%,transparent 78%,rgba(1,8,20,.35)) !important;
+}
+.hunter-auth-page > .hunter-auth-wrap {
+  position:relative !important;
+  z-index:1 !important;
+  display:block !important;
+  box-sizing:border-box !important;
+  width:min(100%,460px) !important;
+  max-width:460px !important;
+  min-width:0 !important;
+  flex:none !important;
+  margin:0 auto !important;
+}
+.hunter-auth-page .hunter-auth-card {
+  box-sizing:border-box !important;
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  height:auto !important;
+  max-height:none !important;
+  overflow:visible !important;
+  margin:0 auto !important;
+  padding:clamp(18px,2.5vw,28px) !important;
+  background:linear-gradient(150deg,rgba(3,19,42,.93),rgba(3,12,31,.96)) !important;
+  border:1px solid rgba(38,144,255,.84) !important;
+  border-radius:19px !important;
+  box-shadow:0 18px 55px rgba(0,0,0,.57),0 0 19px rgba(0,110,255,.18) !important;
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+.hunter-auth-page .hunter-auth-inner {
+  box-sizing:border-box !important;
+  padding:clamp(13px,2vw,20px) !important;
+  min-width:0 !important;
+}
+.hunter-auth-page .hunter-brand strong {font-size:clamp(16px,2vw,21px) !important;}
+.hunter-auth-page .hunter-brand small {font-size:12px !important;}
+.hunter-auth-page .hunter-shield {width:49px !important;height:55px !important;font-size:25px !important;}
+.hunter-auth-page .hunter-auth-card h1 {font-size:clamp(24px,3vw,32px) !important;line-height:1.4 !important;margin:8px 0 !important;}
+.hunter-auth-page .hunter-auth-description {font-size:14px !important;line-height:1.7 !important;margin-bottom:15px !important;}
+.hunter-auth-page .hunter-auth-inner .button {min-height:42px !important;max-width:100% !important;}
+.hunter-auth-page .hunter-auth-inner .row {flex-wrap:wrap !important;}
+.hunter-auth-page .hunter-auth-foot {font-size:13px !important;margin-top:15px !important;}
+@media (max-width:600px) {
+  .hunter-public.hunter-auth-page {justify-content:safe center !important;padding:18px 14px !important;}
+  .hunter-public.hunter-auth-page::before {
+    background-image:linear-gradient(rgba(1,10,28,.55),rgba(1,10,28,.63)),url('/hunter-robot-scene.webp') !important;
+    background-size:100% 100%,contain !important;
+  }
+  .hunter-auth-page > .hunter-auth-wrap {width:100% !important;max-width:440px !important;}
+  .hunter-auth-page .hunter-auth-card {padding:18px !important;}
+}
+@media (max-height:650px) {
+  .hunter-public.hunter-auth-page {justify-content:flex-start !important;}
+}
+/* HUNTER_VISUAL_SAFE_END */
+
+/* HUNTER BACKGROUND FIX START */
+
+.hunter-public {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  background: #030b18;
+}
+
+.hunter-public::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-color: #030b18;
+  background-image: url("/hunter-robot-scene.webp");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain;
+}
+
+.hunter-public > * {
+  position: relative;
+  z-index: 1;
+}
+
+.hunter-auth-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  box-sizing: border-box;
+}
+
+.hunter-auth-page > * {
+  width: 100%;
+  max-width: 460px;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+  .hunter-auth-page {
+    padding: 16px 12px;
+    align-items: safe center;
+  }
+
+  .hunter-auth-page > * {
+    max-width: 100%;
+  }
+}
+
+/* HUNTER BACKGROUND FIX END */
+
+/* Native mobile navigation survives a stalled React hydration / older Safari. */
+.hunter-native-mobile-menu { display:none; }
+.hunter-native-mobile-menu summary { list-style:none; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+.hunter-native-mobile-menu summary::-webkit-details-marker { display:none; }
+.hunter-native-language a { display:inline-flex; align-items:center; justify-content:center; min-height:34px; padding:6px 12px; color:var(--muted); font:11px var(--mono); text-decoration:none; -webkit-tap-highlight-color:transparent; }
+.hunter-native-language a.on, .hunter-native-language a[aria-current="true"] { background:#1d2c3b; color:var(--text); box-shadow:inset 0 -2px var(--mode); }
+.hunter-native-language a:focus-visible, .hunter-native-mobile-menu summary:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+@media(max-width:740px) {
+  .hunter-native-mobile-menu { display:block; }
+  .hunter-native-mobile-menu > summary { display:flex; width:44px; height:44px; align-items:center; justify-content:center; padding:6px; }
+  .hunter-native-mobile-menu[open] > summary { background:#26415c; }
+  .hunter-native-menu-body { position:fixed; top:var(--console-header-height, 72px); inset-inline-start:0; width:min(315px,88vw); max-height:calc(100vh - var(--console-header-height, 72px)); max-height:calc(100dvh - var(--console-header-height, 72px)); overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; z-index:32; padding:12px 14px 30px; background:#0c1520; border:1px solid #344b62; box-shadow:10px 18px 40px #000b; }
+  .hunter-native-menu-body .nav-link { display:block; min-height:44px; padding:12px 10px; }
+  .console-top { z-index:40; }
+  .console-nav { display:none !important; }
+  .hunter-native-language a { min-height:44px; min-width:74px; }
+}
+
+/* Native sign-in fallback only when the independent legacy script detects missing React hydration. */
+.hunter-auth-nohydrate { display:none !important; }
+html[data-hunter-js-fallback="true"] .hunter-auth-nohydrate { display:inline-flex !important; }
+/* Account session controls: explicit and touch accessible across desktop/mobile. */
+.hunter-account-status { display:flex; align-items:center; flex-wrap:wrap; gap:8px; max-width:100%; }
+.hunter-account-email { display:inline-block; max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--text); font-size:12px; }
+@media(max-width:640px){.hunter-account-email{max-width:140px}.hunter-account-status .button{min-height:40px;padding:6px 10px}}
+
+
+/* iOS compact bilingual controls (no wrapping in Safari fallback). */
+.hunter-native-language { display:inline-flex !important; flex-direction:row !important; flex-wrap:nowrap !important; align-items:stretch !important; max-width:100%; }
+.hunter-native-language a { flex:1 1 50%; white-space:nowrap; min-width:0 !important; padding:7px 10px; color:#b9cde6; font-size:12px; }
+.hunter-native-language a.on { color:#fff !important; background:#24446d !important; }
+.manual-intro .eyebrow,.manual-chapter .eyebrow { color:#c7d9f2 !important; opacity:1 !important; font-weight:600; letter-spacing:.02em; }
+.manual-chapter .button { color:#f0f6ff !important; border-color:#5980ae !important; }
+.hunter-native-unavailable { color:#f9daac; padding:12px; border:1px solid #725d37; border-radius:8px; }
+@media(max-width:740px){.hunter-native-language{width:min(100%,318px)}.hunter-native-language a{min-height:44px;font-size:12px}.top-actions{min-width:0}}
+
+
+/* HUNTER public authentication language selector (2026-10-22) */
+.hunter-locale-selector { display:inline-flex; gap:4px; padding:4px; border:1px solid #3677b7; border-radius:12px; background:#09203f; direction:ltr; }
+.hunter-locale-selector button { border:0; border-radius:8px; padding:9px 12px; min-height:42px; color:#d8edff; background:transparent; font:600 13px system-ui,"Noto Sans Arabic",sans-serif; cursor:pointer; }
+.hunter-locale-selector button[aria-pressed="true"] { background:#0879ee; color:white; }
+.hunter-locale-selector button:focus-visible {outline:2px solid white; outline-offset:2px;}
+.hunter-public-auth-tools { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; }
+.hunter-public-auth-tools > a {color:#a8dcff;}
+@media(max-width:700px) { .hunter-nav-actions {flex-wrap:wrap; gap:12px;} .hunter-locale-selector button {padding:9px 10px;} }
+
+.hunter-public .hunter-auth-error-banner { max-width:100%; border:1px solid #e19c49; border-radius:12px; background:#452714; padding:14px 18px; color:#fff4de; font-size:16px; line-height:1.8; overflow-wrap:anywhere; }
+
+/* Owner bot start/stop: visible in header on desktop and mobile. */
+.hunter-bot-power {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  border: 1px solid var(--line, #777);
+  border-radius: 10px;
+  padding: 6px 10px;
+  max-width: 100%;
+}
+.hunter-bot-power > span { white-space: nowrap; }
+.hunter-bot-power .button { min-height: 44px; min-width: 96px; touch-action: manipulation; }
+.hunter-bot-power small { flex-basis: 100%; font-size: 12px; }
+@media (max-width: 600px) {
+  .hunter-bot-power { width: 100%; justify-content: center; }
+  .hunter-bot-power .button { flex: 1 1 120px; }
+}
+
+/* Compact, accessible operator header for iPhone and small devices. */
+@media (max-width: 740px) {
+  .console-shell .console-top {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 10px 12px 12px;
+    position: relative;
+  }
+  .console-top > .row:first-child {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+  }
+  .console-top > .row:first-child .top-label {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    font-size: 10px;
+    min-width: 0;
+  }
+  .console-top .top-actions {
+    display: grid;
+    width: 100%;
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+  }
+  .top-actions > .hunter-native-language { grid-column: 1; width: 100%; max-width: 260px; }
+  .top-actions > .acceptance-label { grid-column: 2; justify-self: end; max-width: 145px; white-space: normal; }
+  .top-actions > .hunter-bot-power { grid-column: 1 / -1; }
+  .top-actions > .hunter-account-status,
+  .top-actions > a.button,
+  .top-actions > .hunter-auth-nohydrate { grid-column: 1 / -1; justify-self: stretch; }
+  .console-top .hunter-account-status { display:flex; flex-wrap:wrap; justify-content: space-between; width:100%; }
+  .console-top .hunter-account-email { font-size: 13px; max-width: min(65vw, 260px); }
+  .console-top .hunter-bot-power {
+    display:grid;
+    grid-template-columns: minmax(0, 1fr) minmax(125px, auto);
+    align-items:center;
+    gap:6px 12px;
+    width:100%;
+    padding:10px 12px;
+    text-align:start;
+  }
+  .console-top .hunter-bot-power > span {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    min-width:0;
+    font-size: 13px;
+  }
+  .console-top .hunter-bot-power-action { min-height:46px; min-width:125px; font-size:13px; font-weight:700; }
+  .console-top .hunter-bot-power > small { grid-column:1 / -1; line-height:1.5; }
+  .console-top .hunter-bot-power .hunter-bot-status-issues { color:#f9c694; }
+  .hunter-native-mobile-menu > summary { flex-shrink: 0; }
+  .hunter-native-menu-body { top: var(--console-header-height, 72px); }
+}
+
+/* 2026-10-22: stable narrow-screen operator layout; no synthetic KPI blocks. */
+@media (max-width: 740px) {
+  html, body, .console-shell, .console-workspace { max-width: 100%; }
+  .console-shell .console-top { display: flex; flex-direction: column; align-items: stretch; }
+  .console-top > .row:first-child { min-width: 0; }
+  .console-top .top-actions {
+    display: flex; flex-direction: column; align-items: stretch; gap: 10px;
+    width: 100%; min-width: 0;
+  }
+  .top-actions > .hunter-native-language { width: 100%; max-width: none; align-self: stretch; }
+  .top-actions > .hunter-bot-power { width: 100%; }
+  .top-actions > .acceptance-label { display: none; }
+  .console-top .hunter-bot-power {
+    display: flex; flex-direction: column; align-items: stretch; gap: 8px;
+    padding: 12px; width: 100%; text-align: start;
+  }
+  .console-top .hunter-bot-power > span { white-space: normal; overflow-wrap: anywhere; }
+  .console-top .hunter-bot-power-action { min-width: 0; width: 100%; }
+  .console-top .hunter-bot-power > small { flex-basis: auto; overflow-wrap: anywhere; }
+  .console-top .hunter-account-status { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .console-main, .page-content, .panel, .strategy-list, .hunter-operator-intro { min-width: 0; max-width: 100%; }
+  .console-main { overflow-wrap: anywhere; }
+  .hunter-native-menu-body { inset-inline-start: 0; inset-inline-end: auto; }
+  html[dir="rtl"] .hunter-native-menu-body { inset-inline-start: auto; inset-inline-end: 0; }
+}
+
+/* HUNTER mobile drawer accessibility and layout repair */
+@media (max-width:740px) {
+ .hunter-native-mobile-menu { position:relative; }
+ .hunter-native-mobile-menu .hunter-menu-trigger { display:flex; align-items:center; justify-content:center; width:44px; height:44px; }
+ .hunter-menu-backdrop { position:fixed; inset:0; z-index:998; border:0; background:rgba(0,0,0,.68); cursor:pointer; }
+ .hunter-native-menu-body { position:fixed !important; top:0 !important; bottom:0 !important; left:auto !important; right:0 !important; width:min(340px,88vw) !important; height:100dvh !important; max-height:100dvh !important; overflow-y:auto !important; overscroll-behavior:contain; padding:18px 14px calc(28px + env(safe-area-inset-bottom)) !important; z-index:999 !important; transform:translateX(110%); visibility:hidden; pointer-events:none; transition:transform .2s ease,visibility .2s; background:#0c1520; box-sizing:border-box; }
+ .hunter-native-menu-body.is-open { transform:translateX(0); visibility:visible; pointer-events:auto; }
+ .hunter-menu-heading { position:sticky; top:-18px; z-index:1; display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px 4px; margin-bottom:8px; background:#0c1520; border-bottom:1px solid #344b62; }
+ .hunter-native-menu-body .nav-label { margin:18px 0 8px; text-align:start; }
+ .hunter-native-menu-body .nav-link { min-height:48px; text-align:start; white-space:normal; }
+ .hunter-native-menu-body[aria-hidden="true"] { display:none; }
+}
+@media (prefers-reduced-motion:reduce) { .hunter-native-menu-body { transition:none !important; } }

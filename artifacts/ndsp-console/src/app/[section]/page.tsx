@@ -8,10 +8,12 @@ import HealthPanel from "../../components/HealthPanel";
 import IdentityPanel from "../../components/IdentityPanel";
 import SettingsPanel from "../../components/SettingsPanel";
 import AdminBlocked from "../../components/AdminBlocked";
+import AccountEnrollmentPanel from "../../components/AccountEnrollmentPanel";
+import { UserGuide } from "../../components/Guides";
 
 export const dynamicParams = false;
 export function generateStaticParams() {
-  return userPages.filter(p => p.slug !== "command-center").map(p => ({ section: p.slug }));
+  return userPages.filter(p => p.slug !== "command-center" && p.slug !== "registration").map(p => ({ section: p.slug }));
 }
 type Props = { params: Promise<{ section: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -25,8 +27,11 @@ export default async function UserPage({ params }: Props) {
   const page = userPages.find(p => p.slug === section);
   if (!page || section === "command-center") notFound();
   let content;
-  if (section === "health") content = <><HealthPanel /><PreviewWorkspace section="future-health" /></>;
-  else if (section === "settings") content = <><SettingsPanel /><PreviewWorkspace section="bot-settings" /></>;
+  if (section === "user-guide") content = <UserGuide />;
+  else if (section === "account-access") content = <AccountEnrollmentPanel />;
+  else if (section === "registration") content = <AccountEnrollmentPanel registration />;
+  else if (section === "health") content = <HealthPanel />;
+  else if (section === "settings") content = <SettingsPanel />;
   else if (section === "security") content = <SecurityView />;
   else if (section === "subscription") content = <IdentityPanel entitlementsOnly />;
   else if (section === "audit") content = <AdminBlocked />;
