@@ -20,14 +20,15 @@ from nex_api import hunter_live_executor as engine
 from nex_api import hunter_m5_testnet_pilot as pilot
 from nex_api import hunter_testnet_reconcile as reconcile
 from nex_api.testnet_automation import AutomationSession, automation_accounts
+from nex_api.strategy_signals import BY_ID
 
 ACTIONS = {"preflight", "dry-run", "entry", "inspect", "reconcile", "exit", "cleanup", "recover"}
 MUTATIONS = {"entry", "exit", "cleanup"}
 PRESET = {"mode": "testnet", "mainnet_enabled": False, "symbol": "BTCUSDT",
-          "strategy": "ema20_50_long_only", "daily_loss_pct": "2",
+          "strategy": "trend-ladder", "daily_loss_pct": "2",
           "trade_risk_pct": "0.5", "max_exposure_pct": "10",
           "stop_pct": "1", "margin_mode": "CROSS"}
-SYMBOLS = {"BTCUSDT", "ETHUSDT", "BNBUSDT", "SOLUSDT", "XRPUSDT", "ADAUSDT", "DOGEUSDT"}
+SYMBOLS = {"BTCUSDT", "ETHUSDT", "BNBUSDT", "SOLUSDT", "XRPUSDT", "ADAUSDT", "DOGEUSDT", "LINKUSDT"}
 
 
 def reject(code):
@@ -58,6 +59,8 @@ def valid_config(value):
         reject("TESTNET_CONFIG_INVALID")
     if value.get("symbol") not in SYMBOLS or value.get("margin_mode") not in {"CROSS", "ISOLATED"}:
         reject("TESTNET_CONFIG_INVALID")
+    if value["strategy"] not in BY_ID or value["symbol"] != BY_ID[value["strategy"]].symbol:
+        reject("STRATEGY_MARKET_INTERVAL_MISMATCH")
     return reconcile.checked_config(dict(value))
 
 
@@ -132,8 +135,8 @@ class ExecutionSession(AutomationSession):
         recent = list(receipts.values())[-30:]
         return {"venue": "BINANCE_USDM_TESTNET", "mainnet_orders_enabled": False,
                 "configured": config is not None, "config": config,
-                "revision": meta.get("revision"), "interval": "15m", "leverage": 1,
-                "strategy": "ema20_50_long_only", "automated_trading": automation["state"] == "RUNNING",
+                "revision": meta.get("revision"), "interval": BY_ID[config["strategy"]].interval if config else None, "leverage": 1,
+                "strategy": config["strategy"] if config else None, "automated_trading": automation["state"] == "RUNNING",
                 "automation": automation,
                 "active_position": state.get("active_position"),
                 "pending_order": state.get("pending_order"),

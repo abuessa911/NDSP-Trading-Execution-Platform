@@ -138,7 +138,7 @@ def preflight(ex, config, state):
         status = "TESTNET_ACCOUNT_AND_MARKET_READABLE"
     return {"status": status, "mode": "testnet", "network_writes": False,
             "mainnet_order_execution": False, "risk": risk,
-            "strategy_order_flow": "EMA20_50_LONG_ONLY_NOT_FOUR_STRATEGIES",
+            "strategy_order_flow": "SELECTED_RESEARCH_STRATEGY_REQUIRES_TESTNET_RISK_APPROVAL",
             "m3_candidates_are_not_orders": True}
 
 

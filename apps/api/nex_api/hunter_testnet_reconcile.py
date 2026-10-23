@@ -53,9 +53,11 @@ def checked_ids(state: dict):
     return pending, active
 
 
-def get_position(ex, symbol, required_leverage=1, required_margin_mode=None):
+def get_position(ex, symbol, required_leverage=1, required_margin_mode=None, *, allow_tracked_short=False):
     legacy.account_settings(ex)
     qty = legacy.position_snapshot(ex, symbol, required_leverage, required_margin_mode)
+    if qty < 0 and not allow_tracked_short:
+        reject("OPEN_SHORT_POSITION_NOT_ALLOWED")
     return qty
 
 
@@ -117,7 +119,8 @@ def inspect(ex, config, state):
         return {"status": "NO_TRACKED_TRADE", "write_enabled": False}
     if state.get("account") != hashlib.sha256(ex.key.encode()).hexdigest():
         reject("ACCOUNT_KEY_ROTATION_BLOCKED")
-    qty = get_position(ex, symbol, config.get("leverage", 1), config.get("margin_mode"))
+    tracked_short = (pending is not None and pending["signal"] in {"ENTER_SHORT", "EXIT_SHORT"}) or (active is not None and active.get("direction") == "SHORT")
+    qty = get_position(ex, symbol, config.get("leverage", 1), config.get("margin_mode"), allow_tracked_short=tracked_short)
     ordinary = ordinary_orders(ex, symbol)
     stops = algo_orders(ex, symbol)
     if ordinary:

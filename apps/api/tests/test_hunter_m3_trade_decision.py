@@ -3,7 +3,7 @@ import pytest
 
 from nex_api.strategy_risk_decision import decide
 
-IDS = ("trend-ladder", "range-fade", "breakout-scout", "mean-return")
+IDS = ("trend-ladder", "range-fade", "breakout-scout", "mean-return", "divergence-rsi")
 
 def strategy(sid, signal="NEUTRAL", status="SCANNING", symbol="BTCUSDT", interval="1h", **kwargs):
     return S(id=sid, signal=signal, status=status, symbol=symbol, interval=interval,
@@ -25,7 +25,7 @@ def test_no_candidate():
     assert view["candidates"] == []
 
 @pytest.mark.parametrize("strategy_id", IDS)
-def test_all_four_strategy_candidates_advisory_only(strategy_id):
+def test_all_five_strategy_candidates_advisory_only(strategy_id):
     view = decide(rows(**{strategy_id: "LONG_CANDIDATE"}), risk())
     assert view["candidates"][0]["decision"] == "LONG_RESEARCH"
     assert view["candidates"][0]["evidence"] == [strategy_id]
@@ -60,7 +60,7 @@ def test_stalled_scanner_ignored():
     seq=rows()
     seq[0]=strategy("trend-ladder","LONG_CANDIDATE",status="STALLED")
     v=decide(seq,risk())
-    assert v["active_scanners"]==3
+    assert v["active_scanners"]==4
     assert v["stalled_scanners"]==1
     assert v["candidates"] == []
 

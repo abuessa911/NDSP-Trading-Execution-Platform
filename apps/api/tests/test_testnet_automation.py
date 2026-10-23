@@ -178,10 +178,14 @@ def test_closed_candle_exit_and_sticky_daily_loss_reduces_only(demo_browser, mon
         return response
     owner.venue.read = read
     cycle(owner, authority, monkeypatch)
-    assert view(owner)["pending_order"]["signal"] == "EXIT_LONG"
-    assert owner.venue.mutations[-1] == "REDUCE_ONLY_EXIT_FILLED"
     if cause == "daily_loss":
+        assert view(owner)["pending_order"]["signal"] == "EXIT_LONG"
+        assert owner.venue.mutations[-1] == "REDUCE_ONLY_EXIT_FILLED"
         assert view(owner)["daily_loss_hit"]
+    else:
+        # EMA crossover is no longer an authorized strategy exit.
+        assert view(owner)["pending_order"] is None
+        assert owner.venue.mutations[-1] != "REDUCE_ONLY_EXIT_FILLED"
     automate(owner, False)
     finish_stop(owner, authority, monkeypatch)
 

@@ -472,6 +472,16 @@
               "default": false,
               "title": "Admin Mfa"
             }
+          },
+          {
+            "name": "register",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Register"
+            }
           }
         ],
         "responses": {

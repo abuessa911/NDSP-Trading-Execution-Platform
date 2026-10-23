@@ -10,7 +10,8 @@ from dataclasses import dataclass
 from typing import Any
 
 ALLOWED_SIGNALS = {"LONG_CANDIDATE", "SHORT_CANDIDATE", "NEUTRAL"}
-STRATEGY_IDS = frozenset({"trend-ladder", "range-fade", "breakout-scout", "mean-return"})
+from nex_api.strategy_signals import BY_ID
+STRATEGY_IDS = frozenset(BY_ID)
 INTERVALS = frozenset({"5m", "15m", "1h", "4h", "1d"})
 
 @dataclass(frozen=True)
@@ -29,7 +30,7 @@ def decide(strategies: list[Any], risk: Any) -> dict[str, Any]:
         reasons.append("RISK_EQUITY_NOT_MONITORING")
     if getattr(risk, "new_entries_blocked", True) is not False:
         reasons.append("RISK_BLOCKED")
-    if len(strategies) != 4 or {getattr(s, "id", None) for s in strategies} != STRATEGY_IDS:
+    if len(strategies) != len(STRATEGY_IDS) or {getattr(s, "id", None) for s in strategies} != STRATEGY_IDS:
         reasons.append("STRATEGY_INVENTORY_INCOMPLETE")
     by_symbol: dict[str, dict[str, list[tuple[str, str]]]] = defaultdict(
         lambda: {"LONG_CANDIDATE": [], "SHORT_CANDIDATE": []}

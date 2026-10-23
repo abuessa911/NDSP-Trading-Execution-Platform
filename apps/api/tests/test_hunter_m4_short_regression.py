@@ -35,7 +35,7 @@ class Exchange:
     def signed_post(self,path,**kw):
         self.posts.append((path,kw));return {"status":"FILLED"}
 
-CFG={"symbol":"BTCUSDT","strategy":"ema20_50_long_only","mode":"testnet",
+CFG={"symbol":"BTCUSDT","strategy":"trend-ladder","mode":"testnet",
      "daily_loss_pct":"2","trade_risk_pct":"0.5","max_exposure_pct":"10","stop_pct":"1"}
 
 def state(signal="ENTER_SHORT",active=False):

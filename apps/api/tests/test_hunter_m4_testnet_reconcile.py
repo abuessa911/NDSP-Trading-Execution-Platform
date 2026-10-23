@@ -106,7 +106,7 @@ class M4Tests(unittest.TestCase):
     def test_no_implicit_strategy(self):
         bad = cfg()
         bad["strategy"] = "range-fade"
-        with self.assertRaisesRegex(legacy.Halt,"STRATEGY_NOT_EXPLICITLY_SELECTED"):
+        with self.assertRaisesRegex(legacy.Halt,"STRATEGY_MARKET_INTERVAL_MISMATCH"):
             m4.checked_config(bad)
 
     def test_initial_entry_reconciles_only_with_protection(self):

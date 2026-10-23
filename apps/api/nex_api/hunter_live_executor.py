@@ -25,7 +25,7 @@ import httpx
 
 ORIGINS = {"testnet": "https://demo-fapi.binance.com", "mainnet": "https://fapi.binance.com"}
 SYMBOL = re.compile(r"^[A-Z0-9]{5,20}$")
-STRATEGY = "ema20_50_long_only"
+STRATEGY = "trend-ladder"
 DAY_TTL = 86400
 
 class Halt(Exception):
@@ -111,6 +111,8 @@ def require_config(config):
     from nex_api.strategy_signals import BY_ID
     if config["strategy"] not in BY_ID:
         raise Halt("STRATEGY_NOT_EXPLICITLY_SELECTED")
+    if config["symbol"] != BY_ID[config["strategy"]].symbol:
+        raise Halt("STRATEGY_MARKET_INTERVAL_MISMATCH")
     if not SYMBOL.fullmatch(str(config["symbol"])):
         raise Halt("INVALID_SYMBOL")
     d, r, exp, stop = (pct(config[k]) for k in ("daily_loss_pct", "trade_risk_pct",
@@ -452,13 +454,26 @@ def execute_once(config, state_path, ex, allow_write=False):
         raise
     # Persist the original verified daily baseline even if market/planning reads fail.
     save_state(state_path, state)
-    candles=market_candles(ex,symbol)
-    close_time=candles[-1][1]
-    state.setdefault("last_equity",str(equity))
-    if state.get("last_signal_candle")==close_time:
-        return {"status":"NO_NEW_CANDLE"}
-    closes=[c[2] for c in candles]
-    signal="ENTER_LONG" if crossed_up(closes) else ("EXIT_LONG" if crossed_down(closes) else "NO_SIGNAL")
+    from nex_api.strategy_execution_adapter import (
+        evaluate_exchange_testnet, StrategyExecutionRejected,
+    )
+    try:
+        evidence = evaluate_exchange_testnet(config["strategy"], ex)
+    except StrategyExecutionRejected as exc:
+        raise Halt(str(exc)) from exc
+    close_time = evidence.candle_close_ms
+    signal_key = config["strategy"] + ":" + str(close_time)
+    state.setdefault("last_equity", str(equity))
+    if state.get("last_strategy_signal_key") == signal_key:
+        return {"status": "NO_NEW_CANDLE"}
+    # Research signals are NOT EMA crossovers or exit orders.
+    signal = "ENTER_LONG" if evidence.decision == "LONG_REQUIRES_RISK_AND_APPROVAL" else "NO_SIGNAL"
+    if evidence.decision == "SHORT_BLOCKED":
+        if allow_write:
+            raise Halt("SHORT_EXECUTION_BLOCKED")
+        state["last_preview_candle"] = close_time
+        save_state(state_path, state)
+        return {"status": "SHORT_BLOCKED", "strategy": config["strategy"]}
     if position_signed < 0:
         if allow_write:
             raise Halt("SHORT_REQUIRES_PROTECTED_DUALSIDE_RECONCILIATION")
@@ -475,6 +490,7 @@ def execute_once(config, state_path, ex, allow_write=False):
         return {"status":"NO_SIGNAL"} if signal == "NO_SIGNAL" else {"status":"DRY_RUN","signal":signal}
     if signal=="NO_SIGNAL":
         state["last_signal_candle"] = close_time
+        state["last_strategy_signal_key"] = signal_key
         save_state(state_path, state)
         return {"status":"NO_SIGNAL"}
     if signal != "ENTER_LONG":
@@ -485,7 +501,7 @@ def execute_once(config, state_path, ex, allow_write=False):
     step,minimum,tick,min_notional=symbol_filters(ex,symbol)
     mark=ex.get("/fapi/v1/premiumIndex",symbol=symbol)
     mark_price=D(mark.get("markPrice"),positive=True)
-    entry=closes[-1]
+    entry=D(evidence.reference_close, positive=True)
     if abs(mark_price-entry)/entry>Decimal("0.0075"):
         raise Halt("MARK_PRICE_TOO_FAR_FROM_CLOSED_CANDLE")
     if "leverage" in config:
@@ -524,9 +540,10 @@ def execute_once(config, state_path, ex, allow_write=False):
 
     intent_id="HK1"+uuid.uuid4().hex[:24]
     state["last_signal_candle"] = close_time
+    state["last_strategy_signal_key"] = signal_key
     state["pending_order"] = {"id": intent_id, "signal": signal,
         "created": int(time.time()), "quantity": str(qty), "stop_price": str(stop),
-        "symbol": symbol, "cost_rate": str(cost_rate)}
+        "symbol": symbol, "strategy": config["strategy"], "signal_key": signal_key, "cost_rate": str(cost_rate)}
     save_state(state_path, state)
     try:
         stop_result=ex.signed_post("/fapi/v1/algoOrder",

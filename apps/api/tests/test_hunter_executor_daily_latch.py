@@ -36,16 +36,18 @@ def test_observed_daily_breach_is_persisted_and_rebound_cannot_reopen(tmp_path):
 def test_dry_run_does_not_consume_the_actionable_closed_candle(tmp_path):
     path = tmp_path/"state.json"
     ex = SimpleNamespace(key="SYNTHETIC", mode="testnet")
-    candles = [(n*900000, (n+1)*900000-1, Decimal("100")) for n in range(120)]
+    from nex_api.strategy_execution_adapter import ExecutionSignal
+    close_ms = 1710000000000
+    evidence = ExecutionSignal("trend-ladder", "BTCUSDT", "1h", close_ms,
+                               "LONG_CANDIDATE", "LONG_REQUIRES_RISK_AND_APPROVAL")
     with (patch.object(engine, "account_snapshot", return_value=(Decimal("1000"), 0, 0)),
-          patch.object(engine, "market_candles", return_value=candles),
-          patch.object(engine, "crossed_up", return_value=True)):
+          patch("nex_api.strategy_execution_adapter.evaluate_exchange_testnet", return_value=evidence)):
         first = engine.execute_once(config(), path, ex, allow_write=False)
         second = engine.execute_once(config(), path, ex, allow_write=False)
     assert first == second == {"status": "DRY_RUN", "signal": "ENTER_LONG"}
     saved = engine.load_json(path)
-    assert saved.get("last_signal_candle") != candles[-1][1]
-    assert saved["last_preview_candle"] == candles[-1][1]
+    assert saved.get("last_signal_candle") != close_ms
+    assert saved["last_preview_candle"] == close_ms
     assert not saved.get("pending_order")
 
 

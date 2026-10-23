@@ -22,7 +22,8 @@ Money = Annotated[str, Field(min_length=1, max_length=32)]
 
 class Setup(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    symbol: Literal["BTCUSDT", "ETHUSDT", "BNBUSDT", "SOLUSDT", "XRPUSDT", "ADAUSDT", "DOGEUSDT"]
+    symbol: Literal["BTCUSDT", "ETHUSDT", "BNBUSDT", "SOLUSDT", "XRPUSDT", "ADAUSDT", "DOGEUSDT", "LINKUSDT"]
+    strategy: Literal["trend-ladder", "range-fade", "breakout-scout", "mean-return", "divergence-rsi"] = "trend-ladder"
     margin_mode: Literal["CROSS", "ISOLATED"]
     daily_loss_pct: Money
     trade_risk_pct: Money

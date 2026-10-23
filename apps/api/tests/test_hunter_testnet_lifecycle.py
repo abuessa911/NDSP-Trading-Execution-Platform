@@ -122,7 +122,8 @@ class ExchangeFixture:
             receipt = self.orders.get(params["origClientOrderId"])
             return httpx.Response(200 if receipt else 404, json=receipt or {"code": -2013})
         if path == "/fapi/v1/klines":
-            span = 900000
+            assert params["interval"] == "1h" and params["symbol"] == "BTCUSDT"
+            span = 3600000
             end = int(time.time()*1000)//span*span
             values = [Decimal("100")]*116+[Decimal("99")]*3+[Decimal("110")]
             assert engine.crossed_up(values)
