@@ -33,5 +33,7 @@ report = {"scope":"disposable Keycloak, real browser, isolated database",
           "browser_checks":safe_checks("browser-checks.json"),
           "mfa_checks":safe_checks("mfa-browser-checks.json"),
           "production_login_certified":False}
-(root / "safe-summary.json").write_text(json.dumps(report,indent=2)+"\n")
+destination = Path("scripts/fullstack-qa/results/auth-hosted.json")
+destination.parent.mkdir(parents=True,exist_ok=True)
+destination.write_text(json.dumps(report,indent=2)+"\n")
 print(json.dumps(report,indent=2))

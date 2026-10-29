@@ -142,11 +142,11 @@ jobs:
           version: 10.34.6
       - uses: astral-sh/setup-uv@v5
       - run: uv run --frozen --with playwright==1.63.0 playwright install --with-deps chromium
-      - name: Existing genuine Keycloak and administrator MFA browser acceptance
+      - name: Current native sign-in sign-out and genuine Keycloak MFA
         run: >-
           env -i PATH="$PATH" HOME="$RUNNER_TEMP"
           PLAYWRIGHT_BROWSERS_PATH="$PLAYWRIGHT_BROWSERS_PATH"
-          uv run --frozen --with playwright==1.63.0 python scripts/verify-m1-auth.py
+          uv run --frozen --with playwright==1.63.0 python scripts/fullstack-qa/current_auth.py
           --project "$AUTH_PROJECT" --context "$AUTH_CONTEXT" --evidence "$AUTH_EVIDENCE"
       - if: always()
         run: python scripts/fullstack-qa/auth_summary.py
@@ -159,4 +159,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: isolated-browser-auth-verdict
-          path: ${{ github.workspace }}/../qa-auth-evidence/safe-summary.json
+          path: scripts/fullstack-qa/results/auth-hosted.json
