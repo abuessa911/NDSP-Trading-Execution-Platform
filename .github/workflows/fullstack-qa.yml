@@ -124,9 +124,9 @@ jobs:
     timeout-minutes: 45
     env:
       AUTH_PROJECT: nex-m1-isolated-verification-authqa${{ github.run_id }}a${{ github.run_attempt }}
-      AUTH_CONTEXT: ${{ runner.temp }}/qa-auth-source
-      AUTH_EVIDENCE: ${{ runner.temp }}/qa-auth-evidence
-      PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/qa-auth-browsers
+      AUTH_CONTEXT: ${{ github.workspace }}/../qa-auth-source
+      AUTH_EVIDENCE: ${{ github.workspace }}/../qa-auth-evidence
+      PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/../qa-auth-browsers
     steps:
       - uses: actions/checkout@v4
         with:
@@ -159,4 +159,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: isolated-browser-auth-verdict
-          path: ${{ runner.temp }}/qa-auth-evidence/safe-summary.json
+          path: ${{ github.workspace }}/../qa-auth-evidence/safe-summary.json
