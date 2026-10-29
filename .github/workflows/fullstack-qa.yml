@@ -45,23 +45,13 @@ jobs:
           python-version: '3.12'
       - uses: astral-sh/setup-uv@v5
       - run: uv sync --frozen
-      - run: >-
-          uv run pytest -q
-          apps/api/tests/test_contract.py
-          apps/api/tests/test_hunter_usdm_current_contract.py
-          apps/api/tests/test_ndsp_contract_preview.py
-          apps/api/tests/test_health.py
-          apps/api/tests/test_browser_auth.py
-          apps/api/tests/test_hunter_execution_safety_v1.py
-          apps/api/tests/test_hunter_transport_guard_v1.py
-          apps/api/tests/test_hunter_emergency_stop_v1.py
-          apps/api/tests/test_tenant_isolation.py
-          --junitxml=qa-backend.xml
+      - name: Entire backend suite with TCP disabled
+        run: uv run python scripts/fullstack-qa/offline_backend.py
       - if: always()
         uses: actions/upload-artifact@v4
         with:
           name: backend-qa-results
-          path: qa-backend.xml
+          path: scripts/fullstack-qa/results/backend-offline-all.xml
   postgres:
     runs-on: ubuntu-24.04
     timeout-minutes: 35
@@ -92,3 +82,81 @@ jobs:
         with:
           name: isolated-db-verdict
           path: ${{ runner.temp }}/qa-db-evidence/verification-result.json
+
+  telemetry:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      telemetry-db:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: qa_observer
+          POSTGRES_PASSWORD: isolated-qa-only
+          POSTGRES_DB: ndsp_qa_telemetry
+        ports:
+          - 15432:5432
+        options: >-
+          --health-cmd "pg_isready -U qa_observer -d ndsp_qa_telemetry"
+          --health-interval 5s --health-timeout 3s --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@v5
+      - name: Exercise real SDK HTTP delivery and API to PostgreSQL trace
+        env:
+          PYTHONPATH: apps/api
+          QA_OTEL_DATABASE_URL: postgresql+asyncpg://qa_observer:isolated-qa-only@127.0.0.1:15432/ndsp_qa_telemetry
+          QA_TELEMETRY_RESULT: scripts/fullstack-qa/results/telemetry-hosted.json
+        run: >-
+          uv run --frozen --with-requirements scripts/fullstack-qa/telemetry-requirements.txt
+          python scripts/fullstack-qa/telemetry_probe.py
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: isolated-telemetry-verdict
+          path: scripts/fullstack-qa/results/telemetry-hosted.json
+  browser-auth:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      AUTH_PROJECT: nex-m1-isolated-verification-authqa${{ github.run_id }}a${{ github.run_attempt }}
+      AUTH_CONTEXT: ${{ runner.temp }}/qa-auth-source
+      AUTH_EVIDENCE: ${{ runner.temp }}/qa-auth-evidence
+      PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/qa-auth-browsers
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.6
+      - uses: astral-sh/setup-uv@v5
+      - run: uv run --frozen --with playwright==1.63.0 playwright install --with-deps chromium
+      - name: Existing genuine Keycloak and administrator MFA browser acceptance
+        run: >-
+          env -i PATH="$PATH" HOME="$RUNNER_TEMP"
+          PLAYWRIGHT_BROWSERS_PATH="$PLAYWRIGHT_BROWSERS_PATH"
+          uv run --frozen --with playwright==1.63.0 python scripts/verify-m1-auth.py
+          --project "$AUTH_PROJECT" --context "$AUTH_CONTEXT" --evidence "$AUTH_EVIDENCE"
+      - if: always()
+        run: python scripts/fullstack-qa/auth_summary.py
+      - if: always()
+        run: >-
+          env -i PATH="$PATH" HOME="$RUNNER_TEMP"
+          uv run --frozen python scripts/verify-m1-auth.py --finalize
+          --project "$AUTH_PROJECT" --context "$AUTH_CONTEXT" --evidence "$AUTH_EVIDENCE"
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: isolated-browser-auth-verdict
+          path: ${{ runner.temp }}/qa-auth-evidence/safe-summary.json
