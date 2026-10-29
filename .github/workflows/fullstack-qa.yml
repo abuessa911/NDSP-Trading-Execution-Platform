@@ -74,6 +74,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - uses: astral-sh/setup-uv@v5
       - name: Reuse existing isolated PostgreSQL Redis API acceptance runner
         run: >-
           env -i PATH="$PATH" HOME="$RUNNER_TEMP"
