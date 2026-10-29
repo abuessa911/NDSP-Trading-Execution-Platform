@@ -1,0 +1,93 @@
+name: NDSP and Hunter fullstack verification
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: fullstack-qa-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  public-browser-api:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: scripts/fullstack-qa
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - run: npm test
+      - if: always()
+        run: npm run test:api
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-qa-results
+          path: scripts/fullstack-qa/results/
+          retention-days: 7
+  backend:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --frozen
+      - run: >-
+          uv run pytest -q
+          apps/api/tests/test_contract.py
+          apps/api/tests/test_hunter_usdm_current_contract.py
+          apps/api/tests/test_ndsp_contract_preview.py
+          apps/api/tests/test_health.py
+          apps/api/tests/test_browser_auth.py
+          apps/api/tests/test_hunter_execution_safety_v1.py
+          apps/api/tests/test_hunter_transport_guard_v1.py
+          apps/api/tests/test_hunter_emergency_stop_v1.py
+          apps/api/tests/test_tenant_isolation.py
+          --junitxml=qa-backend.xml
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-qa-results
+          path: qa-backend.xml
+  postgres:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      QA_PROJECT: nex-m1-isolated-verification-qa${{ github.run_id }}a${{ github.run_attempt }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Reuse existing isolated PostgreSQL Redis API acceptance runner
+        run: >-
+          env -i PATH="$PATH" HOME="$RUNNER_TEMP"
+          python scripts/ci-m1-compose.py --project "$QA_PROJECT"
+          --evidence "$RUNNER_TEMP/qa-db-evidence"
+          --context "$RUNNER_TEMP/qa-db-source"
+      - if: always()
+        run: >-
+          env -i PATH="$PATH" HOME="$RUNNER_TEMP"
+          python scripts/ci-m1-compose.py --finalize --project "$QA_PROJECT"
+          --evidence "$RUNNER_TEMP/qa-db-evidence"
+          --context "$RUNNER_TEMP/qa-db-source"
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: isolated-db-verdict
+          path: ${{ runner.temp }}/qa-db-evidence/verification-result.json

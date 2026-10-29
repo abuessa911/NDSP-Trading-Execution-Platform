@@ -1,0 +1,13 @@
+{
+  "name": "ndsp-hunter-fullstack-qa",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "test:api": "newman run public.postman_collection.json --reporters cli,junit --reporter-junit-export results/postman.xml"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "newman": "6.2.1"
+  }
+}
