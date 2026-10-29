@@ -142,6 +142,8 @@ jobs:
           version: 10.34.6
       - uses: astral-sh/setup-uv@v5
       - run: uv run --frozen --with playwright==1.63.0 playwright install --with-deps chromium
+      - name: Install isolated Postman runner
+        run: npm ci --prefix scripts/fullstack-qa --ignore-scripts --no-audit --no-fund
       - name: Current native sign-in sign-out and genuine Keycloak MFA
         run: >-
           env -i PATH="$PATH" HOME="$RUNNER_TEMP"

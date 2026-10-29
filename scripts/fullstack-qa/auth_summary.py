@@ -32,7 +32,9 @@ report = {"scope":"disposable Keycloak, real browser, isolated database",
           "failed_stage":stage,
           "browser_checks":safe_checks("browser-checks.json"),
           "mfa_checks":safe_checks("mfa-browser-checks.json"),
-          "production_login_certified":False}
+          "production_login_certified":False,
+          "postman_authenticated_assertions":raw.get("postman_authenticated_assertions",0)
+            if type(raw.get("postman_authenticated_assertions")) is int else 0}
 destination = Path("scripts/fullstack-qa/results/auth-hosted.json")
 destination.parent.mkdir(parents=True,exist_ok=True)
 destination.write_text(json.dumps(report,indent=2)+"\n")

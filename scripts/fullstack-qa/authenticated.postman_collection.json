@@ -1,0 +1,60 @@
+{
+  "info": {
+    "name": "Owned fixture authenticated identity persistence",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Identity backed by PostgreSQL",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Cookie",
+            "value": "{{session_cookie_name}}={{session_cookie}}"
+          }
+        ],
+        "url": "{{base_url}}/api/v1/me"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Identity endpoint succeeds',()=>pm.response.to.have.status(200));",
+              "pm.test('Identity matches persisted user and tenant',()=>{const d=pm.response.json();pm.expect(d.user_id).to.eql(pm.environment.get('expected_user_id'));pm.expect(d.tenant_id).to.eql(pm.environment.get('expected_tenant_id'));});",
+              "pm.test('Persisted user has ordinary role',()=>pm.expect(pm.response.json().role).to.eql('USER'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Durable opaque session resolves same identity",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Cookie",
+            "value": "{{session_cookie_name}}={{session_cookie}}"
+          }
+        ],
+        "url": "{{base_url}}/api/v1/auth/session"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Session endpoint succeeds',()=>pm.response.to.have.status(200));",
+              "pm.test('Session matches persisted user and tenant',()=>{const d=pm.response.json();pm.expect(d.user_id).to.eql(pm.environment.get('expected_user_id'));pm.expect(d.tenant_id).to.eql(pm.environment.get('expected_tenant_id'));});",
+              "pm.test('Authenticated session has CSRF and cannot be cached',()=>{const d=pm.response.json();pm.expect(d.authenticated).to.eql(true);pm.expect(Boolean(d.csrf_token)).to.eql(true);pm.expect(pm.response.headers.get('Cache-Control')).to.include('no-store');});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

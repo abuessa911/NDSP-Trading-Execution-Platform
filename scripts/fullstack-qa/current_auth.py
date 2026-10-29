@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import sys
 import time
+import xml.etree.ElementTree as ET
 from urllib.parse import urlsplit
 
 import httpx
@@ -14,7 +15,7 @@ from redis.asyncio import Redis
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "apps/api"))
-from m1_auth_environment import AuthEnvironment, ORIGIN, ISSUER
+from m1_auth_environment import AuthEnvironment, ORIGIN, ISSUER, SUBJECT
 from m1_admin_fixture import IDENTITIES, PASSWORD_ONLY, totp
 from m1_auth_browser import isolated_async
 from nex_api.browser_sessions import BrowserSessions, SESSION_COOKIE
@@ -29,6 +30,7 @@ def main():
     checks, mfa = [], []
     stage = "fresh isolated setup"
     verdict = "FAIL"
+    postman_assertions = 0
     def check(name, condition, privileged=False):
         target = mfa if privileged else checks
         target.append({"check":name,"passed":bool(condition)})
@@ -115,6 +117,39 @@ def main():
                     """values=>!Object.values(localStorage).concat(Object.values(sessionStorage))
                         .some(v=>values.some(token=>token&&String(v).includes(token)))""",
                     [original.data["access_token"],original.data["refresh_token"]]))
+                stage="authenticated Postman and physical persistence"
+                row=fixture.sql("SELECT id::text || '|' || tenant_id::text FROM users "
+                                "WHERE subject='"+SUBJECT+"'").strip().split("|")
+                check("browser identity matches actual PostgreSQL row",
+                      len(row)==2 and me["body"]["user_id"]==row[0]
+                      and me["body"]["tenant_id"]==row[1])
+                audit=fixture.sql("SELECT count(*) FROM audit_events "
+                                  "WHERE action='LOGIN_SUCCESS' AND outcome='SUCCESS'").strip()
+                check("application login audit is persisted in PostgreSQL",int(audit)>=1)
+                qa_directory=Path(__file__).resolve().parent
+                environment=fixture.temp/"newman-session.json"
+                environment.write_text(json.dumps({"name":"owned-session","values":[
+                    {"key":key,"value":value,"enabled":True} for key,value in {
+                        "base_url":ORIGIN,"session_cookie_name":SESSION_COOKIE,
+                        "session_cookie":cookie["value"],
+                        "expected_user_id":row[0],"expected_tenant_id":row[1]
+                    }.items()]}))
+                environment.chmod(0o600)
+                junit=fixture.evidence/"postman-authenticated.xml"
+                try:
+                    fixture.command(["node",str(qa_directory/"node_modules/newman/bin/newman.js"),
+                        "run",str(qa_directory/"authenticated.postman_collection.json"),
+                        "-e",str(environment),"--ssl-extra-ca-certs",
+                        str(fixture.temp/"tls/cert.pem"),"--timeout-request","10000",
+                        "--reporters","junit","--reporter-junit-export",str(junit)],
+                        timeout=60)
+                finally:
+                    environment.unlink(missing_ok=True)
+                cases=list(ET.parse(junit).getroot().iter("testcase"))
+                postman_assertions=len(cases)
+                check("authenticated Postman verifies persisted identity and session",
+                      postman_assertions==6
+                      and all(x.find("failure") is None and x.find("error") is None for x in cases))
                 stage="actual refresh and current sign-out button"
                 refreshed=fetch(page,"/api/v1/auth/refresh","POST",csrf)
                 rotated=isolated_async(record(cookie["value"]))
@@ -204,7 +239,7 @@ def main():
         (fixture.evidence/"result.json").write_text(json.dumps({
             "verdict":verdict,"failed_stage":stage if verdict!="PASS" else "NONE",
             "scope":"current UI and actual provider on isolated fixture",
-            "production":False},indent=2))
+            "production":False,"postman_authenticated_assertions":postman_assertions},indent=2))
         fixture.finalize()
     return 0 if verdict=="PASS" else 1
 
