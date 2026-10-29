@@ -103,6 +103,8 @@ def main():
                 check("actual protected user identity and opaque session",
                       me["status"]==200 and me["body"]["role"]=="USER"
                       and session["status"]==200 and session["body"]["authenticated"] is True)
+                check("ordinary user cannot access privileged health",
+                      fetch(page,"/api/v1/admin/system/health")["status"]==403)
                 csrf=session["body"]["csrf_token"]
                 cookie=next(c for c in ctx.cookies(ORIGIN+"/api/") if c["name"]==SESSION_COOKIE)
                 check("session cookie Secure HttpOnly scoped SameSite",
@@ -164,7 +166,7 @@ def main():
                           session["status"]==200
                           and session["body"]["administrator_mfa_verified"] is True
                           and identity["status"]==200 and identity["body"]["role"]==role,True)
-                    health=fetch(page,"/admin/v1/system/health")
+                    health=fetch(page,"/api/v1/admin/system/health")
                     check("privileged health allowed after real MFA "+role,health["status"]==200,True)
                     ctx.close()
                 username,_,_=IDENTITIES[0]
