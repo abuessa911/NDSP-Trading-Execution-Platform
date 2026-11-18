@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import base64
 import json
+from dataclasses import replace
 from datetime import datetime, timezone
 from uuid import UUID
 
@@ -182,3 +183,27 @@ def test_valid_signature_does_not_expose_a_trade_api(keys):
                    if hasattr(module, name))
     result = accepted(signed(keys[0]), keys)
     assert result.execution_authorized is False
+
+
+@pytest.mark.parametrize("source_state", ["MONITORING_ONLY", "BLOCKED_BY_DEVILS_ADVOCATE"])
+def test_unmapped_l16_state_is_rejected_by_signed_reader(keys, source_state):
+    document = dict(sample(), decision_state=source_state)
+    with pytest.raises(NDSPContractRejected, match="NDSP_SCHEMA_INVALID"):
+        accepted(signed(keys[0], document), keys)
+
+
+@pytest.mark.parametrize("state,scenario", [
+    ("BLOCKED", "ACTIVE"),
+    ("BLOCKED", "UNDER_MONITORING"),
+    ("EXECUTABLE", "ACTIVE"),
+])
+def test_signed_read_results_cannot_be_promoted_to_order_authority(keys, state, scenario):
+    from nex_api.ndsp_canonical_read_gate_l7_preview import ReadOnlySourceDecision
+
+    raw = signed(keys[0], dict(sample(), decision_state=state, scenario_state=scenario))
+    verified = accepted(raw, keys)
+    read_result = ReadOnlySourceDecision(document=raw, decision_version=verified.decision_version)
+    for result in (verified, read_result):
+        assert result.execution_authorized is False
+        with pytest.raises(ValueError, match="init=False"):
+            replace(result, execution_authorized=True)
