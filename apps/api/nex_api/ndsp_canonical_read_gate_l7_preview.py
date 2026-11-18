@@ -11,7 +11,7 @@ prototype must NOT be interpreted as production identity certification.
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Awaitable, Callable, Mapping, NoReturn
 from uuid import UUID
@@ -49,7 +49,7 @@ class SyntheticCanonicalAuthorities:
 class ReadOnlySourceDecision:
     document: bytes
     decision_version: int
-    execution_authorized: bool = False
+    execution_authorized: bool = field(default=False, init=False)
 
 
 def _deny(code: str) -> NoReturn:
