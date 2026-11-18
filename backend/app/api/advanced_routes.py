@@ -65,6 +65,17 @@ def _payload_dict(payload: BaseModel | dict[str, Any]) -> dict[str, Any]:
     return payload.model_dump(mode="python", exclude_none=True)
 
 
+def _interpret_entry(payload_data: dict[str, Any]) -> dict[str, Any]:
+    result = interpret_ndsp_payload(payload_data)
+    if result["action"] == "NO_TRADE":
+        return result
+    # The legacy endpoints receive client projections without G6 source verification.
+    if settings.BINANCE_MODE != "dryrun":
+        return {**result, "action": "NO_TRADE", "executable": False,
+                "reason": "Verified NDSP order source unavailable"}
+    return result
+
+
 def _payload_symbol(payload_data: dict[str, Any]) -> str:
     meta = payload_data.get("meta") if isinstance(payload_data.get("meta"), dict) else {}
     symbol = payload_data.get("symbol") or meta.get("symbol_id") or meta.get("symbol")
@@ -212,7 +223,7 @@ async def ndsp_signal(
     user: User = Depends(get_current_user),
 ):
     payload_data = _payload_dict(payload)
-    interpretation = interpret_ndsp_payload(payload_data)
+    interpretation = _interpret_entry(payload_data)
     normalized_symbol = _payload_symbol(payload_data)
 
     if interpretation["action"] == "NO_TRADE":
@@ -313,7 +324,7 @@ async def ndsp_webhook_signal(
     if not target_user.is_active:
         raise HTTPException(status_code=403, detail="Target user is disabled")
 
-    interpretation = interpret_ndsp_payload(payload_data)
+    interpretation = _interpret_entry(payload_data)
     normalized_symbol = _payload_symbol(payload_data)
 
     if interpretation["action"] == "NO_TRADE":
