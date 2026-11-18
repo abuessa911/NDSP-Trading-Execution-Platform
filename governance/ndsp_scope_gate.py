@@ -45,7 +45,11 @@ def area(repository: str, path: str) -> str:
 
 
 def is_governance_document(path: str) -> bool:
-    return path.startswith(GOVERNANCE) or path == "AGENTS.md"
+    return path == "AGENTS.md" or (path.startswith(GOVERNANCE) and path.endswith(".md"))
+
+
+def is_governance_control(path: str) -> bool:
+    return path.startswith(".github/") or (path.startswith(GOVERNANCE) and not path.endswith(".md"))
 
 
 def metadata(body: str, key: str) -> str:
@@ -99,6 +103,9 @@ def selftest() -> None:
     assert area("abuessa911/ndsp-audit-archive", "evidence/old.json") == "archive"
     assert is_governance_document("governance/NDSP-GOV-APP-ISOLATION-002.md")
     assert not is_governance_document(".github/workflows/ci.yml")
+    assert not is_governance_document("governance/ndsp_scope_gate.py")
+    assert is_governance_control(".github/workflows/ci.yml")
+    assert is_governance_control("governance/ndsp_scope_gate.py")
     assert metadata("NDSP-CHANGE-SCOPE: ISOLATED_APP", "NDSP-CHANGE-SCOPE") == "ISOLATED_APP"
     print("PASS: application boundary guard selftest")
 
@@ -124,6 +131,7 @@ def main() -> None:
     print(f"REPOSITORY={repository} BASE={base} HEAD={head} CHANGED_FILES={len(changes)}")
     gov = [p for p in changes if is_governance_document(p)]
     code = [p for p in changes if not is_governance_document(p)]
+    controls = [p for p in code if is_governance_control(p)]
     if gov and code:
         fail("Mixed governance documents and functional changes: separate pull requests are mandatory")
     if gov and not code:
@@ -141,11 +149,11 @@ def main() -> None:
     if scope not in {"ISOLATED_APP", "CROSS_APP"} or not target or not qa:
         fail("PR body must declare NDSP-CHANGE-SCOPE, TARGET_APP, AFFECTED_APPS, QA_PLAN")
     actual = {area(repository, p) for p in code}
-    if target == "shared" or target not in actual:
+    if target not in actual or (target == "shared" and not controls):
         fail(f"Target app {target!r} is not an evidenced primary changed application: {sorted(actual)}")
     if actual != declared:
         fail(f"Declared applications {sorted(declared)} != inferred affected boundaries {sorted(actual)}")
-    must_cross = len(actual) > 1 or "shared" in actual or "archive" in actual
+    must_cross = len(actual) > 1 or "shared" in actual or "archive" in actual or bool(controls)
     if must_cross and scope != "CROSS_APP":
         fail(f"Shared/cross-app effect requires CROSS_APP and recorded approval: {sorted(actual)}")
     if scope == "CROSS_APP":
