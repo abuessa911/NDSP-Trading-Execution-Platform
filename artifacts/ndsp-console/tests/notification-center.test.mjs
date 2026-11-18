@@ -13,7 +13,7 @@ test("notifications use the authenticated source, not preview data", () => {
 
 test("bilingual and fail-closed when messaging transport is not implemented", () => {
   assert.match(panel, /dir=\{ar \? "rtl" : "ltr"\}/);
-  assert.match(panel, /"Telegram"/);
+  assert.match(panel, /<strong>Telegram<\/strong>/);
   assert.match(panel, /not enabled/i);
   assert.match(panel, /غير مفعّل/);
   assert.match(panel, /never open or close trades/);
