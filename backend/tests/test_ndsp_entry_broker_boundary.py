@@ -61,13 +61,34 @@ source_definitions("schemas/schemas.py", {"NdspSignalRequest"})
 source_definitions("services/execution.py", {"execute_signal", "calculate_protective_prices"})
 source_definitions("api/advanced_routes.py", {
     "NdspWebhookSignalRequest", "ndsp_signal", "ndsp_webhook_signal",
-    "_payload_dict", "_payload_reason", "_payload_symbol",
+    "_payload_dict", "_payload_reason", "_payload_symbol", "_interpret_entry",
 })
 app = FastAPI()
 app.include_router(router)
 
 
 class BrokerBoundaryTest(unittest.TestCase):
+    def test_unsigned_ready_decision_never_leaves_simulation(self):
+        from unittest.mock import patch
+
+        with TestClient(app) as http:
+            for mode in ("testnet", "live", "unknown"):
+                for path in ("/ndsp/signal", "/webhooks/ndsp-signal"):
+                    with self.subTest(mode=mode, path=path), patch.object(settings, "BINANCE_MODE", mode):
+                        broker.reset_mock()
+                        database.reset_mock()
+                        pre_trade_risk_check.reset_mock()
+                        document = {"direction": "bullish", "confidence": 90,
+                                    "single_truth_state": "READY", "allowed": True}
+                        response = http.post(path, json={"symbol": "BTC/USDT", "decision": document,
+                            "user_email": get_current_user().email},
+                            headers={"X-NDSP-SECRET": "local-fixture"})
+                        self.assertEqual(response.status_code, 200)
+                        self.assertEqual(response.json()["action"], "NO_TRADE")
+                        broker.market_order_by_notional.assert_not_called()
+                        pre_trade_risk_check.assert_not_called()
+                        database.add.assert_not_called()
+
     def test_entry_contract(self):
         baseline = {"direction": "bullish", "confidence": 90}
         cases = [
