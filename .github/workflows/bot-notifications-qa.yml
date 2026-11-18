@@ -6,6 +6,8 @@ on:
     branches: ["feature/bot-account-notification-*"]
 permissions:
   contents: read
+  issues: read
+  pull-requests: read
 concurrency:
   group: bot-notifications-${{ github.ref }}
   cancel-in-progress: true
@@ -15,6 +17,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Mandatory NDSP application-boundary check (read-only, base-pinned)
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          if ! git cat-file -e "${BASE_SHA}^{commit}" 2>/dev/null; then
+            git fetch --no-tags origin "${BASE_SHA}"
+          fi
+          git show "${BASE_SHA}:governance/ndsp_scope_gate.py" > "${RUNNER_TEMP}/ndsp-scope-gate.py"
+          python3 "${RUNNER_TEMP}/ndsp-scope-gate.py" --selftest
+          python3 "${RUNNER_TEMP}/ndsp-scope-gate.py"
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
