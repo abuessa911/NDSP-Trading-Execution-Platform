@@ -10,7 +10,7 @@ import base64
 import binascii
 import json
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Mapping
 from uuid import UUID
@@ -59,7 +59,7 @@ class VerifiedSyntheticDecision:
     evidence_hash: str
     source_environment: str = "test"
     # Verification does not grant execution permission or create an intent.
-    execution_authorized: bool = False
+    execution_authorized: bool = field(default=False, init=False)
 
 
 def _unique_pairs(pairs: list[tuple[str, object]]) -> dict[str, object]:
