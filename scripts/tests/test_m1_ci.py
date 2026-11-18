@@ -21,14 +21,15 @@ PROJECT = verify.PROJECT + "-ci123a1"
 
 
 def test_workflow_runner_paths_are_step_scoped():
-    workflow = (Path(__file__).parents[2] / ".github/workflows/ci.yml").read_text()
-    job = workflow.split("  m1-docker:", 1)[1]
+    workflow = (Path(__file__).parents[2] / ".github/workflows/m1-acceptance.yml").read_text()
+    job = workflow.split("  postgres-redis:", 1)[1].split("  keycloak-mfa:", 1)[0]
     job_settings, steps = job.split("    steps:", 1)
+    assert "M1_PROJECT: nex-m1-isolated-verification-ci" in job_settings
     # GitHub rejects runner expressions in jobs.<job_id>.env before starting a VM.
     assert "${{ runner." not in job_settings
-    assert steps.count("M1_EVIDENCE: ${{ runner.temp }}/m1-docker-evidence") == 2
-    assert steps.count("M1_CONTEXT: ${{ runner.temp }}/m1-committed-source") == 2
-    assert "path: ${{ runner.temp }}/m1-docker-evidence" in steps
+    assert steps.count("M1_EVIDENCE: ${{ runner.temp }}/nex-m1-evidence") == 3
+    assert steps.count("M1_CONTEXT: ${{ runner.temp }}/nex-m1-source") == 2
+    assert "path: ${{ runner.temp }}/nex-m1-evidence/verification-result.json" in steps
 
 
 @pytest.fixture

@@ -205,6 +205,72 @@ def exercise(fixture, http):
             check("privileged health allowed and audit response remains RLS-scoped: " + role,
                   health.status_code == 200 and audit.status_code == 200
                   and all(row["tenant_id"] == me.json()["tenant_id"] for row in audit.json()))
+            # Verify real Next.js administrator pages with the genuine MFA
+            # browser cookie. No mock data, role override or bearer shortcut.
+            with page.expect_response(
+                lambda response: response.url.split("?", 1)[0]
+                == ORIGIN + "/api/v1/admin/system/health",
+                timeout=30000,
+            ) as ui_health_response:
+                page.goto(ORIGIN + "/admin/operations-center/", wait_until="domcontentloaded")
+            page.locator(".admin-health .admin-status.is-ready").wait_for(timeout=30000)
+            check("real MFA administrator browser renders live service health: " + role,
+                  ui_health_response.value.status == 200
+                  and page.get_by_role("heading", name="Service readiness").is_visible()
+                  and page.locator(".admin-health .admin-status.is-ready").is_visible())
+
+            with page.expect_response(
+                lambda response: response.url.split("?", 1)[0]
+                == ORIGIN + "/api/v1/admin/audit",
+                timeout=30000,
+            ) as ui_audit_response:
+                page.goto(ORIGIN + "/admin/audit/", wait_until="domcontentloaded")
+            ui_audit = ui_audit_response.value
+            ui_rows = ui_audit.json() if ui_audit.status == 200 else []
+            page.get_by_role("heading", name="Recent audit events").wait_for(timeout=30000)
+            page.wait_for_function(
+                """expected => Array.from(document.querySelectorAll('.admin-audit [role="status"]'))
+                   .some(node => node.textContent.includes('loaded records')) &&
+                   document.querySelector('.admin-audit-summary strong')?.textContent === String(expected)""",
+                arg=len(ui_rows), timeout=30000,
+            )
+            check("real MFA administrator browser renders tenant audit response: " + role,
+                  ui_audit.status == 200
+                  and isinstance(ui_rows, list)
+                  and len(ui_rows) > 0  # A filtered 200/[] is not a functional admin view.
+                  and all(row.get("tenant_id") == me.json()["tenant_id"] for row in ui_rows)
+                  and page.locator(".admin-audit [role=alert]").count() == 0)
+            with page.expect_response(
+                lambda response: response.url.split("?", 1)[0]
+                == ORIGIN + "/api/v1/admin/directory",
+                timeout=30000,
+            ) as directory_response:
+                page.goto(ORIGIN + "/admin/users-tenants/", wait_until="domcontentloaded")
+            result = directory_response.value
+            page.get_by_role("heading", name="Tenant users").wait_for(timeout=30000)
+            page.locator(".admin-directory tbody tr").first.wait_for(timeout=30000)
+            data = result.json() if result.status == 200 else {}
+            users = data.get("users", []) if isinstance(data, dict) else []
+            check("real MFA administrator reads only own tenant user directory: " + role,
+                  result.status == 200 and isinstance(users, list)
+                  and data.get("tenant_id") == me.json()["tenant_id"]
+                  and len(users) >= 1
+                  and page.locator(".admin-directory tbody tr").count() == len(users)
+                  and all(entry.get("id") and entry.get("role") in
+                          {"USER", "OPERATOR", "ADMIN", "SUPER_ADMIN"} for entry in users))
+            operations = http.get(ORIGIN + "/api/v1/admin/operations", headers=headers)
+            operational = operations.json() if operations.status_code == 200 else {}
+            check("real MFA administrator reads honest operational boundaries: " + role,
+                  operations.status_code == 200
+                  and operational.get("tenant_id") == me.json()["tenant_id"]
+                  and operational.get("trading_safety") == {
+                      "trading_mode": "paper", "live_trading_enabled": False,
+                      "global_kill_switch": True, "binance_allow_withdraw": False,
+                  }
+                  and operational.get("exchange", {}).get("status") == "NOT_CONFIGURED"
+                  and operational.get("ndsp_connector", {}).get("status") == "NOT_CONFIGURED"
+                  and operational.get("worker_queues", {}).get("status") == "NOT_IMPLEMENTED")
+
             other = "00000000-0000-4000-8000-000000000099"
             isolated = http.get(ORIGIN + "/api/v1/tenants/" + other + "/audit-events", headers=headers)
             check("cross-tenant privileged audit denied: " + role, isolated.status_code == 404)
@@ -304,6 +370,10 @@ def exercise(fixture, http):
         user_me = http.get(ORIGIN + "/api/v1/me", headers=user_headers)
         user_session = http.get(ORIGIN + "/api/v1/auth/session", headers=user_headers)
         denied = http.get(ORIGIN + "/admin/v1/system/health", headers=user_headers)
+        user_directory_denied = http.get(ORIGIN + "/api/v1/admin/directory",
+                                        headers=user_headers)
+        user_operations_denied = http.get(ORIGIN + "/api/v1/admin/operations",
+                                         headers=user_headers)
         user_refresh = http.post(ORIGIN + "/api/v1/auth/refresh", headers={
             **user_headers, "Origin": ORIGIN,
             "X-NEX-CSRF": user_session.json().get("csrf_token", ""),
@@ -317,9 +387,22 @@ def exercise(fixture, http):
               and user_session.json()["administrator_mfa_verified"] is False
               and denied.status_code == 403
               and denied.json()["reason_code"] == "ROLE_NOT_ALLOWED"
+              and user_directory_denied.status_code == 403
+              and user_directory_denied.json()["reason_code"] == "ROLE_NOT_ALLOWED"
+              and user_operations_denied.status_code == 403
+              and user_operations_denied.json()["reason_code"] == "ROLE_NOT_ALLOWED"
               and user_refresh.status_code == 200
               and user_session_after_refresh.status_code == 200
               and user_session_after_refresh.json()["administrator_mfa_verified"] is False)
+        # Browser UI must not request privileged endpoints for ordinary USER.
+        user_admin_requests = []
+        page.on("request", lambda request: user_admin_requests.append(request.url)
+                if request.url.startswith((ORIGIN + "/admin/v1/", ORIGIN + "/api/v1/admin/")) else None)
+        page.goto(ORIGIN + "/admin/operations-center/", wait_until="domcontentloaded")
+        page.get_by_role("heading", name="Administrator access required").wait_for(timeout=20000)
+        page.get_by_role("button", name="Sign out", exact=True).wait_for(timeout=20000)
+        check("real USER browser health is gated without privileged fetch",
+              not user_admin_requests)
         context.close()
 
         # An OPERATOR is a separate, explicitly lower-scope role in the
@@ -342,6 +425,10 @@ def exercise(fixture, http):
         operator_health = http.get(ORIGIN + "/admin/v1/system/health",
                                    headers=operator_headers)
         operator_audit = http.get(ORIGIN + "/admin/v1/audit", headers=operator_headers)
+        operator_directory = http.get(ORIGIN + "/api/v1/admin/directory",
+                                      headers=operator_headers)
+        operator_operations = http.get(ORIGIN + "/api/v1/admin/operations",
+                                       headers=operator_headers)
         check("password-only OPERATOR is denied administrator routes and assurance",
               operator_me.status_code == 200
               and operator_me.json()["role"] == "OPERATOR"
@@ -350,7 +437,19 @@ def exercise(fixture, http):
               and operator_health.status_code == 403
               and operator_health.json()["reason_code"] == "ROLE_NOT_ALLOWED"
               and operator_audit.status_code == 403
-              and operator_audit.json()["reason_code"] == "ROLE_NOT_ALLOWED")
+              and operator_audit.json()["reason_code"] == "ROLE_NOT_ALLOWED"
+              and operator_directory.status_code == 403
+              and operator_directory.json()["reason_code"] == "ROLE_NOT_ALLOWED"
+              and operator_operations.status_code == 403
+              and operator_operations.json()["reason_code"] == "ROLE_NOT_ALLOWED")
+        operator_admin_requests = []
+        page.on("request", lambda request: operator_admin_requests.append(request.url)
+                if request.url.startswith((ORIGIN + "/admin/v1/", ORIGIN + "/api/v1/admin/")) else None)
+        page.goto(ORIGIN + "/admin/audit/", wait_until="domcontentloaded")
+        page.get_by_role("heading", name="Administrator access required").wait_for(timeout=20000)
+        page.get_by_role("button", name="Sign out", exact=True).wait_for(timeout=20000)
+        check("real OPERATOR browser audit is gated without privileged fetch",
+              not operator_admin_requests)
         context.close()
 
         # Capture only synthetic subject/tenant/role/status and credential-type

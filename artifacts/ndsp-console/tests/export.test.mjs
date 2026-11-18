@@ -28,13 +28,13 @@ test("every M1 and specified V1 route exports its own HTML document", async () =
   await access(root + "out/404.html");
 });
 
-test("admin health/audit export a closed session gate and other admin capabilities remain unavailable", async () => {
+test("every administrator surface exports a closed session gate without privileged data", async () => {
   for (const route of ["audit", "admin", ...adminRoutes.map(r => `admin/${r}`)]) {
     const html = await read(`out/${route}/index.html`);
     if (route === "admin") {
-      assert.match(html, /Read-only administrator health and audit views/, route);
+      assert.match(html, /Read-only tenant operations/, route);
       assert.match(html, /Navigation does not grant access/, route);
-    } else if (["admin/operations-center", "admin/audit"].includes(route)) {
+    } else if (route.startsWith("admin/")) {
       assert.match(html, /Administrator access required/, route);
       assert.match(html, /server-verified administrator session/, route);
     } else {

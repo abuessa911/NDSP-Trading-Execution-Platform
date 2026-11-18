@@ -1,0 +1,194 @@
+# NDSP-NEX M1 — verification ONLY. Deliberately no release/deploy jobs.
+name: NDSP NEX M1 — Hosted Acceptance (Nonproduction)
+on:
+  pull_request:
+    branches: [replit-handoff-20261012]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: nex-m1-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  api-static:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv sync --frozen
+      - run: uv run ruff check apps/api scripts/ci-m1-compose.py scripts/verify-m1-compose.py scripts/tests
+      - run: uv run mypy apps/api/nex_api
+      - run: uv run python scripts/export-m1-openapi.py --check
+      - run: uv run pytest apps/api/tests scripts/tests
+  console:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.6
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @workspace/ndsp-console run build
+        env:
+          BASE_PATH: /
+          NEXT_TELEMETRY_DISABLED: '1'
+      - run: pnpm --filter @workspace/ndsp-console run typecheck
+      - run: pnpm --filter @workspace/ndsp-console run test
+  postgres-redis:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      M1_PROJECT: nex-m1-isolated-verification-ci${{ github.run_id }}a${{ github.run_attempt }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@v5
+      - name: Real isolated database / Redis / API contract checks
+        env:
+          M1_EVIDENCE: ${{ runner.temp }}/nex-m1-evidence
+          M1_CONTEXT: ${{ runner.temp }}/nex-m1-source
+        run: |
+          env -i PATH="$PATH" HOME="$RUNNER_TEMP" \
+            python scripts/ci-m1-compose.py --project "$M1_PROJECT" \
+              --evidence "$M1_EVIDENCE" --context "$M1_CONTEXT"
+      - name: Scoped test resource cleanup
+        if: always()
+        env:
+          M1_EVIDENCE: ${{ runner.temp }}/nex-m1-evidence
+          M1_CONTEXT: ${{ runner.temp }}/nex-m1-source
+        run: |
+          env -i PATH="$PATH" HOME="$RUNNER_TEMP" \
+            python scripts/ci-m1-compose.py --finalize --project "$M1_PROJECT" \
+              --evidence "$M1_EVIDENCE" --context "$M1_CONTEXT"
+      - name: Summarize PostgreSQL failing test names only
+        if: failure()
+        env:
+          M1_EVIDENCE: ${{ runner.temp }}/nex-m1-evidence
+        run: |
+          python - <<'PY'
+          import os, pathlib, re, xml.etree.ElementTree as ET
+          report = pathlib.Path(os.environ["M1_EVIDENCE"]) / "postgres-tests.xml"
+          if not report.is_file():
+              print("POSTGRES_JUNIT=NOT_AVAILABLE_BEFORE_PYTEST")
+          else:
+              root = ET.parse(report).getroot()
+              failures = [case for case in root.iter("testcase")
+                          if case.find("failure") is not None or case.find("error") is not None]
+              print("POSTGRES_FAILURE_COUNT=" + str(len(failures)))
+              for case in failures[:8]:
+                  name = case.attrib.get("name", "")
+                  if re.fullmatch(r"test_[a-zA-Z0-9_]{1,110}", name):
+                      print("POSTGRES_FAILED_TEST=" + name)
+                  failure = case.find("failure")
+                  if failure is None:
+                      failure = case.find("error")
+                  if failure is not None:
+                      kind = failure.attrib.get("type", "")
+                      if re.fullmatch(r"[A-Za-z0-9_.]{1,90}", kind):
+                          print("POSTGRES_FAILED_CLASS=" + kind)
+                      excerpt = (failure.text or "")[-10000:]
+                      lines = re.findall(r"test_postgres_m1.py:(\d{1,4}):", excerpt)
+                      if lines:
+                          print("POSTGRES_FAILED_LINE=" + lines[-1])
+                      role = re.search(r"(USER|OPERATOR|ADMIN|SUPER_ADMIN) expected=([01]) observed=(\d{1,6})", excerpt)
+                      if role:
+                          print("POSTGRES_RLS_ROLE_COUNTS=" + role.group(0))
+          PY
+      - name: Retain only non-sensitive M1 acceptance verdict
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m1-db-verdict-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/nex-m1-evidence/verification-result.json
+          if-no-files-found: warn
+          retention-days: 14
+  keycloak-mfa:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      AUTH_PROJECT: nex-m1-isolated-verification-authci${{ github.run_id }}a${{ github.run_attempt }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.6
+      - uses: astral-sh/setup-uv@v5
+      - name: Install isolated test browser
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/pw-browsers
+        run: uv run --frozen --with playwright==1.63.0 playwright install --with-deps chromium
+      - name: Genuine disposable Keycloak browser and administrator MFA
+        env:
+          AUTH_CONTEXT: ${{ runner.temp }}/nex-auth-source
+          AUTH_EVIDENCE: ${{ runner.temp }}/nex-auth-evidence
+          PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/pw-browsers
+        run: |
+          env -i PATH="$PATH" HOME="$RUNNER_TEMP" PLAYWRIGHT_BROWSERS_PATH="$PLAYWRIGHT_BROWSERS_PATH" \
+            uv run --frozen --with playwright==1.63.0 python scripts/verify-m1-auth.py \
+              --project "$AUTH_PROJECT" --context "$AUTH_CONTEXT" --evidence "$AUTH_EVIDENCE"
+      - name: Summarize bounded MFA checks without exposing provider evidence
+        if: always()
+        env:
+          AUTH_EVIDENCE: ${{ runner.temp }}/nex-auth-evidence
+        run: |
+          python - <<'PY'
+          import json, os, pathlib, re
+          root = pathlib.Path(os.environ["AUTH_EVIDENCE"])
+          checks_file = root / "mfa-browser-checks.json"
+          result_file = root / "result.json"
+          try:
+              checks = json.loads(checks_file.read_text()) if checks_file.is_file() else []
+          except (ValueError, OSError):
+              checks = []
+          if not isinstance(checks, list):
+              checks = []
+          safe = [x for x in checks if isinstance(x, dict) and type(x.get("passed")) is bool]
+          good = sum(1 for x in safe if x["passed"])
+          last = safe[-1].get("check", "") if safe else ""
+          label = last if isinstance(last, str) and re.fullmatch(r"[a-zA-Z0-9 /:;,+_.()-]{1,170}", last) else "NONE_OR_REDACTED"
+          try:
+              result = json.loads(result_file.read_text()) if result_file.is_file() else {}
+          except (ValueError, OSError):
+              result = {}
+          stage = result.get("failed_stage", "NONE") if isinstance(result, dict) else "NONE"
+          stage = stage if isinstance(stage, str) and re.fullmatch(r"[a-zA-Z0-9 _/:;,+_.()-]{1,100}", stage) else "REDACTED"
+          print("MFA_RECORDED_CHECKS=" + str(len(safe)))
+          print("MFA_PASSED_CHECKS=" + str(good))
+          print("MFA_LAST_CHECK_LABEL=" + label)
+          print("MFA_FAILED_STAGE=" + stage)
+          PY
+      - name: Cleanup only this test project
+        if: always()
+        env:
+          AUTH_CONTEXT: ${{ runner.temp }}/nex-auth-source
+          AUTH_EVIDENCE: ${{ runner.temp }}/nex-auth-evidence
+        run: |
+          env -i PATH="$PATH" HOME="$RUNNER_TEMP" \
+            uv run --frozen python scripts/verify-m1-auth.py --finalize \
+              --project "$AUTH_PROJECT" --context "$AUTH_CONTEXT" --evidence "$AUTH_EVIDENCE"

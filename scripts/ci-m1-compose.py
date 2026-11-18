@@ -210,7 +210,9 @@ class Harness:
         self.env["NEX_M1_POSTGRES_TEST"] = "isolated"
         self.env["NEX_M1_TEST_PROJECT"] = self.project
         self.command("postgres-tests.txt", [
-            "uv", "run", "--frozen", "pytest", "apps/api/tests/test_postgres_m1.py",
+            "uv", "run", "--frozen", "pytest",
+            "--junitxml=" + str(self.evidence / "postgres-tests.xml"),
+            "apps/api/tests/test_postgres_m1.py",
         ], timeout=300)
         self.env.pop("NEX_M1_POSTGRES_TEST")
         self.env.pop("NEX_M1_TEST_PROJECT")

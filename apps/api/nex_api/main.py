@@ -1,7 +1,7 @@
 from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import asynccontextmanager
-from typing import Annotated
-from uuid import uuid4
+from typing import Annotated, Literal
+from uuid import UUID, uuid4
 
 import structlog
 from fastapi import Depends, FastAPI, HTTPException, Request, Response
@@ -16,7 +16,7 @@ from nex_api.config import Settings, get_settings
 from nex_api.database import create_session_factory
 from nex_api.dependencies import get_administrator, get_provisioned_user, get_session
 from nex_api.logging import configure_logging
-from nex_api.models import SECURITY_TENANT_ID, User
+from nex_api.models import SECURITY_TENANT_ID, Tenant, User
 from nex_api.oidc import OIDCVerifier
 from nex_api.routes.health import ReadyResponse, readiness, router as health_router
 from nex_api.routes.tenants import AuditEventView, router as tenants_router
@@ -32,6 +32,38 @@ class ErrorResponse(BaseModel):
     reason_code: str
     message: str
     correlation_id: str
+
+
+class AdminDirectoryUser(BaseModel):
+    id: UUID
+    email: str
+    role: str
+    status: str
+
+
+class AdminDirectoryView(BaseModel):
+    tenant_id: UUID
+    tenant_name: str
+    tenant_status: str
+    users: list[AdminDirectoryUser]
+    truncated: bool
+
+
+class OperationalCapability(BaseModel):
+    status: Literal["CONFIGURED", "NOT_CONFIGURED", "NOT_IMPLEMENTED"]
+    reason_code: str
+
+
+class AdminOperationsView(BaseModel):
+    tenant_id: UUID
+    entitlements: dict[str, bool]
+    subscription: OperationalCapability
+    trading_safety: dict[str, bool | str]
+    exchange: OperationalCapability
+    ndsp_connector: OperationalCapability
+    worker_queues: OperationalCapability
+    notifications: OperationalCapability
+    incidents: OperationalCapability
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -102,6 +134,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     # Native admin API paths are forwarded separately from static /admin UI
     # routes. Registration changes routing only, never authorization.
+    # Browser sessions are deliberately scoped to /api (HttpOnly Secure cookie).
+    # Reuse the SAME server-authoritative administrator dependency on a cookie-safe
+    # browser route; retain canonical /admin/v1 contracts unchanged.
+    @app.get("/api/v1/admin/system/health", include_in_schema=False)
     @app.get("/admin/v1/system/health", response_model=ReadyResponse,
              operation_id="getAdminHealth", responses={503: {"model": ReadyResponse}})
     async def admin_health(
@@ -109,6 +145,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     ) -> dict[str, object]:
         return await readiness(request, response)
 
+    @app.get("/api/v1/admin/audit", include_in_schema=False)
     @app.get("/admin/v1/audit", response_model=list[AuditEventView],
              operation_id="getAdminAudit")
     async def admin_audit(
@@ -119,6 +156,64 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             AuditEvent.tenant_id == user.tenant_id
         ).order_by(AuditEvent.created_at.desc()).limit(100))).scalars().all()
         return [AuditEventView.model_validate(event) for event in events]
+
+    # Internal, browser-only, read-only directory. Same server-side administrator
+    # MFA dependency as other control endpoints; RLS adds tenant-scoped SELECT.
+    # Not part of the public M1 OpenAPI contract.
+    @app.get("/api/v1/admin/directory",
+             response_model=AdminDirectoryView, include_in_schema=False)
+    async def admin_directory(
+        user: Annotated[User, Depends(get_administrator)],
+        session: Annotated[AsyncSession, Depends(get_session)],
+    ) -> AdminDirectoryView:
+        tenant = await session.get(Tenant, user.tenant_id)
+        if tenant is None or tenant.status != "active":
+            raise HTTPException(
+                status_code=403,
+                detail={"reason_code": "TENANT_DISABLED", "message": "Tenant unavailable."},
+            )
+        rows = (await session.execute(
+            select(User).where(User.tenant_id == user.tenant_id)
+            .order_by(User.created_at.desc(), User.id).limit(101)
+        )).scalars().all()
+        return AdminDirectoryView(
+            tenant_id=tenant.id, tenant_name=tenant.name,
+            tenant_status=tenant.status,
+            users=[AdminDirectoryUser(
+                id=entry.id, email=entry.email, role=entry.role, status=entry.status
+            ) for entry in rows[:100]],
+            truncated=len(rows) > 100,
+        )
+
+    # Internal browser-only operational projection. It contains only validated
+    # server configuration and explicit absence states; it never guesses health
+    # for services/data stores that M1 does not implement.
+    @app.get("/api/v1/admin/operations",
+             response_model=AdminOperationsView, include_in_schema=False)
+    async def admin_operations(
+        request: Request,
+        user: Annotated[User, Depends(get_administrator)],
+    ) -> AdminOperationsView:
+        not_implemented = OperationalCapability(
+            status="NOT_IMPLEMENTED", reason_code="M1_DATA_SOURCE_NOT_IMPLEMENTED"
+        )
+        return AdminOperationsView(
+            tenant_id=user.tenant_id,
+            entitlements={"live_trading": request.app.state.settings.live_trading_enabled},
+            subscription=OperationalCapability(
+                status="NOT_IMPLEMENTED", reason_code="BILLING_NOT_IMPLEMENTED"
+            ),
+            trading_safety=request.app.state.settings.trading_safety,
+            exchange=OperationalCapability(
+                status="NOT_CONFIGURED", reason_code="EXCHANGE_CONNECTOR_NOT_CONFIGURED"
+            ),
+            ndsp_connector=OperationalCapability(
+                status="NOT_CONFIGURED", reason_code="NDSP_CONNECTOR_NOT_CONFIGURED"
+            ),
+            worker_queues=not_implemented,
+            notifications=not_implemented,
+            incidents=not_implemented,
+        )
 
     @app.middleware("http")
     async def request_context(

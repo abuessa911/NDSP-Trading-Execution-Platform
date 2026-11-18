@@ -53,11 +53,14 @@ Notifications have individually titled navigable routes with explicit milestone
 gates. They do not fetch unimplemented APIs, simulate activity, accept
 credentials, expose order/arming controls, or display invented zero metrics.
 
-`/admin/` plus Operations Center, Users/Tenants, Subscriptions, Trading Safety,
-Exchange Health, NDSP Health, Audit, Notifications, Workers/Queues and Incidents
-all render an unconditional blocked view. `/audit/` does too. No privileged
-fetcher or action is mounted. The existing audit API is operator-only; it is not
-repurposed as a user audit feed.
+The MFA-guarded administrator console exposes read-only service readiness,
+tenant users, tenant audit, and an internal `/api/v1/admin/operations`
+projection. The projection reports the validated M1 safety configuration and
+the existing `live_trading=false` entitlement. Billing, worker queues,
+notifications and incidents explicitly report `NOT_IMPLEMENTED`; exchange and
+NDSP connectors report `NOT_CONFIGURED`. No health is inferred for absent data
+sources and no mutation control is mounted. `/audit/` remains blocked for
+ordinary users; the existing tenant audit API is not repurposed as a user feed.
 
 The API artifact registers `/api` and `/admin/v1` separately from the frontend
 `/admin` routes. This preserves native admin API contracts and **does not alter

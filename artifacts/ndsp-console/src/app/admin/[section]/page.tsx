@@ -4,6 +4,8 @@ import { adminPages } from "../../../lib/console-pages";
 import AdminBlocked from "../../../components/AdminBlocked";
 import AdminAuditPanel from "../../../components/AdminAuditPanel";
 import AdminHealthPanel from "../../../components/AdminHealthPanel";
+import AdminUsersTenantsPanel from "../../../components/AdminUsersTenantsPanel";
+import AdminOperationsPanel from "../../../components/AdminOperationsPanel";
 import PageFrame from "../../../components/PageFrame";
 
 export const dynamicParams = false;
@@ -21,6 +23,9 @@ export default async function AdminPage({ params }: Props) {
   let content;
   if (section === "operations-center") content = <AdminHealthPanel />;
   else if (section === "audit") content = <AdminAuditPanel />;
+  else if (section === "users-tenants") content = <AdminUsersTenantsPanel />;
+  else if (["subscriptions", "trading-safety", "exchange-health", "ndsp-health",
+    "notifications", "workers-queues", "incidents"].includes(section)) content = <AdminOperationsPanel section={section} />;
   else content = <AdminBlocked />;
   return <PageFrame title={page.title} description={page.description}>{content}</PageFrame>;
 }

@@ -36,7 +36,7 @@ export default function AdminHomePanel() {
           <p className="eyebrow">AVAILABLE IN M1</p>
           <h2>Control-plane tools</h2>
           <p className="muted">
-            Both views request data only after this browser has a fresh,
+            Read-only administrator views request data only after this browser has a fresh,
             server-verified administrator session. The API checks every request.
           </p>
         </div>
@@ -44,6 +44,8 @@ export default function AdminHomePanel() {
           <Link className="button" href="/admin/operations-center/">
             <Activity size={15} aria-hidden /> Service health
           </Link>
+          <Link className="button" href="/admin/users-tenants/">Tenant users</Link>
+          <Link className="button" href="/admin/trading-safety/">Operational boundaries</Link>
           <Link className="button" href="/admin/audit/">
             <ClipboardList size={15} aria-hidden /> Audit events
           </Link>
@@ -53,8 +55,9 @@ export default function AdminHomePanel() {
       <section className="panel admin-home-boundary">
         <h2>Remaining administrator surfaces</h2>
         <p className="muted">
-          User and tenant management, trading controls, exchange and NDSP health,
-          queues and incident workflows remain unavailable in M1.
+          User and tenant changes, trading controls and operational workflows remain unavailable.
+          Navigation does not grant access. Status pages report absent connectors and data sources
+          explicitly without inventing health.
         </p>
       </section>
     </>

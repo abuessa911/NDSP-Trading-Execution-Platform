@@ -31,7 +31,7 @@ export const userPages: ConsolePage[] = [
 
 export const adminPages: ConsolePage[] = [
   { slug: "operations-center", title: "Operations Center", description: "Control API and tenant dependency health from the protected M1 route." },
-  { slug: "users-tenants", title: "Users / Tenants", description: "Status, plans and governed support controls." },
+  { slug: "users-tenants", title: "Users / Tenants", description: "Read-only, MFA-protected directory of users in the current tenant; no user mutations or plans." },
   { slug: "subscriptions", title: "Subscriptions", description: "Plans and server-authoritative entitlements." },
   { slug: "trading-safety", title: "Trading Safety", description: "Governed global, account and strategy kill switches." },
   { slug: "exchange-health", title: "Exchange Health", description: "Adapters, WebSockets and rate budgets." },
