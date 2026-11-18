@@ -1,0 +1,41 @@
+name: Bot notification source and typecheck
+on:
+  pull_request:
+    branches: [replit-handoff-20261012]
+  push:
+    branches: ["feature/bot-account-notification-*"]
+permissions:
+  contents: read
+concurrency:
+  group: bot-notifications-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  source:
+    name: source-security
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Auth and non-fabrication regressions
+        run: node --test artifacts/ndsp-console/tests/notification-center.test.mjs
+      - name: Python syntax
+        run: python3 -m compileall -q apps/api/nex_api
+  web-typecheck:
+    name: console-typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: pnpm/action-setup@v4
+        with:
+          version: "10.26.0"
+          run_install: false
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+      - name: TypeScript console gate
+        run: pnpm --filter @workspace/ndsp-console run typecheck

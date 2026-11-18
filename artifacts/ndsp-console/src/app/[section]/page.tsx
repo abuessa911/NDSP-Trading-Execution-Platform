@@ -7,6 +7,7 @@ import { SecurityView } from "../../ndsp/OperationsPreview";
 import HealthPanel from "../../components/HealthPanel";
 import IdentityPanel from "../../components/IdentityPanel";
 import SettingsPanel from "../../components/SettingsPanel";
+import NotificationsPanel from "../../components/NotificationsPanel";
 import AdminBlocked from "../../components/AdminBlocked";
 
 export const dynamicParams = false;
@@ -27,6 +28,7 @@ export default async function UserPage({ params }: Props) {
   let content;
   if (section === "health") content = <><HealthPanel /><PreviewWorkspace section="future-health" /></>;
   else if (section === "settings") content = <><SettingsPanel /><PreviewWorkspace section="bot-settings" /></>;
+  else if (section === "notifications") content = <NotificationsPanel />;
   else if (section === "security") content = <SecurityView />;
   else if (section === "subscription") content = <IdentityPanel entitlementsOnly />;
   else if (section === "audit") content = <AdminBlocked />;
