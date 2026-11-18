@@ -72,6 +72,16 @@ def interpret_ndsp_payload(payload: dict, min_confidence: int = 80) -> dict:
         return _no_trade(None, None, "Invalid payload")
 
     decision = _decision_root(payload)
+    # NDSP entry points require the canonical readiness pair on the decision.
+    # A legacy side or confidence score alone cannot authorize entry.
+    if payload.get("decision") is not None and payload.get("ndsp_decision") is not None:
+        return _no_trade(None, None, "Ambiguous NDSP decision envelope")
+    if decision.get("single_truth_state") != "READY" or decision.get("allowed") is not True:
+        return _no_trade(None, None, "NDSP readiness does not permit entry")
+    for envelope in (payload, payload.get("ndsp_decision")):
+        if isinstance(envelope, dict):
+            if envelope.get("single_truth_state", "READY") != "READY" or envelope.get("allowed", True) is not True:
+                return _no_trade(None, None, "Conflicting NDSP readiness")
     legacy_side = payload.get("side")
     source_direction = decision.get("direction")
     confidence = _as_number(decision.get("confidence"))
