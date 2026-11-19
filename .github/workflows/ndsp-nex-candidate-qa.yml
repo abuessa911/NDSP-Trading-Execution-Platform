@@ -1,0 +1,36 @@
+name: NEX NDSP-NEX-1.0 candidate security tests (no runtime integration)
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  signed-contract-no-order-safety:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@v6
+      - name: Install locked NEX dependencies
+        run: uv sync --frozen --dev
+      - name: Verify Ed25519 negative contract and no M1 order routes
+        env:
+          PYTHONPATH: apps/api
+          TRADING_MODE: paper
+          LIVE_TRADING_ENABLED: 'false'
+          GLOBAL_KILL_SWITCH: 'true'
+          BINANCE_ALLOW_WITHDRAW: 'false'
+        run: |
+          set -Eeuo pipefail
+          uv run pytest apps/api/tests/test_ndsp_nex_future_contract_v1.py -q
+          uv run ruff check apps/api/nex_api/future_contracts apps/api/tests/test_ndsp_nex_future_contract_v1.py
+      - name: Report staging-only safety
+        run: |
+          printf 'SIGNED_CONTRACT_NEGATIVE_QA=ATTEMPTED\nBROKER_ENDPOINT_ADDED=NO\nM1_RUNTIME_INTEGRATION=NO\nLIVE_TRADING=DISABLED\n'
