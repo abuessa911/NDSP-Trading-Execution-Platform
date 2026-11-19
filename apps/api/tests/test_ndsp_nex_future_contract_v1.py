@@ -1,6 +1,6 @@
 """Detached signed contract tests. Synthetic keys, no account, broker or network."""
 import base64
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
