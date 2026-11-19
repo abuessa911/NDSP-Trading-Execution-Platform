@@ -151,14 +151,20 @@ def test_unknown_extra_payload_field_rejected():
     check_rejected("PAYLOAD_SCHEMA_MISMATCH", envelope(p))
 
 
-def test_no_order_route_in_frozen_m1_openapi_snapshot_only():
-    # This is an audited static OpenAPI snapshot, NOT live API runtime proof.
-    # Real import of nex_api.main is separately BLOCKED in current M1 source
-    # by missing nex_api.secrets. Do not fabricate a runtime pass.
+def test_actual_m1_app_routes_match_openapi_without_any_order_endpoint():
+    # Actual FastAPI handler registry, after importing the exactly recovered
+    # secrets provider from independent review PR #22. Still not a live deploy.
     import json
     from pathlib import Path
 
-    spec = json.loads(Path("lib/api-spec/openapi.yaml").read_text(encoding="utf-8"))
-    paths = set(spec["paths"])
-    assert not any("/order" in path or "/trade" in path for path in paths)
-    assert "NDSP-NEX-1.0" not in str(paths)
+    from nex_api.config import Settings
+    from nex_api.main import create_app
+
+    app = create_app(Settings(_env_file=None))
+    actual_paths = set(app.openapi()["paths"])
+    stored_contract = json.loads(
+        Path("lib/api-spec/openapi.yaml").read_text(encoding="utf-8")
+    )
+    assert actual_paths == set(stored_contract["paths"])
+    assert not any("/order" in path or "/trade" in path for path in actual_paths)
+    assert "NDSP-NEX-1.0" not in str(actual_paths)
