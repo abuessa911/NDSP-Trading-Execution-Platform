@@ -1,0 +1,62 @@
+{
+  "contract_id": "NDSP-NEX-1.0",
+  "lifecycle": "CANDIDATE_SOURCE_ONLY_NOT_DEPLOYED",
+  "consumer_milestone": "NEX_M2_OR_LATER_WITH_SEPARATE_APPROVAL",
+  "issuer": "NDSP",
+  "audience": "NEX",
+  "signing": {
+    "algorithm": "Ed25519",
+    "authenticated_key_source": "NEX_MANAGED_TRUSTED_PUBLIC_KEY_REGISTRY",
+    "signature_encoding": "standard_base64_strict",
+    "signature_over": "UTF8('NDSP-NEX-1.0:completed-decision\\n') + UTF8(canonical_payload_json)",
+    "canonical_payload_json": "sort_keys=True, separators=(',', ':'), ensure_ascii=False, allow_nan=False",
+    "key_rotation": "explicit_reviewer_approval_and_kid",
+    "allowed_clock_skew_seconds": 30,
+    "max_lifetime_seconds": 300
+  },
+  "envelope_fields": [
+    "key_id",
+    "signature_base64",
+    "payload"
+  ],
+  "payload_fields": [
+    "contract_version",
+    "issuer",
+    "audience",
+    "decision_id",
+    "asset_id",
+    "market",
+    "timeframe",
+    "analysis_mode",
+    "state",
+    "l15_state",
+    "l15_blocked",
+    "l16_state",
+    "l16_allowed",
+    "actual_layers_executed",
+    "evidence_sha256",
+    "source_revision",
+    "issued_at_utc",
+    "expires_at_utc",
+    "nonce",
+    "no_execution_authority",
+    "not_recommendation"
+  ],
+  "blocked_states": [
+    "MONITORING_ONLY",
+    "BLOCKED_BY_DEVILS_ADVOCATE",
+    "DATA_BLOCKED",
+    "UNAVAILABLE"
+  ],
+  "invariants": [
+    "Never accept request-supplied claims as server-signed evidence",
+    "Reject unsigned/invalid signature, unknown key, replay, stale or future decision",
+    "Reject asset mismatch, incomplete or duplicated layer set, any L15/L16 block",
+    "Signed READY is study-only in NEX M1. Zero order sends and zero position modifications",
+    "Missing legal index entitlement or systemic event corroboration leaves NDSP monitoring-only",
+    "No exchange credentials or outbound broker adapter in M1",
+    "NEX independent owner approval and integration test required before M2 consumer activation"
+  ],
+  "deployment_approval": false,
+  "production_order_capability": false
+}
